@@ -1,4 +1,4 @@
-<library   file="*.cc" name="CMSDIJETDijetAnalysisPlugins">
+<library   file="*.cc" name="CMSDIJETDijetRootTreeMakerPlugins">
 <use   name="root"/> 
 <use   name="rootrflx"/>
 <use   name="rootcore"/>
