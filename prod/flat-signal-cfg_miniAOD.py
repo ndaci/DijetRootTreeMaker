@@ -207,14 +207,14 @@ process.MessageLogger.suppressWarning = cms.untracked.vstring('ecalLaserCorrFilt
 
 #Load the toolbox
 #process.load('RecoJets.JetProducers.jettoolbox_cff')
-process.load('CMSROMA.DijetAnalysis.jettoolbox_cff')
+process.load('CMSDIJET.DijetRootTreeMaker.jettoolbox_cff')
 
 
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 #Test with Edmund Code... not working
 #Load the GenEvent and GenPraticles cff files
-#process.load('CMSROMA.DijetAnalysis.RootTupleMakerV2_GenEventInfo_cfi')
-#process.load('CMSROMA.DijetAnalysis.RootTupleMakerV2_GenParticles_cfi')
+#process.load('CMSDIJET.DijetRootTreeMaker.RootTupleMakerV2_GenEventInfo_cfi')
+#process.load('CMSDIJET.DijetRootTreeMaker.RootTupleMakerV2_GenParticles_cfi')
 
 #------------- Recluster Gen Jets to access the constituents -------
 #already in toolbox, just add keep statements
