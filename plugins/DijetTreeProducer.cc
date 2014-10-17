@@ -13,6 +13,7 @@
 #include "TMath.h"
 #include "TLorentzVector.h"
 
+
 #include "CMSDIJET/DijetRootTreeMaker/plugins/DijetTreeProducer.h"
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/Framework/interface/Frameworkfwd.h"
@@ -42,6 +43,7 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
   srcVrtx_            = cfg.getParameter<edm::InputTag>             ("vtx");
   srcPU_              = cfg.getUntrackedParameter<edm::InputTag>    ("pu",edm::InputTag(""));
   srcGenInfo_           = cfg.getUntrackedParameter<edm::InputTag>  ("ptHat",edm::InputTag());
+  srcPrunedGenParticles_ = cfg.getParameter<edm::InputTag>          ("genParticles");
 
   ptMinAK4_           = cfg.getParameter<double>                    ("ptMinAK4");
   ptMinAK8_           = cfg.getParameter<double>                    ("ptMinAK8");
@@ -81,6 +83,41 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("nvtx"                 ,&nVtx_              ,"nVtx_/I");
   outTree_->Branch("met"                  ,&met_               ,"met_/F");
   outTree_->Branch("metSig"               ,&metSig_            ,"metSig_/F");
+
+  gen_eta           = new std::vector<float>;
+  gen_phi           = new std::vector<float>;
+  gen_p            = new std::vector<float>;
+  gen_px           = new std::vector<float>;
+  gen_py           = new std::vector<float>;
+  gen_pz           = new std::vector<float>;
+  gen_pt           = new std::vector<float>;
+  gen_energy	   = new std::vector<float>; 
+  gen_pdgId	   = new std::vector<int>; 
+  gen_vx	   = new std::vector<float>; 
+  gen_vy	   = new std::vector<float>; 
+  gen_vz	   = new std::vector<float>;	 
+  gen_numDaught    = new std::vector<int>;      
+  gen_status	   = new std::vector<int>; 
+  gen_index	   = new std::vector<int>; 
+  gen_motherIndex  = new std::vector<int>; 
+
+  outTree_->Branch("gen_eta"		, &gen_eta   , "gen_eta/F");
+  outTree_->Branch("gen_phi"		, &gen_phi   , "gen_phi/F");
+  outTree_->Branch("gen_p"		,   &gen_p   , "gen_p/F");
+  outTree_->Branch("gen_px"		,  &gen_px  , "gen_px/F");
+  outTree_->Branch("gen_py"		,  &gen_py  , "gen_py/F");
+  outTree_->Branch("gen_pz"		,  &gen_pz  , "gen_py/F");
+  outTree_->Branch("gen_pt"		,  &gen_pt  , "gen_pt/F");
+  outTree_->Branch("gen_energy"	    	,  &gen_energy,  "gen_energy/F" );
+  outTree_->Branch("gen_pdgId"	    	, &gen_pdgId,   "gen_pdgId/I");
+  outTree_->Branch("gen_vx"	    	, &gen_vx,  "gen_vx/F");
+  outTree_->Branch("gen_vy"	    	, &gen_vy,  "gen_vy/F");
+  outTree_->Branch("gen_vz"	    	, &gen_vz,  "gen_vz/F");
+  outTree_->Branch("gen_numDaught"  	,  &gen_numDaught,  "gen_numDaught/I");
+  outTree_->Branch("gen_status"	    	,  &gen_status,  "gen_status/I");
+  outTree_->Branch("gen_index"	    	,  &gen_index,  "gen_index/I");
+  outTree_->Branch("gen_motherIndex"	, &gen_motherIndex,  "gen_motherIndex/I");
+
   outTree_->Branch("nJetsAK4"             ,&nJetsAK4_          ,"nJetsAK4_/I");
   outTree_->Branch("htAK4"                ,&htAK4_             ,"htAK4_/F");
   outTree_->Branch("mjjAK4"               ,&mjjAK4_            ,"mjjAK4_/F");
@@ -278,6 +315,24 @@ void DijetTreeProducer::endJob()
 {  
   delete triggerResult_;
 
+
+  delete gen_eta	;
+  delete gen_phi	;
+  delete gen_p		;
+  delete gen_px	;
+  delete gen_py	;
+  delete gen_pz	;
+  delete gen_pt	;
+  delete gen_energy    ;
+  delete gen_pdgId	;
+  delete gen_vx	;
+  delete gen_vy	;
+  delete gen_vz	;
+  delete gen_numDaught	;
+  delete gen_status	;
+  delete gen_index   	;
+  delete gen_motherIndex;
+
   delete ptAK4_;
   delete jecAK4_;
   delete etaAK4_;
@@ -351,6 +406,8 @@ void DijetTreeProducer::endJob()
   delete phiGenAK8_     ;
   delete massGenAK8_    ;
   delete energyGenAK8_  ;
+
+
   
   for(unsigned i=0;i<vtriggerSelector_.size();i++) {
     delete vtriggerSelector_[i];
@@ -395,6 +452,8 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   edm::Handle<std::vector<PileupSummaryInfo> > PupInfo;
   if (!iEvent.isRealData()) {
     iEvent.getByLabel(srcPU_,PupInfo);
+    
+    std::cout << "PupInfo.isValid()? : " << PupInfo.isValid() << endl;
 
     if(PupInfo.isValid()) {
       for( std::vector<PileupSummaryInfo>::const_iterator it = PupInfo->begin(); it != PupInfo->end(); ++it ) {
@@ -418,7 +477,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     //   }
     // }
   }// if MC
-
+  
   //-------------- Gen Event Info -----------------------------------
   if (!iEvent.isRealData()) {
     edm::Handle<GenEventInfoProduct> genEvtInfo;
@@ -434,53 +493,77 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       weight_ = genEvtInfo->weight();      
       
     }
+    
 
-
-    //------------------ Gen Jet initial partons -------------------
+    //------------------ Gen particles hard scattering -------------------
     //    (to be implemented)
 
     // to be saved only for partons that start the jet -> from genJets take the costituents -> 
     //see hypernews https://hypernews.cern.ch/HyperNews/CMS/get/csa14/49/2.html
     //and https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD#Advanced_topics_re_clustering_ev 
 
-    // if( genParticles.isValid() ) {
-  //     edm::LogInfo("GenParticlesInfo") << "Total # GenParticles: " << genParticles->size();
 
-  //     for( reco::GenParticleCollection::const_iterator it = genParticles->begin(); it != genParticles->end(); ++it ) {
-  //       // exit from loop when you reach the required number of GenParticles
-  //       if(eta->size() >= maxSize)
-  //         break;
-
-  //       // fill in all the vectors
-  //       eta->push_back( it->eta() );
-  //       phi->push_back( it->phi() );
-  //       p->push_back( it->p() );
-  //       px->push_back( it->px() );
-  //       py->push_back( it->py() );
-  //       pz->push_back( it->pz() );
-  //       pt->push_back( it->pt() );
-  //       energy->push_back( it->energy() );
-  //       pdgId->push_back( it->pdgId() );
-  //       vx->push_back( it->vx() );
-  //       vy->push_back( it->vy() );
-  //       vz->push_back( it->vz() );
-  //       numDaught->push_back( it->numberOfDaughters() );
-  //       status->push_back( it->status() );
-      
+    edm::Handle<reco::GenParticle> prunedGenParticles;
+    iEvent.getByLabel(srcPrunedGenParticles_, prunedGenParticles);
     
-  // 	int idx = -1;
-  // 	for( reco::GenParticleCollection::const_iterator mit = genParticles->begin(); mit != genParticles->end(); ++mit ) {
-  // 	  if( it->mother()==&(*mit) ) {
-  // 	    idx = std::distance(genParticles->begin(),mit);
-  // 	    break;
-  // 	  }
-  // 	}
-  // 	motherIndex->push_back( idx );
-  //     }
-      
-  //   }
-  // }// if MC
 
+    std::cout << "-------------------------------" << endl;
+    std::cout << "   DEBUG   gen particles" << endl;
+    std::cout << "-------------------------------" << endl;
+    std::cout << "prunedGenParticles.failedToGet() = " << prunedGenParticles.isValid() << endl;
+    std::cout << "prunedGenParticles.isValid() = " << prunedGenParticles.isValid() << endl;
+    
+    if( prunedGenParticles.isValid() ) {
+      //edm::LogInfo("GenParticlesInfo") << "Total # GenParticles: " << prunedGenParticles->size();
+
+      
+      for( reco::GenParticle::const_iterator it = prunedGenParticles->begin(); it != prunedGenParticles->end(); ++it ) {
+	
+	
+        // exit from loop when you reach the required number of GenParticles
+        //if(eta->size() >= maxSize)
+        //  break;
+	
+    	//save only particles from hard scattering 
+	//already done from the pruner?
+    	if(it->status()<21 || it->status()>29) continue; 
+    	int idx = std::distance(prunedGenParticles->begin(),it);
+
+        // fill in all the vectors
+        gen_eta		->push_back( it->eta() );
+        gen_phi		->push_back( it->phi() );
+        gen_p		->push_back( it->p() );
+        gen_px		->push_back( it->px() );
+        gen_py		->push_back( it->py() );
+        gen_pz		->push_back( it->pz() );
+        gen_pt		->push_back( it->pt() );
+        gen_energy	->push_back( it->energy() );
+        gen_pdgId	->push_back( it->pdgId() );
+        gen_vx		->push_back( it->vx() );
+        gen_vy		->push_back( it->vy() );
+        gen_vz		->push_back( it->vz() );
+        gen_numDaught	->push_back( it->numberOfDaughters() );
+        gen_status	->push_back( it->status() );
+    	gen_index   	->push_back( idx );
+  
+    	int midx = -1;
+
+	for( reco::GenParticle::const_iterator mit = prunedGenParticles->begin(); mit != prunedGenParticles->end(); ++mit ) {
+	
+    	  if( it->mother()==&(*mit) ) {
+    	    midx = std::distance(prunedGenParticles->begin(),mit);
+    	    break;
+    	  }
+    	}
+    	gen_motherIndex->push_back( midx );
+
+	std::cout << "id : " << gen_index << "   status : " << gen_status << "   mother index : " << gen_motherIndex << endl; 
+	
+      }//loop over genParticles
+    }
+    
+  }// if MC
+  
   //-------------- Trigger Info -----------------------------------
   triggerPassHisto_->Fill("totalEvents",1);
   if (triggerCache_.setEvent(iEvent,iSetup)) {
@@ -503,7 +586,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   bool cut_vtx = (recVtxs->size() > 0);
   
   if (cut_vtx) {
-
+    
     // Event
     met_    = (*met)[0].et();
     if ((*met)[0].sumEt() > 0) {
@@ -698,59 +781,61 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     
     nGenJetsAK4_ = 0;
     vector<TLorentzVector> vP4GenAK4;
-    for(edm::View<reco::GenJet>::const_iterator ijet = genJetsAK4.begin();ijet != genJetsAK4.end(); ++ijet) { 
+    if (!iEvent.isRealData()) {
+      for(edm::View<reco::GenJet>::const_iterator ijet = genJetsAK4.begin();ijet != genJetsAK4.end(); ++ijet) { 
+	
+	//float eta  = fabs(ijet->eta());
+	float pt   = ijet->pt();
+	if (pt > ptMinAK4_) {
+	  nGenJetsAK4_++;
+	  vP4GenAK4.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
+	  ptGenAK4_            ->push_back(pt);
+	  phiGenAK4_           ->push_back(ijet->phi());
+	  etaGenAK4_           ->push_back(ijet->eta());
+	  massGenAK4_          ->push_back(ijet->mass());
+	  energyGenAK4_        ->push_back(ijet->energy());
+	}
+      }// jet loop  
       
-      //float eta  = fabs(ijet->eta());
-      float pt   = ijet->pt();
-      if (pt > ptMinAK4_) {
-        nGenJetsAK4_++;
-        vP4GenAK4.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
-        ptGenAK4_            ->push_back(pt);
-        phiGenAK4_           ->push_back(ijet->phi());
-        etaGenAK4_           ->push_back(ijet->eta());
-        massGenAK4_          ->push_back(ijet->mass());
-        energyGenAK4_        ->push_back(ijet->energy());
-      }
-    }// jet loop  
-    
-    //AK8
-    nGenJetsAK8_ = 0;
-    vector<TLorentzVector> vP4GenAK8;
-    
-    for(edm::View<reco::GenJet>::const_iterator ijet = genJetsAK8.begin();ijet != genJetsAK8.end(); ++ijet) { 
+      //AK8
+      nGenJetsAK8_ = 0;
+      vector<TLorentzVector> vP4GenAK8;
       
-      //float eta  = fabs(ijet->eta());
-      float pt   = ijet->pt();
-      if (pt > ptMinAK8_) {
-        nGenJetsAK8_++;
-        vP4GenAK8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
-        ptGenAK8_            ->push_back(pt);
-        phiGenAK8_           ->push_back(ijet->phi());
-        etaGenAK8_           ->push_back(ijet->eta());
-        massGenAK8_          ->push_back(ijet->mass());
-        energyGenAK8_        ->push_back(ijet->energy());
-      }
-    }// jet loop  
-    
-    nGenJetsCA8_ = 0;
-    vector<TLorentzVector> vP4GenCA8;
-    
-    for(edm::View<pat::Jet>::const_iterator ijet = pat_jetsCA8.begin();ijet != pat_jetsCA8.end(); ++ijet) { 
+      for(edm::View<reco::GenJet>::const_iterator ijet = genJetsAK8.begin();ijet != genJetsAK8.end(); ++ijet) { 
+	
+	//float eta  = fabs(ijet->eta());
+	float pt   = ijet->pt();
+	if (pt > ptMinAK8_) {
+	  nGenJetsAK8_++;
+	  vP4GenAK8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
+	  ptGenAK8_            ->push_back(pt);
+	  phiGenAK8_           ->push_back(ijet->phi());
+	  etaGenAK8_           ->push_back(ijet->eta());
+	  massGenAK8_          ->push_back(ijet->mass());
+	  energyGenAK8_        ->push_back(ijet->energy());
+	}
+      }// jet loop  
       
+      nGenJetsCA8_ = 0;
+      vector<TLorentzVector> vP4GenCA8;
       
-      //float eta  = fabs(ijet->eta());
-      float pt   = ijet->pt();
-      if (pt > ptMinCA8_) {
-        nGenJetsCA8_++;
-        vP4GenCA8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
-        ptGenCA8_            ->push_back(pt);
-        phiGenCA8_           ->push_back(ijet->phi());
-        etaGenCA8_           ->push_back(ijet->eta());
-        massGenCA8_          ->push_back(ijet->mass());
-        energyGenCA8_        ->push_back(ijet->energy());
-      }
-    }// jet loop  
-  }
+      for(edm::View<pat::Jet>::const_iterator ijet = pat_jetsCA8.begin();ijet != pat_jetsCA8.end(); ++ijet) { 
+	
+	
+	//float eta  = fabs(ijet->eta());
+	float pt   = ijet->pt();
+	if (pt > ptMinCA8_) {
+	  nGenJetsCA8_++;
+	  vP4GenCA8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
+	  ptGenCA8_            ->push_back(pt);
+	  phiGenCA8_           ->push_back(ijet->phi());
+	  etaGenCA8_           ->push_back(ijet->eta());
+	  massGenCA8_          ->push_back(ijet->mass());
+	  energyGenCA8_        ->push_back(ijet->energy());
+	}
+      }// jet loop  
+    }//if MC 
+  }// if vtx
   
   
   //---- Fill Tree ---
@@ -759,7 +844,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   //}
   //------------------
   
-  }// if vtx
+  
 }//end analyze for each event
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -848,11 +933,11 @@ void DijetTreeProducer::initialize()
   tau1CA8_           ->clear();
   tau2CA8_           ->clear();
   //dRCA8_             ->clear();
-
-
+  
+  
   triggerResult_     ->clear();
   
-//----- MC -------
+  //----- MC -------
   npu_ ->clear();
   Number_interactions ->clear();
   OriginBX            -> clear();
@@ -860,7 +945,7 @@ void DijetTreeProducer::initialize()
   ptHat_ = -999; 
   processID_ = -999; 
   weight_ = -999;
-
+  
   ptGenAK4_    ->clear();
   phiGenAK4_   ->clear();
   etaGenAK4_   ->clear();
@@ -877,12 +962,29 @@ void DijetTreeProducer::initialize()
   massGenCA8_  ->clear();
   energyGenCA8_->clear();
   
+  gen_eta		->clear();
+  gen_phi		->clear();
+  gen_p		        ->clear();
+  gen_px		->clear();
+  gen_py		->clear();
+  gen_pz		->clear();
+  gen_pt		->clear();
+  gen_energy    	->clear();
+  gen_pdgId	        ->clear();
+  gen_vx		->clear();
+  gen_vy		->clear();
+  gen_vz		->clear();
+  gen_numDaught	        ->clear();
+  gen_status	        ->clear();
+  gen_index   	        ->clear();
+  gen_motherIndex       ->clear();  
+  
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 DijetTreeProducer::~DijetTreeProducer() 
 {
 }
- 
+
 DEFINE_FWK_MODULE(DijetTreeProducer);
 
 

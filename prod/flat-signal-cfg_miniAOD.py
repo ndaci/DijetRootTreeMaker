@@ -22,6 +22,7 @@ process.GlobalTag.globaltag = 'PLS170_V7AN1::All'
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.MessageLogger.cerr.FwkReport.reportEvery = 1
 
+
 process.TFileService=cms.Service("TFileService",
                                  fileName=cms.string('dijetTree_signal.root'),
                                  closeFileFast = cms.untracked.bool(True)
@@ -212,9 +213,22 @@ process.load('CMSDIJET.DijetRootTreeMaker.jettoolbox_cff')
 
 #- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 #Test with Edmund Code... not working
-#Load the GenEvent and GenPraticles cff files
+#Load the GenEvent and GenParticles cff files
 #process.load('CMSDIJET.DijetRootTreeMaker.RootTupleMakerV2_GenEventInfo_cfi')
 #process.load('CMSDIJET.DijetRootTreeMaker.RootTupleMakerV2_GenParticles_cfi')
+
+# #-------------------------------------------------------
+# # Gen Particles
+# process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
+
+# process.prunedGenParticles = cms.EDProducer('GenParticlePruner',
+#     src = cms.InputTag("prunedGenParticles"),
+#     select = cms.vstring(
+#     "drop  *  ", # by default
+#     "keep ( status = 3 || (status>=21 && status<=29) )", # keep hard process particles
+#     )
+# )
+
 
 #------------- Recluster Gen Jets to access the constituents -------
 #already in toolbox, just add keep statements
@@ -299,9 +313,6 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   jetsAK4             = cms.InputTag('patJetsAK4PFCHS'),
   jetsAK8         = cms.InputTag('patJetsAK8PFCHS'),
   jetsCA8         = cms.InputTag('patJetsCA8PFCHS'),
-  genJetsAK4             = cms.InputTag('ak4GenJets'),
-  genJetsAK8         = cms.InputTag('ak8GenJets'),
-  genJetsCA8         = cms.InputTag('ca8GenJets'),
   met              = cms.InputTag('slimmedMETs'),
   vtx              = cms.InputTag('offlineSlimmedPrimaryVertices'),
   ptMinAK4         = cms.double(10),
@@ -317,6 +328,10 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   ## MC ########################################
   pu               = cms.untracked.InputTag('addPileupInfo'),
   ptHat            = cms.untracked.InputTag('generator'),
+  genParticles     = cms.InputTag('prunedGenParticles'),
+  genJetsAK4             = cms.InputTag('ak4GenJets'),
+  genJetsAK8         = cms.InputTag('ak8GenJets'),
+  genJetsCA8         = cms.InputTag('ca8GenJets'),
 
   ## trigger ###################################
   triggerAlias     = cms.vstring('Fat','PFHT650','PFNoPUHT650','HT750','HT550'),
@@ -343,7 +358,8 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 
 # ------------------ path --------------------------
 
-process.p = cms.Path(process.chs * 
+process.p = cms.Path(#process.prunedGenParticles*
+                     process.chs * 
                      process.ak4PFJetsCHS *
                      process.ak4GenJets *
                      process.patJetsAK4PFCHS *

@@ -27,7 +27,7 @@ class DijetTreeProducer : public edm::EDAnalyzer
     void initialize();
     //---- configurable parameters --------   
     double ptMinAK4_,ptMinAK8_,ptMinCA8_;//mjjMin_,,dEtaMax_;
-    edm::InputTag srcJetsAK4_,srcJetsAK8_, srcJetsCA8_,srcMET_,srcPU_,srcVrtx_, srcGenInfo_, srcGenJetsAK4_, srcGenJetsAK8_, srcGenJetsCA8_;
+    edm::InputTag srcJetsAK4_,srcJetsAK8_, srcJetsCA8_,srcMET_,srcPU_,srcVrtx_, srcGenInfo_, srcGenJetsAK4_, srcGenJetsAK8_, srcGenJetsCA8_, srcPrunedGenParticles_;
     edm::Service<TFileService> fs_;
     TTree *outTree_; 
     //---- TRIGGER -------------------------
@@ -44,7 +44,8 @@ class DijetTreeProducer : public edm::EDAnalyzer
     float htAK8_,mjjAK8_,dEtajjAK8_,dPhijjAK8_;
     float htCA8_,mjjCA8_,dEtajjCA8_,dPhijjCA8_;
     std::vector<bool> *triggerResult_;
-    //---- jet variables --------------
+
+    //---- jet and genJet variables --------------
     std::vector<float> *ptAK4_,*jecAK4_,*etaAK4_,*phiAK4_,*massAK4_,*energyAK4_,*chfAK4_,*nhfAK4_,*phfAK4_,*elfAK4_,*mufAK4_;
     std::vector<int> *idLAK4_,*idTAK4_;
     //std::vector<float> *cutbasedJetId_, *fullJetId_, *fullJetDiscriminant_;
@@ -63,9 +64,14 @@ class DijetTreeProducer : public edm::EDAnalyzer
     std::vector<int> *Number_interactions;
     std::vector <int> *OriginBX;
    
+    //-----gen particles from hard scattering ------
+  
     float ptHat_; 
     int processID_;
     double weight_;
+    std::vector<float> *gen_eta, *gen_phi, *gen_p, *gen_px, *gen_py, *gen_pz, *gen_pt, *gen_energy,  *gen_vx, *gen_vy, *gen_vz;
+    std::vector<int> *gen_numDaught, *gen_status, *gen_index, *gen_motherIndex, *gen_pdgId;  
+
 };
 
 #endif
