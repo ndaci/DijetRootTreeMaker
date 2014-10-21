@@ -20,7 +20,7 @@ process.GlobalTag.globaltag = 'PLS170_V7AN1::All'
 #--------------------- Report and output ---------------------------
 
 process.load('FWCore.MessageService.MessageLogger_cfi')
-process.MessageLogger.cerr.FwkReport.reportEvery = 1
+process.MessageLogger.cerr.FwkReport.reportEvery = 5000
 
 
 process.TFileService=cms.Service("TFileService",
@@ -35,7 +35,7 @@ process.options = cms.untracked.PSet(
         wantSummary = cms.untracked.bool(False),
 )
 
-############## output test giulia edm format ###############
+############## output  edm format ###############
 process.out = cms.OutputModule('PoolOutputModule',                                                                                                                  
                                fileName = cms.untracked.string('jettoolbox.root'),                                                                              
                                outputCommands = cms.untracked.vstring(['keep *_ak4PFJetsCHS_*_*',                                                                    
@@ -217,17 +217,17 @@ process.load('CMSDIJET.DijetRootTreeMaker.jettoolbox_cff')
 #process.load('CMSDIJET.DijetRootTreeMaker.RootTupleMakerV2_GenEventInfo_cfi')
 #process.load('CMSDIJET.DijetRootTreeMaker.RootTupleMakerV2_GenParticles_cfi')
 
-# #-------------------------------------------------------
-# # Gen Particles
-# process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
+#-------------------------------------------------------
+# Gen Particles
+process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
 
-# process.prunedGenParticles = cms.EDProducer('GenParticlePruner',
-#     src = cms.InputTag("prunedGenParticles"),
-#     select = cms.vstring(
-#     "drop  *  ", # by default
-#     "keep ( status = 3 || (status>=21 && status<=29) )", # keep hard process particles
-#     )
-# )
+process.prunedGenParticles = cms.EDProducer('GenParticlePruner',
+    src = cms.InputTag("prunedGenParticles"),
+    select = cms.vstring(
+    "drop  *  ", # by default
+    "keep ( status = 3 || (status>=21 && status<=29) )", # keep hard process particles
+    )
+)
 
 
 #------------- Recluster Gen Jets to access the constituents -------
@@ -239,7 +239,7 @@ process.out.outputCommands.append("keep *_ca8GenJets_*_*")
 
 ##-------------------- Define the source  ----------------------------
 
-process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(10))
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(-1))
 
 process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:RSGravToJJ_kMpl01_M-1000_test.root')
@@ -358,7 +358,7 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 
 # ------------------ path --------------------------
 
-process.p = cms.Path(#process.prunedGenParticles*
+process.p = cms.Path(process.prunedGenParticles*
                      process.chs * 
                      process.ak4PFJetsCHS *
                      process.ak4GenJets *
