@@ -453,16 +453,13 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   if (!iEvent.isRealData()) {
     iEvent.getByLabel(srcPU_,PupInfo);
     
-    std::cout << "PupInfo.isValid()? : " << PupInfo.isValid() << endl;
+    //std::cout << "PupInfo.isValid()? : " << PupInfo.isValid() << endl;
 
     if(PupInfo.isValid()) {
       for( std::vector<PileupSummaryInfo>::const_iterator it = PupInfo->begin(); it != PupInfo->end(); ++it ) {
 	npu_ -> push_back ( it -> getTrueNumInteractions() );
-	//Number_interactions -> push_back ( it->getPU_NumInteractions() ); 
-	//OriginBX -> push_back ( it -> getBunchCrossing());                
-	//debug giulia
-	Number_interactions -> push_back ( 1);
-	OriginBX -> push_back ( 1);                
+	Number_interactions -> push_back ( it->getPU_NumInteractions() ); 
+	OriginBX -> push_back ( it -> getBunchCrossing());                
 	
       }
     }
@@ -503,30 +500,26 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     //and https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD#Advanced_topics_re_clustering_ev 
 
 
-    edm::Handle<reco::GenParticle> prunedGenParticles;
+    edm::Handle<reco::GenParticleCollection> prunedGenParticles;
     iEvent.getByLabel(srcPrunedGenParticles_, prunedGenParticles);
     
 
-    std::cout << "-------------------------------" << endl;
-    std::cout << "   DEBUG   gen particles" << endl;
-    std::cout << "-------------------------------" << endl;
-    std::cout << "prunedGenParticles.failedToGet() = " << prunedGenParticles.isValid() << endl;
-    std::cout << "prunedGenParticles.isValid() = " << prunedGenParticles.isValid() << endl;
+    // std::cout << "-------------------------------" << endl;
+    // std::cout << "   DEBUG   gen particles" << endl;
+    // std::cout << "-------------------------------" << endl;
+    // std::cout << "prunedGenParticles.failedToGet() = " << prunedGenParticles.isValid() << endl;
+    // std::cout << "prunedGenParticles.isValid() = " << prunedGenParticles.isValid() << endl;
     
     if( prunedGenParticles.isValid() ) {
-      //edm::LogInfo("GenParticlesInfo") << "Total # GenParticles: " << prunedGenParticles->size();
-
-      
-      for( reco::GenParticle::const_iterator it = prunedGenParticles->begin(); it != prunedGenParticles->end(); ++it ) {
-	
-	
+            
+      for( reco::GenParticleCollection::const_iterator it = prunedGenParticles->begin(); it != prunedGenParticles->end(); ++it ) {
         // exit from loop when you reach the required number of GenParticles
         //if(eta->size() >= maxSize)
         //  break;
 	
     	//save only particles from hard scattering 
-	//already done from the pruner?
-    	if(it->status()<21 || it->status()>29) continue; 
+	//already done from the pruner
+    	//if(it->status()<21 || it->status()>29) continue; 
     	int idx = std::distance(prunedGenParticles->begin(),it);
 
         // fill in all the vectors
@@ -548,7 +541,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   
     	int midx = -1;
 
-	for( reco::GenParticle::const_iterator mit = prunedGenParticles->begin(); mit != prunedGenParticles->end(); ++mit ) {
+	for( reco::GenParticleCollection::const_iterator mit = prunedGenParticles->begin(); mit != prunedGenParticles->end(); ++mit ) {
 	
     	  if( it->mother()==&(*mit) ) {
     	    midx = std::distance(prunedGenParticles->begin(),mit);
@@ -556,10 +549,12 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     	  }
     	}
     	gen_motherIndex->push_back( midx );
-
-	std::cout << "id : " << gen_index << "   status : " << gen_status << "   mother index : " << gen_motherIndex << endl; 
 	
+	//cout << "id : " << idx << "   pdgId : " << it->pdgId() << "   status : " <<  it->status() << "   mother index : " << midx  << endl; 
+
       }//loop over genParticles
+      //std::cout << "N gen particles saved = " << gen_index->size() << std::endl;  
+
     }
     
   }// if MC
