@@ -26,8 +26,8 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 5000
 
 process.TFileService=cms.Service("TFileService",
                                  #fileName=cms.string('dijetTree_signal_M1000.root'),
-                                 fileName=cms.string('dijetTree_signal_M8000.root'),
-                                 #fileName=cms.string(THISROOTFILE),
+                                 #fileName=cms.string('dijetTree_signal_M8000.root'),
+                                 fileName=cms.string(THISROOTFILE),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
 
@@ -263,10 +263,10 @@ process.out.outputCommands.append("keep *_slimmedGenJetsAK8_*_*")
 
 
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('file:miniAOD_RSGravToJJ_kMpl01_M-8000.root')
+    #fileNames = cms.untracked.vstring('file:miniAOD_RSGravToJJ_kMpl01_M-8000.root')
     #fileNames = cms.untracked.vstring('file:/cmshome/santanas/CMS/data/Spring14miniaod__RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8__MINIAODSIM__PU20bx25_POSTLS170_V5-v1__00000__6AACD832-3707-E411-A167-001E672489D5.root')
     #fileNames = cms.untracked.vstring('file:/cmshome/santanas/CMS/data/Spring14drAODSIM__RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8__AODSIM__PU20bx25_POSTLS170_V5-v1__00000__0622C950-58E4-E311-A595-0025904B130A.root')
-    #fileNames = cms.untracked.vstring('file:2CEB70D6-D918-E411-B814-003048F30422.root')    
+    fileNames = cms.untracked.vstring('file:2CEB70D6-D918-E411-B814-003048F30422.root')    
 
 )
 

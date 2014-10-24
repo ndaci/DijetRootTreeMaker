@@ -1,0 +1,1 @@
+/RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8/Spring14miniaod-PU20bx25_POSTLS170_V5-v1/MINIAODSIM -1 50 

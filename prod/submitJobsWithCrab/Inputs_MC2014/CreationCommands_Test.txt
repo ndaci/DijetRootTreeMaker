@@ -1,0 +1,14 @@
+##--- Test samples ---##
+
+#------------------------------------------------------------
+# Test_RSG1000
+#------------------------------------------------------------
+
+./createJobsWithCrab_CopyToT2.pl -d Outputs_MC2014 -v RSG1000_v1 -i Inputs_MC2014/InputList_RSG1000.txt -t Inputs_MC2014/template_crab_CopyToRomeT2_MC.cfg -c Inputs_MC2014/flat-signal-cfg.py -n $USER -p v1
+
+#------------------------------------------------------------
+# Test_RSG5000
+#------------------------------------------------------------
+
+./createJobsWithCrab_CopyToT2.pl -d Outputs_MC2014 -v RSG5000_v1 -i Inputs_MC2014/InputList_RSG5000.txt -t Inputs_MC2014/template_crab_CopyToRomeT2_MC.cfg -c Inputs_MC2014/flat-signal-cfg.py -n $USER -p v1
+
