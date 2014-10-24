@@ -35,10 +35,10 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
 {
   srcJetsAK4_         = cfg.getParameter<edm::InputTag>             ("jetsAK4");
   srcJetsAK8_         = cfg.getParameter<edm::InputTag>             ("jetsAK8");
-  srcJetsCA8_         = cfg.getParameter<edm::InputTag>             ("jetsCA8");
+  //srcJetsCA8_         = cfg.getParameter<edm::InputTag>             ("jetsCA8");
   srcGenJetsAK4_      = cfg.getParameter<edm::InputTag>             ("genJetsAK4");
   srcGenJetsAK8_      = cfg.getParameter<edm::InputTag>             ("genJetsAK8");
-  srcGenJetsCA8_      = cfg.getParameter<edm::InputTag>             ("genJetsCA8");
+  //srcGenJetsCA8_      = cfg.getParameter<edm::InputTag>             ("genJetsCA8");
   srcMET_             = cfg.getParameter<edm::InputTag>             ("met");
   srcVrtx_            = cfg.getParameter<edm::InputTag>             ("vtx");
   srcPU_              = cfg.getUntrackedParameter<edm::InputTag>    ("pu",edm::InputTag(""));
@@ -47,7 +47,7 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
 
   ptMinAK4_           = cfg.getParameter<double>                    ("ptMinAK4");
   ptMinAK8_           = cfg.getParameter<double>                    ("ptMinAK8");
-  ptMinCA8_           = cfg.getParameter<double>                    ("ptMinCA8");
+  //ptMinCA8_           = cfg.getParameter<double>                    ("ptMinCA8");
   //mjjMin_             = cfg.getParameter<double>                    ("mjjMin");
   //dEtaMax_            = cfg.getParameter<double>                    ("dEtaMax");
   triggerCache_       = triggerExpression::Data(cfg.getParameterSet("triggerConfiguration"),consumesCollector());
@@ -101,38 +101,38 @@ void DijetTreeProducer::beginJob()
   gen_index	   = new std::vector<int>; 
   gen_motherIndex  = new std::vector<int>; 
 
-  outTree_->Branch("gen_eta"		, &gen_eta   , "gen_eta/F");
-  outTree_->Branch("gen_phi"		, &gen_phi   , "gen_phi/F");
-  outTree_->Branch("gen_p"		,   &gen_p   , "gen_p/F");
-  outTree_->Branch("gen_px"		,  &gen_px  , "gen_px/F");
-  outTree_->Branch("gen_py"		,  &gen_py  , "gen_py/F");
-  outTree_->Branch("gen_pz"		,  &gen_pz  , "gen_py/F");
-  outTree_->Branch("gen_pt"		,  &gen_pt  , "gen_pt/F");
-  outTree_->Branch("gen_energy"	    	,  &gen_energy,  "gen_energy/F" );
-  outTree_->Branch("gen_pdgId"	    	, &gen_pdgId,   "gen_pdgId/I");
-  outTree_->Branch("gen_vx"	    	, &gen_vx,  "gen_vx/F");
-  outTree_->Branch("gen_vy"	    	, &gen_vy,  "gen_vy/F");
-  outTree_->Branch("gen_vz"	    	, &gen_vz,  "gen_vz/F");
-  outTree_->Branch("gen_numDaught"  	,  &gen_numDaught,  "gen_numDaught/I");
-  outTree_->Branch("gen_status"	    	,  &gen_status,  "gen_status/I");
-  outTree_->Branch("gen_index"	    	,  &gen_index,  "gen_index/I");
-  outTree_->Branch("gen_motherIndex"	, &gen_motherIndex,  "gen_motherIndex/I");
+  outTree_->Branch("gen_eta"		,"vector<float>" , &gen_eta      	);
+  outTree_->Branch("gen_phi"		,"vector<float>" , &gen_phi 		);
+  outTree_->Branch("gen_p"		,"vector<float>",   &gen_p 		);
+  outTree_->Branch("gen_px"		,"vector<float>",  &gen_px 		);
+  outTree_->Branch("gen_py"		,"vector<float>",  &gen_py 		);
+  outTree_->Branch("gen_pz"		,"vector<float>",  &gen_pz 		);
+  outTree_->Branch("gen_pt"		,"vector<float>",  &gen_pt 		);
+  outTree_->Branch("gen_energy"	    	,"vector<float>",  &gen_energy		);
+  outTree_->Branch("gen_pdgId"	    	,"vector<int>",   &gen_pdgId  		);
+  outTree_->Branch("gen_vx"	    	,"vector<float>", &gen_vx		);
+  outTree_->Branch("gen_vy"	    	,"vector<float>", &gen_vy		);
+  outTree_->Branch("gen_vz"	    	,"vector<float>", &gen_vz		);
+  outTree_->Branch("gen_numDaught"  	,"vector<int>",    &gen_numDaught       );
+  outTree_->Branch("gen_status"	    	,"vector<int>",  &gen_status     	);
+  outTree_->Branch("gen_index"	    	,"vector<int>",  &gen_index      	);
+  outTree_->Branch("gen_motherIndex"	,"vector<int>", &gen_motherIndex 	);
 
-  outTree_->Branch("nJetsAK4"             ,&nJetsAK4_          ,"nJetsAK4_/I");
-  outTree_->Branch("htAK4"                ,&htAK4_             ,"htAK4_/F");
-  outTree_->Branch("mjjAK4"               ,&mjjAK4_            ,"mjjAK4_/F");
-  outTree_->Branch("dEtajjAK4"            ,&dEtajjAK4_         ,"dEtajjAK4_/F");
-  outTree_->Branch("dPhijjAK4"            ,&dPhijjAK4_         ,"dPhijjAK4_/F"); 
-  outTree_->Branch("nJetsAK8"             ,&nJetsAK8_          ,"nJetsAK8_/I");
-  outTree_->Branch("htAK8"                ,&htAK8_             ,"htAK8_/F");
-  outTree_->Branch("mjjAK8"               ,&mjjAK8_            ,"mjjAK8_/F");
-  outTree_->Branch("dEtajjAK8"            ,&dEtajjAK8_         ,"dEtajjAK8_/F");
-  outTree_->Branch("dPhijjAK8"            ,&dPhijjAK8_         ,"dPhijjAK8_/F"); 
-  outTree_->Branch("nJetsCA8"             ,&nJetsCA8_          ,"nJetsCA8_/I");
-  outTree_->Branch("htCA8"                ,&htCA8_             ,"htCA8_/F");
-  outTree_->Branch("mjjCA8"               ,&mjjCA8_            ,"mjjCA8_/F");
-  outTree_->Branch("dEtajjCA8"            ,&dEtajjCA8_         ,"dEtajjCA8_/F");
-  outTree_->Branch("dPhijjCA8"            ,&dPhijjCA8_         ,"dPhijjCA8_/F"); 
+  outTree_->Branch("nJetsAK4"           ,&nJetsAK4_          ,"nJetsAK4_/I"		);
+  outTree_->Branch("htAK4"              ,&htAK4_             ,"htAK4_/F"		);
+  outTree_->Branch("mjjAK4"             ,&mjjAK4_            ,"mjjAK4_/F"		);
+  outTree_->Branch("dEtajjAK4"          ,&dEtajjAK4_         ,"dEtajjAK4_/F"		);
+  outTree_->Branch("dPhijjAK4"          ,&dPhijjAK4_         ,"dPhijjAK4_/F"		); 
+  outTree_->Branch("nJetsAK8"           ,&nJetsAK8_          ,"nJetsAK8_/I"		);
+  outTree_->Branch("htAK8"              ,&htAK8_             ,"htAK8_/F"		);
+  outTree_->Branch("mjjAK8"             ,&mjjAK8_            ,"mjjAK8_/F"		);
+  outTree_->Branch("dEtajjAK8"          ,&dEtajjAK8_         ,"dEtajjAK8_/F"		);
+  outTree_->Branch("dPhijjAK8"          ,&dPhijjAK8_         ,"dPhijjAK8_/F"		); 
+  outTree_->Branch("nJetsCA8"           ,&nJetsCA8_          ,"nJetsCA8_/I"		);
+  // outTree_->Branch("htCA8"           ,&htCA8_             ,"htCA8_/F"		);
+  // outTree_->Branch("mjjCA8"          ,&mjjCA8_            ,"mjjCA8_/F"		);
+  // outTree_->Branch("dEtajjCA8"       ,&dEtajjCA8_         ,"dEtajjCA8_/F"	);
+  // outTree_->Branch("dPhijjCA8"       ,&dPhijjCA8_         ,"dPhijjCA8_/F"	); 
 
   //------------------------------------------------------------------
   ptAK4_             = new std::vector<float>;
@@ -215,42 +215,42 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetTau3AK8"              ,"vector<float>"     ,&tau3AK8_);
   //outTree_->Branch("jetDRAK8"                ,"vector<float>"     ,&dRAK8_); 
 
-  ptCA8_             = new std::vector<float>;
-  jecCA8_            = new std::vector<float>;
-  etaCA8_            = new std::vector<float>;
-  phiCA8_            = new std::vector<float>;
-  massCA8_           = new std::vector<float>;
-  energyCA8_         = new std::vector<float>;
-  chfCA8_            = new std::vector<float>;
-  nhfCA8_            = new std::vector<float>;
-  phfCA8_            = new std::vector<float>;
-  mufCA8_            = new std::vector<float>;
-  elfCA8_            = new std::vector<float>;
-  idLCA8_            = new std::vector<int>;
-  idTCA8_            = new std::vector<int>;
-  massPrunedCA8_     = new std::vector<float>;
-  tau1CA8_           = new std::vector<float>;
-  tau2CA8_           = new std::vector<float>;
-  tau3CA8_           = new std::vector<float>;
-  //dRCA8_             = new std::vector<float>;
-  outTree_->Branch("jetPtCA8"                ,"vector<float>"     ,&ptCA8_);
-  outTree_->Branch("jetJecCA8"               ,"vector<float>"     ,&jecCA8_);
-  outTree_->Branch("jetEtaCA8"               ,"vector<float>"     ,&etaCA8_);
-  outTree_->Branch("jetPhiCA8"               ,"vector<float>"     ,&phiCA8_);
-  outTree_->Branch("jetMassCA8"              ,"vector<float>"     ,&massCA8_);
-  outTree_->Branch("jetEnergyCA8"            ,"vector<float>"     ,&energyCA8_);
-  outTree_->Branch("jetChfCA8"               ,"vector<float>"     ,&chfCA8_);
-  outTree_->Branch("jetNhfCA8"               ,"vector<float>"     ,&nhfCA8_);
-  outTree_->Branch("jetPhfCA8"               ,"vector<float>"     ,&phfCA8_);
-  outTree_->Branch("jetMufCA8"               ,"vector<float>"     ,&mufCA8_);
-  outTree_->Branch("jetElfCA8"               ,"vector<float>"     ,&elfCA8_);   
-  outTree_->Branch("idLCA8"                  ,"vector<int>"      ,&idLCA8_);   
-  outTree_->Branch("idTCA8"                  ,"vector<int>"      ,&idTCA8_);   
-  outTree_->Branch("jetMassPrunedCA8"        ,"vector<float>"     ,&massPrunedCA8_);
-  outTree_->Branch("jetTau1CA8"              ,"vector<float>"     ,&tau1CA8_);
-  outTree_->Branch("jetTau2CA8"              ,"vector<float>"     ,&tau2CA8_);
-  outTree_->Branch("jetTau3CA8"              ,"vector<float>"     ,&tau3CA8_);
-  //outTree_->Branch("jetDRCA8"                ,"vector<float>"     ,&dRCA8_); 
+  // ptCA8_             = new std::vector<float>;
+  // jecCA8_            = new std::vector<float>;
+  // etaCA8_            = new std::vector<float>;
+  // phiCA8_            = new std::vector<float>;
+  // massCA8_           = new std::vector<float>;
+  // energyCA8_         = new std::vector<float>;
+  // chfCA8_            = new std::vector<float>;
+  // nhfCA8_            = new std::vector<float>;
+  // phfCA8_            = new std::vector<float>;
+  // mufCA8_            = new std::vector<float>;
+  // elfCA8_            = new std::vector<float>;
+  // idLCA8_            = new std::vector<int>;
+  // idTCA8_            = new std::vector<int>;
+  // massPrunedCA8_     = new std::vector<float>;
+  // tau1CA8_           = new std::vector<float>;
+  // tau2CA8_           = new std::vector<float>;
+  // tau3CA8_           = new std::vector<float>;
+  // //dRCA8_             = new std::vector<float>;
+  // outTree_->Branch("jetPtCA8"                ,"vector<float>"     ,&ptCA8_);
+  // outTree_->Branch("jetJecCA8"               ,"vector<float>"     ,&jecCA8_);
+  // outTree_->Branch("jetEtaCA8"               ,"vector<float>"     ,&etaCA8_);
+  // outTree_->Branch("jetPhiCA8"               ,"vector<float>"     ,&phiCA8_);
+  // outTree_->Branch("jetMassCA8"              ,"vector<float>"     ,&massCA8_);
+  // outTree_->Branch("jetEnergyCA8"            ,"vector<float>"     ,&energyCA8_);
+  // outTree_->Branch("jetChfCA8"               ,"vector<float>"     ,&chfCA8_);
+  // outTree_->Branch("jetNhfCA8"               ,"vector<float>"     ,&nhfCA8_);
+  // outTree_->Branch("jetPhfCA8"               ,"vector<float>"     ,&phfCA8_);
+  // outTree_->Branch("jetMufCA8"               ,"vector<float>"     ,&mufCA8_);
+  // outTree_->Branch("jetElfCA8"               ,"vector<float>"     ,&elfCA8_);   
+  // outTree_->Branch("idLCA8"                  ,"vector<int>"      ,&idLCA8_);   
+  // outTree_->Branch("idTCA8"                  ,"vector<int>"      ,&idTCA8_);   
+  // outTree_->Branch("jetMassPrunedCA8"        ,"vector<float>"     ,&massPrunedCA8_);
+  // outTree_->Branch("jetTau1CA8"              ,"vector<float>"     ,&tau1CA8_);
+  // outTree_->Branch("jetTau2CA8"              ,"vector<float>"     ,&tau2CA8_);
+  // outTree_->Branch("jetTau3CA8"              ,"vector<float>"     ,&tau3CA8_);
+  // //outTree_->Branch("jetDRCA8"                ,"vector<float>"     ,&dRCA8_); 
 
 
 
@@ -272,13 +272,13 @@ void DijetTreeProducer::beginJob()
 
   outTree_->Branch("nGenJetsAK4"             ,&nGenJetsAK4_          ,"nGenJetsAK4_/I");
   outTree_->Branch("nGenJetsAK8"             ,&nGenJetsAK8_          ,"nGenJetsAK8_/I");
-  outTree_->Branch("nGenJetsCA8"             ,&nGenJetsCA8_          ,"nGenJetsCA8_/I");
+  //  outTree_->Branch("nGenJetsCA8"             ,&nGenJetsCA8_          ,"nGenJetsCA8_/I");
 
-  ptGenCA8_             = new std::vector<float>;
-  etaGenCA8_            = new std::vector<float>;
-  phiGenCA8_            = new std::vector<float>;
-  massGenCA8_           = new std::vector<float>;
-  energyGenCA8_         = new std::vector<float>;
+  // ptGenCA8_             = new std::vector<float>;
+  // etaGenCA8_            = new std::vector<float>;
+  // phiGenCA8_            = new std::vector<float>;
+  // massGenCA8_           = new std::vector<float>;
+  // energyGenCA8_         = new std::vector<float>;
   ptGenAK4_             = new std::vector<float>;
   etaGenAK4_            = new std::vector<float>;
   phiGenAK4_            = new std::vector<float>;
@@ -300,11 +300,11 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetPhiGenAK8"               ,"vector<float>"     ,&phiGenAK8_);
   outTree_->Branch("jetMassGenAK8"              ,"vector<float>"     ,&massGenAK8_);
   outTree_->Branch("jetEnergyGenAK8"            ,"vector<float>"     ,&energyGenAK8_);
-  outTree_->Branch("jetPtGenCA8"                ,"vector<float>"     ,&ptGenCA8_);
-  outTree_->Branch("jetEtaGenCA8"               ,"vector<float>"     ,&etaGenCA8_);
-  outTree_->Branch("jetPhiGenCA8"               ,"vector<float>"     ,&phiGenCA8_);
-  outTree_->Branch("jetMassGenCA8"              ,"vector<float>"     ,&massGenCA8_);
-  outTree_->Branch("jetEnergyGenCA8"            ,"vector<float>"     ,&energyGenCA8_);
+  // outTree_->Branch("jetPtGenCA8"                ,"vector<float>"     ,&ptGenCA8_);
+  // outTree_->Branch("jetEtaGenCA8"               ,"vector<float>"     ,&etaGenCA8_);
+  // outTree_->Branch("jetPhiGenCA8"               ,"vector<float>"     ,&phiGenCA8_);
+  // outTree_->Branch("jetMassGenCA8"              ,"vector<float>"     ,&massGenCA8_);
+  // outTree_->Branch("jetEnergyGenCA8"            ,"vector<float>"     ,&energyGenCA8_);
 
 
 
@@ -372,40 +372,40 @@ void DijetTreeProducer::endJob()
   delete tau3AK8_;
   //delete dRAK8_;
   
-  delete ptCA8_;
-  delete jecCA8_;
-  delete etaCA8_;
-  delete phiCA8_;
-  delete massCA8_;
-  delete energyCA8_;
-  delete chfCA8_;
-  delete nhfCA8_;
-  delete phfCA8_;
-  delete mufCA8_;
-  delete elfCA8_;
-  delete idLCA8_;
-  delete idTCA8_;
-  delete massPrunedCA8_;
-  delete tau1CA8_;
-  delete tau2CA8_;
-  delete tau3CA8_;
-  //delete dRCA8_;
+  // delete ptCA8_;
+  // delete jecCA8_;
+  // delete etaCA8_;
+  // delete phiCA8_;
+  // delete massCA8_;
+  // delete energyCA8_;
+  // delete chfCA8_;
+  // delete nhfCA8_;
+  // delete phfCA8_;
+  // delete mufCA8_;
+  // delete elfCA8_;
+  // delete idLCA8_;
+  // delete idTCA8_;
+  // delete massPrunedCA8_;
+  // delete tau1CA8_;
+  // delete tau2CA8_;
+  // delete tau3CA8_;
+  // //delete dRCA8_;
   
-  delete ptGenCA8_      ;
-  delete etaGenCA8_     ;
-  delete phiGenCA8_     ;
-  delete massGenCA8_    ;
-  delete energyGenCA8_  ;
-  delete ptGenAK4_      ;
-  delete etaGenAK4_     ;
-  delete phiGenAK4_     ;
-  delete massGenAK4_    ;
-  delete energyGenAK4_  ;
-  delete ptGenAK8_      ;
-  delete etaGenAK8_     ;
-  delete phiGenAK8_     ;
-  delete massGenAK8_    ;
-  delete energyGenAK8_  ;
+  // delete ptGenCA8_      ;
+  // delete etaGenCA8_     ;
+  // delete phiGenCA8_     ;
+  // delete massGenCA8_    ;
+  // delete energyGenCA8_  ;
+  // delete ptGenAK4_      ;
+  // delete etaGenAK4_     ;
+  // delete phiGenAK4_     ;
+  // delete massGenAK4_    ;
+  // delete energyGenAK4_  ;
+  // delete ptGenAK8_      ;
+  // delete etaGenAK8_     ;
+  // delete phiGenAK8_     ;
+  // delete massGenAK8_    ;
+  // delete energyGenAK8_  ;
 
 
   
@@ -426,9 +426,9 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   iEvent.getByLabel(srcJetsAK8_,jetsAK8);
   edm::View<pat::Jet> pat_jetsAK8 = *jetsAK8;
 
-  edm::Handle<edm::View<pat::Jet> > jetsCA8;
-  iEvent.getByLabel(srcJetsCA8_,jetsCA8);
-  edm::View<pat::Jet> pat_jetsCA8 = *jetsCA8;
+  // edm::Handle<edm::View<pat::Jet> > jetsCA8;
+  // iEvent.getByLabel(srcJetsCA8_,jetsCA8);
+  // edm::View<pat::Jet> pat_jetsCA8 = *jetsCA8;
 
   edm::Handle<edm::View<reco::GenJet> > handle_genJetsAK4;
   iEvent.getByLabel(srcGenJetsAK4_,handle_genJetsAK4);
@@ -438,9 +438,9 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   iEvent.getByLabel(srcGenJetsAK8_,handle_genJetsAK8);
   edm::View<reco::GenJet> genJetsAK8 = *handle_genJetsAK8;
   
-  edm::Handle<edm::View<reco::GenJet> > handle_genJetsCA8;
-  iEvent.getByLabel(srcGenJetsCA8_,handle_genJetsCA8);
-  edm::View<reco::GenJet> genJetsCA8 = *handle_genJetsCA8;
+  // edm::Handle<edm::View<reco::GenJet> > handle_genJetsCA8;
+  // iEvent.getByLabel(srcGenJetsCA8_,handle_genJetsCA8);
+  // edm::View<reco::GenJet> genJetsCA8 = *handle_genJetsCA8;
   
   edm::Handle<edm::View<MET> >  met;
   iEvent.getByLabel(srcMET_,met);
@@ -550,7 +550,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     	}
     	gen_motherIndex->push_back( midx );
 	
-	//cout << "id : " << idx << "   pdgId : " << it->pdgId() << "   status : " <<  it->status() << "   mother index : " << midx  << endl; 
+	//cout << "id : " << idx << "   pdgId : " << it->pdgId() << "   status : " <<  it->status() << "   mother index : " << midx  << "  pt : " << it->pt() << "  pz : " << it->pz() << endl; 
 
       }//loop over genParticles
       //std::cout << "N gen particles saved = " << gen_index->size() << std::endl;  
@@ -722,53 +722,53 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     }
 
     
-    // CA8
-    nJetsCA8_ = 0;
-    float htCA8(0.0);
-    vector<TLorentzVector> vP4CA8;
-    for(edm::View<pat::Jet>::const_iterator ijet = pat_jetsCA8.begin();ijet != pat_jetsCA8.end(); ++ijet) { 
-      double chf = ijet->chargedHadronEnergyFraction();
-      double nhf = ijet->neutralHadronEnergyFraction() + ijet->HFHadronEnergyFraction();
-      double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
-      double elf = ijet->electronEnergy()/(ijet->jecFactor(0) * ijet->energy());
-      double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
-      int chm    = ijet->chargedHadronMultiplicity();
-      int npr    = ijet->chargedMultiplicity() + ijet->neutralMultiplicity(); 
-      float eta  = fabs(ijet->eta());
-      float pt   = ijet->pt();
-      int idL   = (npr>1 && phf<0.99 && nhf<0.99);
-      int idT   = (idL && ((eta<=2.4 && nhf<0.9 && phf<0.9 && elf<0.99 && muf<0.99 && chf>0 && chm>0) || eta>2.4));
-      if (pt > ptMinCA8_) {
-        htCA8 += pt;
-        nJetsCA8_++;
+    // // CA8
+    // nJetsCA8_ = 0;
+    // float htCA8(0.0);
+    // vector<TLorentzVector> vP4CA8;
+    // for(edm::View<pat::Jet>::const_iterator ijet = pat_jetsCA8.begin();ijet != pat_jetsCA8.end(); ++ijet) { 
+    //   double chf = ijet->chargedHadronEnergyFraction();
+    //   double nhf = ijet->neutralHadronEnergyFraction() + ijet->HFHadronEnergyFraction();
+    //   double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
+    //   double elf = ijet->electronEnergy()/(ijet->jecFactor(0) * ijet->energy());
+    //   double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
+    //   int chm    = ijet->chargedHadronMultiplicity();
+    //   int npr    = ijet->chargedMultiplicity() + ijet->neutralMultiplicity(); 
+    //   float eta  = fabs(ijet->eta());
+    //   float pt   = ijet->pt();
+    //   int idL   = (npr>1 && phf<0.99 && nhf<0.99);
+    //   int idT   = (idL && ((eta<=2.4 && nhf<0.9 && phf<0.9 && elf<0.99 && muf<0.99 && chf>0 && chm>0) || eta>2.4));
+    //   if (pt > ptMinCA8_) {
+    //     htCA8 += pt;
+    //     nJetsCA8_++;
 	
-        vP4CA8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
-        chfCA8_           ->push_back(chf);
-        nhfCA8_           ->push_back(nhf);
-        phfCA8_           ->push_back(phf);
-        elfCA8_           ->push_back(elf);
-        mufCA8_           ->push_back(muf);
-        jecCA8_           ->push_back(1./ijet->jecFactor(0));
-        ptCA8_            ->push_back(pt);
-        phiCA8_           ->push_back(ijet->phi());
-        etaCA8_           ->push_back(ijet->eta());
-        massCA8_          ->push_back(ijet->mass());
-        energyCA8_        ->push_back(ijet->energy());
-	idLCA8_           ->push_back(idL);
-	idTCA8_           ->push_back(idT);
-        tau1CA8_          ->push_back(ijet->userFloat("NjettinessCA8:tau1"));
-        tau2CA8_          ->push_back(ijet->userFloat("NjettinessCA8:tau2"));
-        tau3CA8_          ->push_back(ijet->userFloat("NjettinessCA8:tau3"));
-	massPrunedCA8_    ->push_back(ijet->userFloat("ca8PFJetsCHSPrunedLinks"));
+    //     vP4CA8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
+    //     chfCA8_           ->push_back(chf);
+    //     nhfCA8_           ->push_back(nhf);
+    //     phfCA8_           ->push_back(phf);
+    //     elfCA8_           ->push_back(elf);
+    //     mufCA8_           ->push_back(muf);
+    //     jecCA8_           ->push_back(1./ijet->jecFactor(0));
+    //     ptCA8_            ->push_back(pt);
+    //     phiCA8_           ->push_back(ijet->phi());
+    //     etaCA8_           ->push_back(ijet->eta());
+    //     massCA8_          ->push_back(ijet->mass());
+    //     energyCA8_        ->push_back(ijet->energy());
+    // 	idLCA8_           ->push_back(idL);
+    // 	idTCA8_           ->push_back(idT);
+    //     tau1CA8_          ->push_back(ijet->userFloat("NjettinessCA8:tau1"));
+    //     tau2CA8_          ->push_back(ijet->userFloat("NjettinessCA8:tau2"));
+    //     tau3CA8_          ->push_back(ijet->userFloat("NjettinessCA8:tau3"));
+    // 	massPrunedCA8_    ->push_back(ijet->userFloat("ca8PFJetsCHSPrunedLinks"));
 	
-      } 
-    }// jet loop  
-    htCA8_     = htCA8;
-    if (nJetsCA8_ > 1) { //assuming jets are ordered by pt in the pat collection
-      mjjCA8_    = (vP4CA8[0]+vP4CA8[1]).M();
-      dEtajjCA8_ = fabs((*etaCA8_)[0]-(*etaCA8_)[1]); 
-      dPhijjCA8_ = fabs(deltaPhi((*phiCA8_)[0],(*phiCA8_)[1]));
-    }
+    //   } 
+    // }// jet loop  
+    // htCA8_     = htCA8;
+    // if (nJetsCA8_ > 1) { //assuming jets are ordered by pt in the pat collection
+    //   mjjCA8_    = (vP4CA8[0]+vP4CA8[1]).M();
+    //   dEtajjCA8_ = fabs((*etaCA8_)[0]-(*etaCA8_)[1]); 
+    //   dPhijjCA8_ = fabs(deltaPhi((*phiCA8_)[0],(*phiCA8_)[1]));
+    // }
   
     
     //-------------- Gen Jets Info -----------------------------------
@@ -811,24 +811,24 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 	}
       }// jet loop  
       
-      nGenJetsCA8_ = 0;
-      vector<TLorentzVector> vP4GenCA8;
+      // nGenJetsCA8_ = 0;
+      // vector<TLorentzVector> vP4GenCA8;
       
-      for(edm::View<pat::Jet>::const_iterator ijet = pat_jetsCA8.begin();ijet != pat_jetsCA8.end(); ++ijet) { 
+      // for(edm::View<pat::Jet>::const_iterator ijet = pat_jetsCA8.begin();ijet != pat_jetsCA8.end(); ++ijet) { 
 	
 	
-	//float eta  = fabs(ijet->eta());
-	float pt   = ijet->pt();
-	if (pt > ptMinCA8_) {
-	  nGenJetsCA8_++;
-	  vP4GenCA8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
-	  ptGenCA8_            ->push_back(pt);
-	  phiGenCA8_           ->push_back(ijet->phi());
-	  etaGenCA8_           ->push_back(ijet->eta());
-	  massGenCA8_          ->push_back(ijet->mass());
-	  energyGenCA8_        ->push_back(ijet->energy());
-	}
-      }// jet loop  
+      // 	//float eta  = fabs(ijet->eta());
+      // 	float pt   = ijet->pt();
+      // 	if (pt > ptMinCA8_) {
+      // 	  nGenJetsCA8_++;
+      // 	  vP4GenCA8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
+      // 	  ptGenCA8_            ->push_back(pt);
+      // 	  phiGenCA8_           ->push_back(ijet->phi());
+      // 	  etaGenCA8_           ->push_back(ijet->eta());
+      // 	  massGenCA8_          ->push_back(ijet->mass());
+      // 	  energyGenCA8_        ->push_back(ijet->energy());
+      // 	}
+      // }// jet loop  
     }//if MC 
   }// if vtx
   
@@ -905,29 +905,29 @@ void DijetTreeProducer::initialize()
   //dRAK8_             ->clear();
   
   
-  nJetsCA8_          = -999;
-  htCA8_             = -999;
-  mjjCA8_            = -999; 
-  dEtajjCA8_         = -999; 
-  dPhijjCA8_         = -999;
-  ptCA8_             ->clear();
-  etaCA8_            ->clear();
-  phiCA8_            ->clear();
-  massCA8_           ->clear();
-  energyCA8_         ->clear();
-  chfCA8_            ->clear();
-  nhfCA8_            ->clear();
-  phfCA8_            ->clear();
-  elfCA8_            ->clear();
-  mufCA8_            ->clear();
-  jecCA8_            ->clear();
-  jecCA8_            ->clear();
-  idLCA8_            ->clear();
-  idTCA8_            ->clear();
-  massPrunedCA8_     ->clear();
-  tau1CA8_           ->clear();
-  tau2CA8_           ->clear();
-  //dRCA8_             ->clear();
+  // nJetsCA8_          = -999;
+  // htCA8_             = -999;
+  // mjjCA8_            = -999; 
+  // dEtajjCA8_         = -999; 
+  // dPhijjCA8_         = -999;
+  // ptCA8_             ->clear();
+  // etaCA8_            ->clear();
+  // phiCA8_            ->clear();
+  // massCA8_           ->clear();
+  // energyCA8_         ->clear();
+  // chfCA8_            ->clear();
+  // nhfCA8_            ->clear();
+  // phfCA8_            ->clear();
+  // elfCA8_            ->clear();
+  // mufCA8_            ->clear();
+  // jecCA8_            ->clear();
+  // jecCA8_            ->clear();
+  // idLCA8_            ->clear();
+  // idTCA8_            ->clear();
+  // massPrunedCA8_     ->clear();
+  // tau1CA8_           ->clear();
+  // tau2CA8_           ->clear();
+  // //dRCA8_             ->clear();
   
   
   triggerResult_     ->clear();
@@ -951,11 +951,11 @@ void DijetTreeProducer::initialize()
   etaGenAK8_   ->clear();
   massGenAK8_  ->clear();
   energyGenAK8_->clear();
-  ptGenCA8_    ->clear();
-  phiGenCA8_   ->clear();
-  etaGenCA8_   ->clear();
-  massGenCA8_  ->clear();
-  energyGenCA8_->clear();
+  // ptGenCA8_    ->clear();
+  // phiGenCA8_   ->clear();
+  // etaGenCA8_   ->clear();
+  // massGenCA8_  ->clear();
+  // energyGenCA8_->clear();
   
   gen_eta		->clear();
   gen_phi		->clear();
