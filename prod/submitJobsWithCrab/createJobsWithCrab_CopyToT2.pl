@@ -149,10 +149,15 @@ close(INPUTLIST);
 foreach $inputListLine(@inputListFile)
 {
     chomp($inputListLine);
-    #print $inputListLine;
+    print "***********************\n";
+    print $inputListLine;
+    print "\n***********************\n";
+    #giulia test
+    next if $inputListLine =~/^#/;
+
 
     ## split each line
-    my ($dataset, $Nevents, $Njobs) = split(/\s+/, $inputListLine);
+    my ($dataset, $Nevents, $Njobs, $globaltag) = split(/\s+/, $inputListLine);
     my @datasetParts = split(/\//, $dataset);
     shift @datasetParts; #remove the first element of the list which is an empty-space
 
@@ -222,6 +227,19 @@ foreach $inputListLine(@inputListFile)
 
 	    #print("$templateCMSSWFileLine\n");
 	}
+
+	if($templateCMSSWFileLine=~/THISGLOBALTAG/)
+	{
+	    $substituteString = "\'$globaltag\'";
+  	    $templateCMSSWFileLine =~ s/THISGLOBALTAG/$substituteString/g;
+	    print("*********************************\n");
+	    print("");
+	    print("$templateCMSSWFileLine\n");
+	    print("");
+	    print("*********************************\n");
+	}
+
+
 	print NEWCMSSWCONFIG "$templateCMSSWFileLine\n";
 
     }
@@ -327,6 +345,7 @@ foreach $inputListLine(@inputListFile)
 	    $templateCrabFileLine = "lumi_mask = $jsonFile";
 	    #print("$templateCrabFileLine\n");
 	}
+
 
 	print NEWCRABCONFIG "$templateCrabFileLine\n";
 
