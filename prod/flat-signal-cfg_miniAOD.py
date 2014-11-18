@@ -14,7 +14,8 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 #process.GlobalTag.globaltag = 'START70_V6::All'
 #process.GlobalTag.globaltag = 'POSTLS170_V5::All'
 #process.GlobalTag.globaltag = 'POSTLS170_V7::All'
-process.GlobalTag.globaltag = 'PLS170_V7AN1::All'
+#process.GlobalTag.globaltag = 'PLS170_V7AN1::All'
+process.GlobalTag.globaltag = THISGLOBALTAG
 
 #--------------------- Report and output ---------------------------
 
@@ -27,6 +28,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 5000
 process.TFileService=cms.Service("TFileService",
                                  #fileName=cms.string('dijetTree_signal_M1000.root'),
                                  #fileName=cms.string('dijetTree_signal_M8000.root'),
+                                 #fileName=cms.string('dijetTree_QstarToJJ_M_3000_PHYS14.root'),
                                  fileName=cms.string(THISROOTFILE),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
@@ -266,8 +268,8 @@ process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:miniAOD_RSGravToJJ_kMpl01_M-8000.root')
     #fileNames = cms.untracked.vstring('file:/cmshome/santanas/CMS/data/Spring14miniaod__RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8__MINIAODSIM__PU20bx25_POSTLS170_V5-v1__00000__6AACD832-3707-E411-A167-001E672489D5.root')
     #fileNames = cms.untracked.vstring('file:/cmshome/santanas/CMS/data/Spring14drAODSIM__RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8__AODSIM__PU20bx25_POSTLS170_V5-v1__00000__0622C950-58E4-E311-A595-0025904B130A.root')
-    fileNames = cms.untracked.vstring('file:2CEB70D6-D918-E411-B814-003048F30422.root')    
-
+    #fileNames = cms.untracked.vstring('file:2CEB70D6-D918-E411-B814-003048F30422.root')    
+    fileNames = cms.untracked.vstring('file:QstarToJJ_M_3000_PHYS14_MINIAODSIM.root')    
 )
 
 # #Keep statements for valueMaps (link Reco::Jets to associated quantities)
@@ -360,16 +362,18 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 
 
   ## trigger ###################################
-  triggerAlias     = cms.vstring('Fat','PFHT650','PFNoPUHT650','HT750','HT550'),
+  #triggerAlias     = cms.vstring('Fat','PFHT650','PFNoPUHT650','HT750','HT550'),
+  triggerAlias     = cms.vstring('PFHT900'),
   triggerSelection = cms.vstring(
-    'HLT_FatDiPFJetMass750_DR1p1_Deta1p5_v*',
+     #'HLT_FatDiPFJetMass750_DR1p1_Deta1p5_v*',
      #'HLT_PFHT650_v*', #giulia : commented because not found in new entuples
      ### giulia
-    'HLT_HT650_v*',
+     #'HLT_HT650_v*',
      ### end giulia
-    'HLT_PFNoPUHT650_v*',
-    'HLT_HT750_v*',  
-    'HLT_HT550_v*'
+     #'HLT_PFNoPUHT650_v*',
+     #'HLT_HT750_v*',  
+     #'HLT_HT550_v*'
+     'HLT_PFHT900_v*'
   ),
   triggerConfiguration = cms.PSet(
     hltResults            = cms.InputTag('TriggerResults','','HLT'),
