@@ -15,11 +15,12 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 #process.GlobalTag.globaltag = 'POSTLS170_V5::All'
 #process.GlobalTag.globaltag = 'POSTLS170_V7::All'
 #process.GlobalTag.globaltag = 'PLS170_V7AN1::All'
+#process.GlobalTag.globaltag = 'PHYS14_25_V1::All'
 process.GlobalTag.globaltag = THISGLOBALTAG
 
 #--------------------- Report and output ---------------------------
 
-process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(-1))
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(100))
 
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.MessageLogger.cerr.FwkReport.reportEvery = 5000
@@ -269,7 +270,7 @@ process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:/cmshome/santanas/CMS/data/Spring14miniaod__RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8__MINIAODSIM__PU20bx25_POSTLS170_V5-v1__00000__6AACD832-3707-E411-A167-001E672489D5.root')
     #fileNames = cms.untracked.vstring('file:/cmshome/santanas/CMS/data/Spring14drAODSIM__RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8__AODSIM__PU20bx25_POSTLS170_V5-v1__00000__0622C950-58E4-E311-A595-0025904B130A.root')
     #fileNames = cms.untracked.vstring('file:2CEB70D6-D918-E411-B814-003048F30422.root')    
-    fileNames = cms.untracked.vstring('file:QstarToJJ_M_3000_PHYS14_MINIAODSIM.root')    
+    fileNames = cms.untracked.vstring('file:6EF79FD0-F06B-E411-B733-BCAEC50971E2.root')    
 )
 
 # #Keep statements for valueMaps (link Reco::Jets to associated quantities)
