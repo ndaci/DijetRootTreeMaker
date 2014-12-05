@@ -1,2 +1,0 @@
-crab -c /cmshome/gdimperi/Dijet/CMSSW_6_2_5/src/CMSROMA/DijetAnalysis/prod/submitJobsWithCrab/Outputs_MC2014_Test/AnyUsefulTag_Test_RSG1000_20140531_172213//workdir/RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8__Fall13dr-tsg_PU20bx25_POSTLS162_V2-v1__AODSIM/ -getoutput 1,2
-crab -c /cmshome/gdimperi/Dijet/CMSSW_6_2_5/src/CMSROMA/DijetAnalysis/prod/submitJobsWithCrab/Outputs_MC2014_Test/AnyUsefulTag_Test_RSG1000_20140531_172213//workdir/RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8__Fall13dr-tsg_PU40bx25_POSTLS162_V2-v1__AODSIM/ -getoutput 1,2
