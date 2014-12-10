@@ -69,7 +69,7 @@ class DijetTreeProducer : public edm::EDAnalyzer
   
     float ptHat_; 
     int processID_;
-    double weight_;
+    float weight_;
     std::vector<float> *gen_eta, *gen_phi, *gen_p, *gen_px, *gen_py, *gen_pz, *gen_pt, *gen_energy,  *gen_vx, *gen_vy, *gen_vz;
     std::vector<int> *gen_numDaught, *gen_status, *gen_index, *gen_motherIndex, *gen_pdgId;  
 
