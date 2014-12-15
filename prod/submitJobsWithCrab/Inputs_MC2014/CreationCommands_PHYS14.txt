@@ -10,6 +10,7 @@
 #			       #
 ################################
 
+
 #----------------------------------------------------------- 
 # Signal qq-->RSG-->qq PU20 bx25 PHYS14
 #----------------------------------------------------------- 
@@ -34,6 +35,18 @@
 ./createJobsWithCrab_CopyToT2.pl -d Outputs_MC2014 -v qgQstarqg_PU30bx50_v1 -i Inputs_MC2014/InputList_qgQstarqg_PU30bx50_PHYS14.txt -t Inputs_MC2014/template_crab_CopyToRomeT2_MC.cfg -c ../flat-signal-cfg_miniAOD.py -n $USER -p qgQstarqg_PU30bx50_v1
 
 
+#----------------------------------------------------------- 
+# Signal gg-->RSG-->gg PU40 bx25 PHYS14 (EXTRA)
+#----------------------------------------------------------- 
+./createJobsWithCrab_CopyToT2.pl -d Outputs_MC2014 -v ggRSGgg_PU40bx25_v1 -i Inputs_MC2014/InputList_ggRSGgg_PU40bx25_PHYS14.txt -t Inputs_MC2014/template_crab_CopyToRomeT2_MC.cfg -c ../flat-signal-cfg_miniAOD.py -n $USER -p ggRSGgg_PU40bx25_v1
+
+
+#----------------------------------------------------------- 
+# Signal gg-->RSG-->gg PU20 bx25 PHYS14 - TSG (EXTRA)
+#----------------------------------------------------------- 
+./createJobsWithCrab_CopyToT2.pl -d Outputs_MC2014 -v ggRSGgg_TSG_PU20bx25_v1 -i Inputs_MC2014/InputList_ggRSGgg_PU20bx25_PHYS14_TSG.txt -t Inputs_MC2014/template_crab_CopyToRomeT2_MC.cfg -c ../flat-signal-cfg_miniAOD.py -n $USER -p ggRSGgg_TSG_PU20bx25_v1
+
+
 
 ###############################################################
 #  _                _                                   _     #
@@ -47,9 +60,26 @@
 #							      #
 ###############################################################
 
+
+#--------------------------------------------------------------------
+# Background QCD pthat bins Pythia8 
+#--------------------------------------------------------------------
+
+./createJobsWithCrab_CopyToT2.pl -d Outputs_MC2014 -v QCD_pythia8_pthatBins_gt300_PU20bx25_v1 -i Inputs_MC2014/InputList_QCD_pthatBins_Pythia8_PHYS14.txt -t Inputs_MC2014/template_crab_CopyToRomeT2_MC.cfg -c ../flat-signal-cfg_miniAOD.py -n $USER -p QCD_pythia8_pthatBins_gt300_PU20bx25_v1
+
+
+#--------------------------------------------------------------------
+# Background QCD HT bins Madgraph
+#--------------------------------------------------------------------
+
+./createJobsWithCrab_CopyToT2.pl -d Outputs_MC2014 -v QCD_madgraph_HTBins_gt250_PU20bx25_v1 -i Inputs_MC2014/InputList_QCD_HTBins_Madgraph_PHYS14.txt -t Inputs_MC2014/template_crab_CopyToRomeT2_MC.cfg -c ../flat-signal-cfg_miniAOD.py -n $USER -p QCD_madgraph_HTBins_gt250_PU20bx25_v1
+
+
 #--------------------------------------------------------------------
 # Background QCD flat Pythia8 
 #--------------------------------------------------------------------
 
-./createJobsWithCrab_CopyToT2.pl -d Outputs_MC2014 -v QCD_Pt-15to3000_Flat_PU20bx25_v1 -i Inputs_MC2014/InputList_QCD_Flat_PHYS14.txt -t Inputs_MC2014/template_crab_CopyToRomeT2_MC.cfg -c ../flat-signal-cfg_miniAOD.py -n $USER -p QCD_Pt-15to3000_Flat_PU20bx25_v1
+./createJobsWithCrab_CopyToT2.pl -d Outputs_MC2014 -v QCD_Pythia8_Pt-15to3000_Flat_PU20bx25_v1 -i Inputs_MC2014/InputList_QCD_Flat_PHYS14.txt -t Inputs_MC2014/template_crab_CopyToRomeT2_MC.cfg -c ../flat-signal-cfg_miniAOD.py -n $USER -p QCD_Pythia8_Pt-15to3000_Flat_PU20bx25_v1
+
+
 
