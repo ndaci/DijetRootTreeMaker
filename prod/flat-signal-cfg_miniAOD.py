@@ -71,14 +71,9 @@ process.out = cms.OutputModule('PoolOutputModule',
 
 process.chs = cms.EDFilter('CandPtrSelector', src = cms.InputTag('packedPFCandidates'), cut = cms.string('fromPV'))
 
-process.load('RecoJets.Configuration.RecoPFJets_cff')
-process.load('RecoJets.Configuration.RecoGenJets_cff')
+from RecoJets.JetProducers.ak4GenJets_cfi import ak4GenJets
+process.slimmedGenJetsAK8 = ak4GenJets.clone(src = 'packedGenParticles', rParam = 0.8)
 
-
-process.ak4GenJets.src = 'packedGenParticles'
-process.slimmedGenJetsAK8 = process.ak4GenJets.clone(src = 'packedGenParticles', rParam = 0.8)
-
- 
 # process.ak4PFJets.src = 'packedPFCandidates'
 # process.ak4PFJets.doAreaFastjet = True
 
@@ -242,7 +237,7 @@ process.slimmedGenJetsAK8 = process.ak4GenJets.clone(src = 'packedGenParticles',
 # Gen Particles Pruner
 process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
 
-process.prunedGenParticles = cms.EDProducer('GenParticlePruner',
+process.prunedGenParticlesDijet = cms.EDProducer('GenParticlePruner',
     src = cms.InputTag("prunedGenParticles"),
     select = cms.vstring(
     "drop  *  ", # by default
@@ -339,6 +334,7 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   # jetsCA8         = cms.InputTag('patJetsCA8PFCHS'),
   jetsAK4             = cms.InputTag('slimmedJets'), 
   jetsAK8             = cms.InputTag('slimmedJetsAK8'),     
+  rho              = cms.InputTag('fixedGridRhoFastjetAll'),
   met              = cms.InputTag('slimmedMETs'),
   vtx              = cms.InputTag('offlineSlimmedPrimaryVertices'),
   ptMinAK4         = cms.double(10),
@@ -354,7 +350,7 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   ## MC ########################################
   pu               = cms.untracked.InputTag('addPileupInfo'),
   ptHat            = cms.untracked.InputTag('generator'),
-  genParticles     = cms.InputTag('prunedGenParticles'),
+  genParticles     = cms.InputTag('prunedGenParticlesDijet'),
   # genJetsAK4             = cms.InputTag('ak4GenJets'), 
   # genJetsAK8         = cms.InputTag('ak8GenJets'),     
   # genJetsCA8         = cms.InputTag('ca8GenJets'),
@@ -383,14 +379,19 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
     l1tIgnoreMask         = cms.bool(False),
     l1techIgnorePrescales = cms.bool(False),
     throw                 = cms.bool(False)
-  )
+  ),
+  ## JECs ######################################
+  redoJECs = cms.bool(True),
+  L1corr   = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/PHYS14_25_V2_L1FastJet_AK4PFchs.txt'),
+  L2corr   = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/PHYS14_25_V2_L2Relative_AK4PFchs.txt'),
+  L3corr   = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/PHYS14_25_V2_L3Absolute_AK4PFchs.txt')
 )
 
 
 # ------------------ path --------------------------
 
 process.p = cms.Path(
-                     process.prunedGenParticles*
+                     process.prunedGenParticlesDijet*
                      process.chs * 
 
                      process.slimmedGenJetsAK8 *

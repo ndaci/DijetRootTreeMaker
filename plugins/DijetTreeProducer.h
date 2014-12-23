@@ -12,6 +12,11 @@
 #include "DataFormats/JetReco/interface/Jet.h"
 #include "TTree.h"
 #include "TH1F.h"
+// For JECs
+#include "FWCore/ParameterSet/interface/FileInPath.h"
+#include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
+#include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
+
 
 class DijetTreeProducer : public edm::EDAnalyzer 
 {
@@ -26,9 +31,16 @@ class DijetTreeProducer : public edm::EDAnalyzer
 
   private:  
     void initialize();
+    // For JECs
+    bool redoJECs_;
+    edm::FileInPath L1corr_, L2corr_, L3corr_;
+    JetCorrectorParameters *L1Par;
+    JetCorrectorParameters *L2Par;
+    JetCorrectorParameters *L3Par;
+    FactorizedJetCorrector *JetCorrector;
     //---- configurable parameters --------   
     double ptMinAK4_,ptMinAK8_,ptMinCA8_;//mjjMin_,,dEtaMax_;
-    edm::InputTag srcJetsAK4_,srcJetsAK8_, srcJetsCA8_,srcMET_,srcPU_,srcVrtx_, srcGenInfo_, srcGenJetsAK4_, srcGenJetsAK8_, srcGenJetsCA8_, srcPrunedGenParticles_;
+    edm::InputTag srcJetsAK4_,srcJetsAK8_, srcJetsCA8_,srcRho_,srcMET_,srcPU_,srcVrtx_, srcGenInfo_, srcGenJetsAK4_, srcGenJetsAK8_, srcGenJetsCA8_, srcPrunedGenParticles_;
     edm::Service<TFileService> fs_;
     TTree *outTree_; 
     //---- TRIGGER -------------------------
@@ -47,12 +59,12 @@ class DijetTreeProducer : public edm::EDAnalyzer
     std::vector<bool> *triggerResult_;
 
     //---- jet and genJet variables --------------
-    std::vector<float> *ptAK4_,*jecAK4_,*etaAK4_,*phiAK4_,*massAK4_,*energyAK4_,*chfAK4_,*nhfAK4_,*phfAK4_,*elfAK4_,*mufAK4_;
+    std::vector<float> *ptAK4_,*jecAK4_,*etaAK4_,*phiAK4_,*massAK4_,*energyAK4_,*areaAK4_,*chfAK4_,*nhfAK4_,*phfAK4_,*elfAK4_,*mufAK4_;
     std::vector<int> *idLAK4_,*idTAK4_;
     //std::vector<float> *cutbasedJetId_, *fullJetId_, *fullJetDiscriminant_;
     std::vector<float> *ptGenAK4_,*etaGenAK4_,*phiGenAK4_,*massGenAK4_,*energyGenAK4_;
 
-    std::vector<float> *ptAK8_,*jecAK8_,*etaAK8_,*phiAK8_,*massAK8_,*energyAK8_,*chfAK8_,*nhfAK8_,*phfAK8_,*elfAK8_,*mufAK8_, *massPrunedAK8_, *dR_AK8_,*tau1AK8_,*tau2AK8_, *tau3AK8_ ;
+    std::vector<float> *ptAK8_,*jecAK8_,*etaAK8_,*phiAK8_,*massAK8_,*energyAK8_,*areaAK8_,*chfAK8_,*nhfAK8_,*phfAK8_,*elfAK8_,*mufAK8_, *massPrunedAK8_, *dR_AK8_,*tau1AK8_,*tau2AK8_, *tau3AK8_ ;
     std::vector<int> *idLAK8_,*idTAK8_;
     std::vector<float> *ptGenAK8_,*etaGenAK8_,*phiGenAK8_,*massGenAK8_,*energyGenAK8_;
 
