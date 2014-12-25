@@ -65,22 +65,40 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
   
   // For JECs
   redoJECs_ = cfg.getParameter<bool>("redoJECs");
-  L1corr_   = cfg.getParameter<edm::FileInPath>("L1corr");
-  L2corr_   = cfg.getParameter<edm::FileInPath>("L2corr");
-  L3corr_   = cfg.getParameter<edm::FileInPath>("L3corr");
+  // AK4
+  L1corrAK4_ = cfg.getParameter<edm::FileInPath>("L1corrAK4");
+  L2corrAK4_ = cfg.getParameter<edm::FileInPath>("L2corrAK4");
+  L3corrAK4_ = cfg.getParameter<edm::FileInPath>("L3corrAK4");
+  // AK8
+  L1corrAK8_ = cfg.getParameter<edm::FileInPath>("L1corrAK8");
+  L2corrAK8_ = cfg.getParameter<edm::FileInPath>("L2corrAK8");
+  L3corrAK8_ = cfg.getParameter<edm::FileInPath>("L3corrAK8");
 
   if(redoJECs_)
   {
-    L1Par = new JetCorrectorParameters(L1corr_.fullPath());
-    L2Par = new JetCorrectorParameters(L2corr_.fullPath());
-    L3Par = new JetCorrectorParameters(L3corr_.fullPath());
+    // AK4
+    L1ParAK4 = new JetCorrectorParameters(L1corrAK4_.fullPath());
+    L2ParAK4 = new JetCorrectorParameters(L2corrAK4_.fullPath());
+    L3ParAK4 = new JetCorrectorParameters(L3corrAK4_.fullPath());
 
-    std::vector<JetCorrectorParameters> vPar;
-    vPar.push_back(*L1Par);
-    vPar.push_back(*L2Par);
-    vPar.push_back(*L3Par);
+    std::vector<JetCorrectorParameters> vParAK4;
+    vParAK4.push_back(*L1ParAK4);
+    vParAK4.push_back(*L2ParAK4);
+    vParAK4.push_back(*L3ParAK4);
 
-    JetCorrector = new FactorizedJetCorrector(vPar);
+    JetCorrectorAK4 = new FactorizedJetCorrector(vParAK4);
+
+    // AK8
+    L1ParAK8 = new JetCorrectorParameters(L1corrAK8_.fullPath());
+    L2ParAK8 = new JetCorrectorParameters(L2corrAK8_.fullPath());
+    L3ParAK8 = new JetCorrectorParameters(L3corrAK8_.fullPath());
+
+    std::vector<JetCorrectorParameters> vParAK8;
+    vParAK8.push_back(*L1ParAK8);
+    vParAK8.push_back(*L2ParAK8);
+    vParAK8.push_back(*L3ParAK8);
+
+    JetCorrectorAK8 = new FactorizedJetCorrector(vParAK8);
   }
 }
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -622,7 +640,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     lumi_   = iEvent.id().luminosityBlock();
     
     // AK4
-    std::vector<double> jecFactors;
+    std::vector<double> jecFactorsAK4;
     std::vector<unsigned> sortedAK4JetIdx;
     if(redoJECs_)
     {
@@ -630,14 +648,14 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       std::multimap<double, unsigned> sortedAK4Jets;
       for(edm::View<pat::Jet>::const_iterator ijet = jetsAK4->begin();ijet != jetsAK4->end(); ++ijet)
       {
-        JetCorrector->setJetEta(ijet->eta());
-        JetCorrector->setJetPt(ijet->correctedJet(0).pt());
-        JetCorrector->setJetA(ijet->jetArea());
-        JetCorrector->setRho(rho_);
+        JetCorrectorAK4->setJetEta(ijet->eta());
+        JetCorrectorAK4->setJetPt(ijet->correctedJet(0).pt());
+        JetCorrectorAK4->setJetA(ijet->jetArea());
+        JetCorrectorAK4->setRho(rho_);
 
-        double correction = JetCorrector->getCorrection();
+        double correction = JetCorrectorAK4->getCorrection();
 
-        jecFactors.push_back(correction);
+        jecFactorsAK4.push_back(correction);
         sortedAK4Jets.insert(std::make_pair(ijet->correctedJet(0).pt()*correction, ijet - jetsAK4->begin()));
       }
       // get jet indices in decreasing pT order
@@ -648,7 +666,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     {
       for(edm::View<pat::Jet>::const_iterator ijet = jetsAK4->begin();ijet != jetsAK4->end(); ++ijet)
       {
-        jecFactors.push_back(1./ijet->jecFactor(0));
+        jecFactorsAK4.push_back(1./ijet->jecFactor(0));
         sortedAK4JetIdx.push_back(ijet - jetsAK4->begin());
       }
     }
@@ -657,7 +675,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     float htAK4(0.0);
     vector<TLorentzVector> vP4AK4;
     for(std::vector<unsigned>::const_iterator i = sortedAK4JetIdx.begin(); i != sortedAK4JetIdx.end(); ++i) {
-     
+
       edm::View<pat::Jet>::const_iterator ijet = (jetsAK4->begin() + *i);
       double chf = ijet->chargedHadronEnergyFraction();
       double nhf = ijet->neutralHadronEnergyFraction() + ijet->HFHadronEnergyFraction();
@@ -667,25 +685,25 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       int chm    = ijet->chargedHadronMultiplicity();
       int npr    = ijet->chargedMultiplicity() + ijet->neutralMultiplicity(); 
       float eta  = fabs(ijet->eta());
-      float pt   = ijet->correctedJet(0).pt()*jecFactors.at(*i);
+      float pt   = ijet->correctedJet(0).pt()*jecFactorsAK4.at(*i);
       int idL   = (npr>1 && phf<0.99 && nhf<0.99);
       int idT   = (idL && ((eta<=2.4 && nhf<0.9 && phf<0.9 && elf<0.99 && muf<0.99 && chf>0 && chm>0) || eta>2.4));
       if (pt > ptMinAK4_) {
         htAK4 += pt;
         nJetsAK4_++;
 
-        vP4AK4.push_back(TLorentzVector(ijet->correctedJet(0).px()*jecFactors.at(*i),ijet->correctedJet(0).py()*jecFactors.at(*i),ijet->correctedJet(0).pz()*jecFactors.at(*i),ijet->correctedJet(0).energy()*jecFactors.at(*i)));
+        vP4AK4.push_back(TLorentzVector(ijet->correctedJet(0).px()*jecFactorsAK4.at(*i),ijet->correctedJet(0).py()*jecFactorsAK4.at(*i),ijet->correctedJet(0).pz()*jecFactorsAK4.at(*i),ijet->correctedJet(0).energy()*jecFactorsAK4.at(*i)));
         chfAK4_           ->push_back(chf);
         nhfAK4_           ->push_back(nhf);
         phfAK4_           ->push_back(phf);
         elfAK4_           ->push_back(elf);
         mufAK4_           ->push_back(muf);
-        jecAK4_           ->push_back(jecFactors.at(*i));
+        jecAK4_           ->push_back(jecFactorsAK4.at(*i));
         ptAK4_            ->push_back(pt);
         phiAK4_           ->push_back(ijet->phi());
         etaAK4_           ->push_back(ijet->eta());
-        massAK4_          ->push_back(ijet->correctedJet(0).mass()*jecFactors.at(*i));
-        energyAK4_        ->push_back(ijet->correctedJet(0).energy()*jecFactors.at(*i));
+        massAK4_          ->push_back(ijet->correctedJet(0).mass()*jecFactorsAK4.at(*i));
+        energyAK4_        ->push_back(ijet->correctedJet(0).energy()*jecFactorsAK4.at(*i));
         areaAK4_          ->push_back(ijet->jetArea());
 	idLAK4_           ->push_back(idL);
 	idTAK4_           ->push_back(idT);
@@ -723,10 +741,43 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 
 
     // AK8
+    std::vector<double> jecFactorsAK8;
+    std::vector<unsigned> sortedAK8JetIdx;
+    if(redoJECs_)
+    {
+      // sort AK8 jets by increasing pT
+      std::multimap<double, unsigned> sortedAK8Jets;
+      for(edm::View<pat::Jet>::const_iterator ijet = jetsAK8->begin();ijet != jetsAK8->end(); ++ijet)
+      {
+        JetCorrectorAK8->setJetEta(ijet->eta());
+        JetCorrectorAK8->setJetPt(ijet->correctedJet(0).pt());
+        JetCorrectorAK8->setJetA(ijet->jetArea());
+        JetCorrectorAK8->setRho(rho_);
+
+        double correction = JetCorrectorAK8->getCorrection();
+
+        jecFactorsAK8.push_back(correction);
+        sortedAK8Jets.insert(std::make_pair(ijet->correctedJet(0).pt()*correction, ijet - jetsAK8->begin()));
+      }
+      // get jet indices in decreasing pT order
+      for(std::multimap<double, unsigned>::const_reverse_iterator it = sortedAK8Jets.rbegin(); it != sortedAK8Jets.rend(); ++it)
+        sortedAK8JetIdx.push_back(it->second);
+    }
+    else
+    {
+      for(edm::View<pat::Jet>::const_iterator ijet = jetsAK8->begin();ijet != jetsAK8->end(); ++ijet)
+      {
+        jecFactorsAK8.push_back(1./ijet->jecFactor(0));
+        sortedAK8JetIdx.push_back(ijet - jetsAK8->begin());
+      }
+    }
+
     nJetsAK8_ = 0;
     float htAK8(0.0);
     vector<TLorentzVector> vP4AK8;
-    for(edm::View<pat::Jet>::const_iterator ijet = jetsAK8->begin();ijet != jetsAK8->end(); ++ijet) { 
+    for(std::vector<unsigned>::const_iterator i = sortedAK8JetIdx.begin(); i != sortedAK8JetIdx.end(); ++i) {
+
+      edm::View<pat::Jet>::const_iterator ijet = (jetsAK8->begin() + *i);
       double chf = ijet->chargedHadronEnergyFraction();
       double nhf = ijet->neutralHadronEnergyFraction() + ijet->HFHadronEnergyFraction();
       double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
@@ -735,25 +786,25 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       int chm    = ijet->chargedHadronMultiplicity();
       int npr    = ijet->chargedMultiplicity() + ijet->neutralMultiplicity(); 
       float eta  = fabs(ijet->eta());
-      float pt   = ijet->pt();
+      float pt   = ijet->correctedJet(0).pt()*jecFactorsAK8.at(*i);
       int idL   = (npr>1 && phf<0.99 && nhf<0.99);
       int idT   = (idL && ((eta<=2.4 && nhf<0.9 && phf<0.9 && elf<0.99 && muf<0.99 && chf>0 && chm>0) || eta>2.4));
       if (pt > ptMinAK8_) {
         htAK8 += pt;
         nJetsAK8_++;
 	
-        vP4AK8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
+        vP4AK8.push_back(TLorentzVector(ijet->correctedJet(0).px()*jecFactorsAK8.at(*i),ijet->correctedJet(0).py()*jecFactorsAK8.at(*i),ijet->correctedJet(0).pz()*jecFactorsAK8.at(*i),ijet->correctedJet(0).energy()*jecFactorsAK8.at(*i)));
         chfAK8_           ->push_back(chf);
         nhfAK8_           ->push_back(nhf);
         phfAK8_           ->push_back(phf);
         elfAK8_           ->push_back(elf);
         mufAK8_           ->push_back(muf);
-        jecAK8_           ->push_back(1./ijet->jecFactor(0));
+        jecAK8_           ->push_back(jecFactorsAK8.at(*i));
         ptAK8_            ->push_back(pt);
         phiAK8_           ->push_back(ijet->phi());
         etaAK8_           ->push_back(ijet->eta());
-        massAK8_          ->push_back(ijet->mass());
-        energyAK8_        ->push_back(ijet->energy());
+        massAK8_          ->push_back(ijet->correctedJet(0).mass()*jecFactorsAK8.at(*i));
+        energyAK8_        ->push_back(ijet->correctedJet(0).energy()*jecFactorsAK8.at(*i));
         areaAK8_          ->push_back(ijet->jetArea());
 	idLAK8_           ->push_back(idL);
 	idTAK8_           ->push_back(idT);

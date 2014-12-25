@@ -33,11 +33,15 @@ class DijetTreeProducer : public edm::EDAnalyzer
     void initialize();
     // For JECs
     bool redoJECs_;
-    edm::FileInPath L1corr_, L2corr_, L3corr_;
-    JetCorrectorParameters *L1Par;
-    JetCorrectorParameters *L2Par;
-    JetCorrectorParameters *L3Par;
-    FactorizedJetCorrector *JetCorrector;
+    edm::FileInPath L1corrAK4_, L2corrAK4_, L3corrAK4_, L1corrAK8_, L2corrAK8_, L3corrAK8_;
+    JetCorrectorParameters *L1ParAK4;
+    JetCorrectorParameters *L2ParAK4;
+    JetCorrectorParameters *L3ParAK4;
+    FactorizedJetCorrector *JetCorrectorAK4;
+    JetCorrectorParameters *L1ParAK8;
+    JetCorrectorParameters *L2ParAK8;
+    JetCorrectorParameters *L3ParAK8;
+    FactorizedJetCorrector *JetCorrectorAK8;
     //---- configurable parameters --------   
     double ptMinAK4_,ptMinAK8_,ptMinCA8_;//mjjMin_,,dEtaMax_;
     edm::InputTag srcJetsAK4_,srcJetsAK8_, srcJetsCA8_,srcRho_,srcMET_,srcPU_,srcVrtx_, srcGenInfo_, srcGenJetsAK4_, srcGenJetsAK8_, srcGenJetsCA8_, srcPrunedGenParticles_;
