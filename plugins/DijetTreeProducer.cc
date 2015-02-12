@@ -779,6 +779,27 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       }
     }
 
+    // AK8SoftDrop
+    std::vector<double> jecFactorsAK8SoftDrop;
+    std::vector<unsigned> sortedAK8SoftDropJetIdx;
+    // sort AK8SoftDrop jets by increasing pT
+    std::multimap<double, unsigned> sortedAK8SoftDropJets;
+    for(edm::View<reco::Jet>::const_iterator ijet = jetsAK8SoftDrop->begin();ijet != jetsAK8SoftDrop->end(); ++ijet)
+    {
+      JetCorrectorAK8->setJetEta(ijet->eta());
+      JetCorrectorAK8->setJetPt(ijet->pt());
+      JetCorrectorAK8->setJetA(ijet->jetArea());
+      JetCorrectorAK8->setRho(rho_);
+
+      double correction = JetCorrectorAK8->getCorrection();
+
+      jecFactorsAK8SoftDrop.push_back(correction);
+      sortedAK8SoftDropJets.insert(std::make_pair(ijet->pt()*correction, ijet - jetsAK8SoftDrop->begin()));
+    }
+    // get jet indices in decreasing pT order
+    for(std::multimap<double, unsigned>::const_reverse_iterator it = sortedAK8SoftDropJets.rbegin(); it != sortedAK8SoftDropJets.rend(); ++it)
+      sortedAK8SoftDropJetIdx.push_back(it->second);
+
     nJetsAK8_ = 0;
     float htAK8(0.0);
     vector<TLorentzVector> vP4AK8;
@@ -818,7 +839,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
         tau1AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau1"));
         tau2AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau2"));
         tau3AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau3"));
-	massPrunedAK8_    ->push_back(ijet->userFloat("ak8PFJetsCHSPrunedLinks")*jecFactorsAK8.at(*i));
+	massPrunedAK8_    ->push_back(ijet->userFloat("ak8PFJetsCHSPrunedLinks"));
 	//massSoftDropAK8_  ->push_back(ijet->userFloat("ak8PFJetsCHSSoftDropLinks"));
 	
 	
@@ -832,7 +853,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
              dRmin = dR;
            } 
          } 
-         massSoftDropAK8_->push_back(auxm*jecFactorsAK8.at(*i));
+         massSoftDropAK8_->push_back(auxm*jecFactorsAK8SoftDrop.at(*i));
          //dR_->push_back(dRmin);
 	
       }
