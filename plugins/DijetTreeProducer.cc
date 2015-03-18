@@ -272,7 +272,7 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetMassPrunedAK8"        ,"vector<float>"     ,&massPrunedAK8_);
   outTree_->Branch("jetTau1AK8"              ,"vector<float>"     ,&tau1AK8_);
   outTree_->Branch("jetTau2AK8"              ,"vector<float>"     ,&tau2AK8_);
-  outTree_->Branch("jetTau3AK8"              ,"vector<float>"     ,&tau3AK8_);
+  outTree_->Branch("jetTau3AK8"              ,"vector<float>"     ,&tau3AK8_); 
   //outTree_->Branch("jetDRAK8"                ,"vector<float>"     ,&dRAK8_); 
   outTree_->Branch("chHadMultAK8"          ,"vector<int>"      ,&chHadMultAK8_);   
   outTree_->Branch("chMultAK8"              ,"vector<int>"      ,&chMultAK8_);   
@@ -1075,6 +1075,7 @@ void DijetTreeProducer::initialize()
   massPrunedAK8_     ->clear();
   tau1AK8_           ->clear();
   tau2AK8_           ->clear();
+  tau3AK8_           ->clear();
   //dRAK8_             ->clear();
   
   
