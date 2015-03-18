@@ -217,6 +217,7 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetMufAK4"               ,"vector<float>"     ,&mufAK4_);
   outTree_->Branch("jetElfAK4"               ,"vector<float>"     ,&elfAK4_);   
   outTree_->Branch("idLAK4"                  ,"vector<int>"      ,&idLAK4_);   
+  outTree_->Branch("idTAK4"                  ,"vector<int>"      ,&idTAK4_);   
   outTree_->Branch("chHadMultAK4"          ,"vector<int>"      ,&chHadMultAK4_);   
   outTree_->Branch("chMultAK4"              ,"vector<int>"      ,&chMultAK4_);   
   outTree_->Branch("neHadMultAK4"           ,"vector<int>"      ,&neHadMultAK4_);   
