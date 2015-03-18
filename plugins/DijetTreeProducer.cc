@@ -188,6 +188,13 @@ void DijetTreeProducer::beginJob()
   elfAK4_            = new std::vector<float>;
   idLAK4_            = new std::vector<int>;
   idTAK4_            = new std::vector<int>;
+  chHadMultAK4_     = new std::vector<int>;
+  chMultAK4_         = new std::vector<int>;
+  neHadMultAK4_      = new std::vector<int>;
+  neMultAK4_         = new std::vector<int>;
+  phoMultAK4_        = new std::vector<int>;
+  
+  
   //massPrunedAK4_     = new std::vector<float>;
   //tau1AK4_           = new std::vector<float>;
   //tau2AK4_           = new std::vector<float>;
@@ -210,7 +217,11 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetMufAK4"               ,"vector<float>"     ,&mufAK4_);
   outTree_->Branch("jetElfAK4"               ,"vector<float>"     ,&elfAK4_);   
   outTree_->Branch("idLAK4"                  ,"vector<int>"      ,&idLAK4_);   
-  outTree_->Branch("idTAK4"                  ,"vector<int>"      ,&idTAK4_);   
+  outTree_->Branch("chHadMultAK4"          ,"vector<int>"      ,&chHadMultAK4_);   
+  outTree_->Branch("chMultAK4"              ,"vector<int>"      ,&chMultAK4_);   
+  outTree_->Branch("neHadMultAK4"           ,"vector<int>"      ,&neHadMultAK4_);   
+  outTree_->Branch("neMultAK4"              ,"vector<int>"      ,&neMultAK4_);   
+  outTree_->Branch("phoMultAK4"             ,"vector<int>"      ,&phoMultAK4_);   
   //outTree_->Branch("jetMassPrunedAK4"        ,"vector<float>"     ,&massPrunedAK4_);
   //outTree_->Branch("jetTau1AK4"              ,"vector<float>"     ,&tau1AK4_);
   //outTree_->Branch("jetTau2AK4"              ,"vector<float>"     ,&tau2AK4_);
@@ -237,6 +248,12 @@ void DijetTreeProducer::beginJob()
   tau1AK8_           = new std::vector<float>;
   tau2AK8_           = new std::vector<float>;
   tau3AK8_           = new std::vector<float>;
+  chHadMultAK8_      = new std::vector<int>;   
+  chMultAK8_         = new std::vector<int>;
+  neHadMultAK8_      = new std::vector<int>; 
+  neMultAK8_         = new std::vector<int>;
+  phoMultAK8_        = new std::vector<int>;
+ 
   //dRAK8_             = new std::vector<float>;
   outTree_->Branch("jetPtAK8"                ,"vector<float>"     ,&ptAK8_);
   outTree_->Branch("jetJecAK8"               ,"vector<float>"     ,&jecAK8_);
@@ -257,7 +274,12 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetTau2AK8"              ,"vector<float>"     ,&tau2AK8_);
   outTree_->Branch("jetTau3AK8"              ,"vector<float>"     ,&tau3AK8_);
   //outTree_->Branch("jetDRAK8"                ,"vector<float>"     ,&dRAK8_); 
-
+  outTree_->Branch("chHadMultAK8"          ,"vector<int>"      ,&chHadMultAK8_);   
+  outTree_->Branch("chMultAK8"              ,"vector<int>"      ,&chMultAK8_);   
+  outTree_->Branch("neHadMultAK8"           ,"vector<int>"      ,&neHadMultAK8_);   
+  outTree_->Branch("neMultAK8"              ,"vector<int>"      ,&neMultAK8_);   
+  outTree_->Branch("phoMultAK8"             ,"vector<int>"      ,&phoMultAK8_);   
+ 
   // ptCA8_             = new std::vector<float>;
   // jecCA8_            = new std::vector<float>;
   // etaCA8_            = new std::vector<float>;
@@ -390,6 +412,11 @@ void DijetTreeProducer::endJob()
   delete elfAK4_;
   delete idLAK4_;
   delete idTAK4_;
+  delete chHadMultAK4_ ;
+  delete chMultAK4_    ;
+  delete neHadMultAK4_ ;
+  delete neMultAK4_    ;
+  delete phoMultAK4_   ;
   //delete massPrunedAK4_;
   //delete tau1AK4_;
   //delete tau2AK4_;
@@ -415,6 +442,12 @@ void DijetTreeProducer::endJob()
   delete tau1AK8_;
   delete tau2AK8_;
   delete tau3AK8_;
+  delete chHadMultAK8_;
+  delete chMultAK8_    ;
+  delete neHadMultAK8_ ;
+  delete neMultAK8_    ;
+  delete phoMultAK8_   ;
+
   //delete dRAK8_;
   
   // delete ptCA8_;
@@ -688,6 +721,13 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       float pt   = ijet->correctedJet(0).pt()*jecFactorsAK4.at(*i);
       int idL   = (npr>1 && phf<0.99 && nhf<0.99);
       int idT   = (idL && ((eta<=2.4 && nhf<0.9 && phf<0.9 && elf<0.99 && muf<0.99 && chf>0 && chm>0) || eta>2.4));
+      int chHadMult = ijet->chargedHadronMultiplicity();
+      int chMult = ijet->chargedMultiplicity();
+      int neHadMult = ijet->neutralHadronMultiplicity();
+      int neMult = ijet->neutralMultiplicity();
+      int phoMult = ijet->photonMultiplicity();
+       
+      
       if (pt > ptMinAK4_) {
         htAK4 += pt;
         nJetsAK4_++;
@@ -707,7 +747,12 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
         areaAK4_          ->push_back(ijet->jetArea());
 	idLAK4_           ->push_back(idL);
 	idTAK4_           ->push_back(idT);
-        //tau1AK4_          ->push_back(ijet->userFloat("NjettinessAK4:tau1"));
+	chHadMultAK4_     ->push_back(chHadMult);
+        chMultAK4_        ->push_back(chMult);
+        neHadMultAK4_     ->push_back(neHadMult);  
+        neMultAK4_        ->push_back(neMult);
+        phoMultAK4_       ->push_back(phoMult); 
+	//tau1AK4_          ->push_back(ijet->userFloat("NjettinessAK4:tau1"));
         //tau2AK4_          ->push_back(ijet->userFloat("NjettinessAK4:tau2"));
 	//cutbasedJetId_      ->push_back(ijet->userInt("pileupJetIdEvaluator:cutbasedId"));
 	//fullJetId_          ->push_back(ijet->userFloat("pileupJetIdEvaluator:fullDiscriminant"));
@@ -789,10 +834,15 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       float pt   = ijet->correctedJet(0).pt()*jecFactorsAK8.at(*i);
       int idL   = (npr>1 && phf<0.99 && nhf<0.99);
       int idT   = (idL && ((eta<=2.4 && nhf<0.9 && phf<0.9 && elf<0.99 && muf<0.99 && chf>0 && chm>0) || eta>2.4));
+      int chHadMult = ijet->chargedHadronMultiplicity();
+      int chMult = ijet->chargedMultiplicity();
+      int neHadMult = ijet->neutralHadronMultiplicity();
+      int neMult = ijet->neutralMultiplicity();
+      int phoMult = ijet->photonMultiplicity();
       if (pt > ptMinAK8_) {
-        htAK8 += pt;
-        nJetsAK8_++;
-	
+	htAK8 += pt;
+	nJetsAK8_++;
+
         vP4AK8.push_back(TLorentzVector(ijet->correctedJet(0).px()*jecFactorsAK8.at(*i),ijet->correctedJet(0).py()*jecFactorsAK8.at(*i),ijet->correctedJet(0).pz()*jecFactorsAK8.at(*i),ijet->correctedJet(0).energy()*jecFactorsAK8.at(*i)));
         chfAK8_           ->push_back(chf);
         nhfAK8_           ->push_back(nhf);
@@ -812,6 +862,11 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
         tau2AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau2"));
         tau3AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau3"));
 	massPrunedAK8_    ->push_back(ijet->userFloat("ak8PFJetsCHSPrunedLinks"));
+	chHadMultAK8_     ->push_back(chHadMult);
+        chMultAK8_        ->push_back(chMult);
+        neHadMultAK8_     ->push_back(neHadMult);  
+        neMultAK8_        ->push_back(neMult);
+        phoMultAK8_       ->push_back(phoMult); 
 	
 	
 	//---- match with the pruned jet collection -----
