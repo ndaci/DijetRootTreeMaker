@@ -1,0 +1,85 @@
+################################ 
+#      _                   _   #
+#     (_)                 | |  #
+#  ___ _  __ _ _ __   __ _| |  #
+# / __| |/ _` | '_ \ / _` | |  #
+# \__ \ | (_| | | | | (_| | |  #
+# |___/_|\__, |_| |_|\__,_|_|  #
+#         __/ |                #
+#        |___/                 #
+#			       #
+################################
+
+#----------------------------------------------------------- 
+# Signal qq-->RSG-->qq PU20 bx25 PHYS14
+#----------------------------------------------------------- 
+python createAndSubmitMC.py -d Outputs_PHYS14 -v qqRSGqq_PU20bx25_Tag48e6f39 -i Inputs_PHYS14/InputList_qqRSGqq_PU20bx25_PHYS14.txt -t Inputs_PHYS14/crab3_template.py -c ../flat-signal-cfg_miniAOD.py -n $USER -p qqRSGqq_PU20bx25_Tag48e6f39 --submit
+
+
+#----------------------------------------------------------- 
+# Signal gg-->RSG-->gg PU20 bx25 PHYS14
+#----------------------------------------------------------- 
+python createAndSubmitMC.py -d Outputs_PHYS14 -v ggRSGgg_PU20bx25_Tag48e6f39 -i Inputs_PHYS14/InputList_ggRSGgg_PU20bx25_PHYS14.txt -t Inputs_PHYS14/crab3_template.py -c ../flat-signal-cfg_miniAOD.py -n $USER -p ggRSGgg_PU20bx25_Tag48e6f39 --submit
+
+
+
+#----------------------------------------------------------- 
+# Signal qg-->Q*-->qg PU20 bx25 PHYS14
+#----------------------------------------------------------- 
+python createAndSubmitMC.py -d Outputs_PHYS14 -v qgQstarqg_PU20bx25_Tag48e6f39 -i Inputs_PHYS14/InputList_qgQstarqg_PU20bx25_PHYS14.txt -t Inputs_PHYS14/crab3_template.py -c ../flat-signal-cfg_miniAOD.py -n $USER -p qgQstarqg_PU20bx25_Tag48e6f39 --submit
+
+
+#----------------------------------------------------------- 
+# Signal qg-->Q*-->qg PU30 bx50 PHYS14
+#----------------------------------------------------------- 
+python createAndSubmitMC.py -d Outputs_PHYS14 -v qgQstarqg_PU30bx50_Tag48e6f39 -i Inputs_PHYS14/InputList_qgQstarqg_PU30bx50_PHYS14.txt -t Inputs_PHYS14/crab3_template.py -c ../flat-signal-cfg_miniAOD.py -n $USER -p qgQstarqg_PU30bx50_Tag48e6f39 --submit
+
+
+#----------------------------------------------------------- 
+# Signal gg-->RSG-->gg PU40 bx25 PHYS14 (EXTRA)
+#----------------------------------------------------------- 
+python createAndSubmitMC.py -d Outputs_PHYS14 -v ggRSGgg_PU40bx25_Tag48e6f39 -i Inputs_PHYS14/InputList_ggRSGgg_PU40bx25_PHYS14.txt -t Inputs_PHYS14/crab3_template.py -c ../flat-signal-cfg_miniAOD.py -n $USER -p ggRSGgg_PU40bx25_Tag48e6f39 --submit
+
+
+#----------------------------------------------------------- 
+# Signal gg-->RSG-->gg PU20 bx25 PHYS14 - TSG (EXTRA)
+#----------------------------------------------------------- 
+python createAndSubmitMC.py -d Outputs_PHYS14 -v ggRSGgg_TSG_PU20bx25_Tag48e6f39 -i Inputs_PHYS14/InputList_ggRSGgg_PU20bx25_PHYS14_TSG.txt -t Inputs_PHYS14/crab3_template.py -c ../flat-signal-cfg_miniAOD.py -n $USER -p ggRSGgg_TSG_PU20bx25_Tag48e6f39 --submit
+
+
+
+###############################################################
+#  _                _                                   _     #
+# | |              | |                                 | |    #
+# | |__   __ _  ___| | ____ _ _ __ ___  _   _ _ __   __| |    #
+# | '_ \ / _` |/ __| |/ / _` | '__/ _ \| | | | '_ \ / _` |    #
+# | |_) | (_| | (__|   < (_| | | | (_) | |_| | | | | (_| |    #
+# |_.__/ \__,_|\___|_|\_\__, |_|  \___/ \__,_|_| |_|\__,_|    #
+#                        __/ |                                #
+#                       |___/                                 #
+#							      #
+###############################################################
+
+
+#--------------------------------------------------------------------
+# Background QCD pthat bins Pythia8 
+#--------------------------------------------------------------------
+
+python createAndSubmitMC.py -d Outputs_PHYS14 -v QCD_pythia8_pthatBins_gt300_PU20bx25_Tag48e6f39 -i Inputs_PHYS14/InputList_QCD_pthatBins_Pythia8_PHYS14.txt -t Inputs_PHYS14/crab3_template.py -c ../flat-signal-cfg_miniAOD.py -n $USER -p QCD_pythia8_pthatBins_gt300_PU20bx25_Tag48e6f39 --submit
+
+
+#--------------------------------------------------------------------
+# Background QCD HT bins Madgraph
+#--------------------------------------------------------------------
+
+python createAndSubmitMC.py -d Outputs_PHYS14 -v QCD_madgraph_HTBins_gt250_PU20bx25_Tag48e6f39 -i Inputs_PHYS14/InputList_QCD_HTBins_Madgraph_PHYS14.txt -t Inputs_PHYS14/crab3_template.py -c ../flat-signal-cfg_miniAOD.py -n $USER -p QCD_madgraph_HTBins_gt250_PU20bx25_Tag48e6f39 --submit
+
+
+#--------------------------------------------------------------------
+# Background QCD flat Pythia8 
+#--------------------------------------------------------------------
+
+python createAndSubmitMC.py -d Outputs_PHYS14 -v QCD_Pythia8_Pt-15to3000_Flat_PU20bx25_Tag48e6f39 -i Inputs_PHYS14/InputList_QCD_Flat_PHYS14.txt -t Inputs_PHYS14/crab3_template.py -c ../flat-signal-cfg_miniAOD.py -n $USER -p QCD_Pythia8_Pt-15to3000_Flat_PU20bx25_Tag48e6f39 --submit
+
+
+
