@@ -1,4 +1,4 @@
-#! /usr/bin/tai dicendo che sono nv python
+#! /usr/bin/env python
 
 import os
 import sys
