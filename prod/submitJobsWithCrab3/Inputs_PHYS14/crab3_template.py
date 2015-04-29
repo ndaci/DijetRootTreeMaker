@@ -2,8 +2,8 @@ from WMCore.Configuration import Configuration
 config = Configuration()
 config.section_('General')
 config.General.transferOutputs = True
-config.General.workArea = 'WORKINGDIR'
-#config.General.requestName = 'workdir'
+config.General.workArea = 'WORKINGAREA'
+config.General.requestName = 'WORKINGDIR'
 config.section_('JobType')
 config.JobType.psetName = 'CMSSWCFG'
 config.JobType.pluginName = 'Analysis'
