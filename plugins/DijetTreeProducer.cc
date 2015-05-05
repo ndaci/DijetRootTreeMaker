@@ -733,21 +733,32 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
       double elf = ijet->electronEnergy()/(ijet->jecFactor(0) * ijet->energy());
       double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
-      
+
       double hf_hf = ijet->HFHadronEnergyFraction();
       double hf_emf= ijet->HFEMEnergyFraction();
-      
+
       int chm    = ijet->chargedHadronMultiplicity();
-      int npr    = ijet->chargedMultiplicity() + ijet->neutralMultiplicity(); 
-      float eta  = fabs(ijet->eta());
-      float pt   = ijet->correctedJet(0).pt()*jecFactorsAK4.at(*i);
-      int idL   = (npr>1 && phf<0.99 && nhf<0.99);
-      int idT   = (idL && ((eta<=2.4 && nhf<0.9 && phf<0.9 && elf<0.99 && muf<0.99 && chf>0 && chm>0) || eta>2.4));
-      int chHadMult = ijet->chargedHadronMultiplicity();
+      
       int chMult = ijet->chargedMultiplicity();
-      int neHadMult = ijet->neutralHadronMultiplicity();
       int neMult = ijet->neutralMultiplicity();
+      int npr    = chMult + neMult;
+
+      int chHadMult = ijet->chargedHadronMultiplicity();
+      int neHadMult = ijet->neutralHadronMultiplicity();
       int phoMult = ijet->photonMultiplicity();
+      
+      // Juska's added fractions for identical JetID with recommendations
+      double nemf = ijet->neutralEmEnergyFraction();
+      double cemf = ijet->chargedEmEnergyFraction();
+      int NumConst = npr;
+
+      float eta  = ijet->eta(); // removed fabs() -Juska
+      float pt   = ijet->correctedJet(0).pt()*jecFactorsAK4.at(*i); // Is this OK? Correct corrected? -Juska
+
+      // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
+      int idL = (nhf<0.99 && nemf<0.99 && NumConst>1 && muf < 0.8) && ((fabs(eta) <= 2.4 && chf>0 && chMult>0 && cemf<0.99) || fabs(eta)>2.4);
+      int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.4 && chf>0 && chm>0 && cemf<0.90) || fabs(eta)>2.4);
+
        
       
       if (pt > ptMinAK4_) {
@@ -846,6 +857,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     vector<TLorentzVector> vP4AK8;
     for(std::vector<unsigned>::const_iterator i = sortedAK8JetIdx.begin(); i != sortedAK8JetIdx.end(); ++i) {
 
+      /*
       edm::View<pat::Jet>::const_iterator ijet = (jetsAK8->begin() + *i);
       double chf = ijet->chargedHadronEnergyFraction();
       double nhf = ijet->neutralHadronEnergyFraction();// + ijet->HFHadronEnergyFraction();
@@ -867,6 +879,41 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       int neHadMult = ijet->neutralHadronMultiplicity();
       int neMult = ijet->neutralMultiplicity();
       int phoMult = ijet->photonMultiplicity();
+      */
+
+      edm::View<pat::Jet>::const_iterator ijet = (jetsAK8->begin() + *i);
+      double chf = ijet->chargedHadronEnergyFraction();
+      double nhf = ijet->neutralHadronEnergyFraction(); // + ijet->HFHadronEnergyFraction();
+      double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
+      double elf = ijet->electronEnergy()/(ijet->jecFactor(0) * ijet->energy());
+      double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
+
+      double hf_hf = ijet->HFHadronEnergyFraction();
+      double hf_emf= ijet->HFEMEnergyFraction();
+
+      int chm    = ijet->chargedHadronMultiplicity();
+      
+      int chMult = ijet->chargedMultiplicity();
+      int neMult = ijet->neutralMultiplicity();
+      int npr    = chMult + neMult;
+
+      int chHadMult = ijet->chargedHadronMultiplicity();
+      int neHadMult = ijet->neutralHadronMultiplicity();
+      int phoMult = ijet->photonMultiplicity();
+      
+      // Juska's added fractions for identical JetID with recommendations
+      double nemf = ijet->neutralEmEnergyFraction();
+      double cemf = ijet->chargedEmEnergyFraction();
+      int NumConst = npr;
+
+      float eta  = ijet->eta(); // removed fabs() -Juska
+      float pt   = ijet->correctedJet(0).pt()*jecFactorsAK8.at(*i); // Is this OK? Correct corrected? -Juska
+
+      // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
+      int idL = (nhf<0.99 && nemf<0.99 && NumConst>1 && muf < 0.8) && ((fabs(eta) <= 2.4 && chf>0 && chMult>0 && cemf<0.99) || fabs(eta)>2.4);
+      int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.4 && chf>0 && chm>0 && cemf<0.90) || fabs(eta)>2.4);
+      
+      
       if (pt > ptMinAK8_) {
 	htAK8 += pt;
 	nJetsAK8_++;
