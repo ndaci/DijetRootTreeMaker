@@ -757,7 +757,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 
       // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
       int idL = (nhf<0.99 && nemf<0.99 && NumConst>1 && muf < 0.8) && ((fabs(eta) <= 2.4 && chf>0 && chMult>0 && cemf<0.99) || fabs(eta)>2.4);
-      int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.4 && chf>0 && chm>0 && cemf<0.90) || fabs(eta)>2.4);
+      int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.4 && chf>0 && chMult>0 && cemf<0.90) || fabs(eta)>2.4);
 
        
       
@@ -911,7 +911,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 
       // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
       int idL = (nhf<0.99 && nemf<0.99 && NumConst>1 && muf < 0.8) && ((fabs(eta) <= 2.4 && chf>0 && chMult>0 && cemf<0.99) || fabs(eta)>2.4);
-      int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.4 && chf>0 && chm>0 && cemf<0.90) || fabs(eta)>2.4);
+      int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.4 && chf>0 && chMult>0 && cemf<0.90) || fabs(eta)>2.4);
       
       
       if (pt > ptMinAK8_) {
