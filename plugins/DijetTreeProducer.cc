@@ -743,7 +743,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       int neMult = ijet->neutralMultiplicity();
       int npr    = chMult + neMult;
 
-      int chHadMult = ijet->chargedHadronMultiplicity();
+      int chHadMult = chm; //ijet->chargedHadronMultiplicity();
       int neHadMult = ijet->neutralHadronMultiplicity();
       int phoMult = ijet->photonMultiplicity();
       
@@ -897,7 +897,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       int neMult = ijet->neutralMultiplicity();
       int npr    = chMult + neMult;
 
-      int chHadMult = ijet->chargedHadronMultiplicity();
+      int chHadMult = chm; //ijet->chargedHadronMultiplicity();
       int neHadMult = ijet->neutralHadronMultiplicity();
       int phoMult = ijet->photonMultiplicity();
       
