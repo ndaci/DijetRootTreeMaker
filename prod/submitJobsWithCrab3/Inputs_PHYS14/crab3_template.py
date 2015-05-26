@@ -13,7 +13,7 @@ config.Data.inputDataset = 'INPUTDATASET'
 config.Data.unitsPerJob = 1
 config.Data.splitting = 'FileBased'
 config.Data.publication = False
-config.Data.outLFN = '/store/user/gdimperi/PHYS14/'
+config.Data.outLFNDirBase = '/store/user/gdimperi/PHYS14/'
 config.section_('User')
 config.section_('Site')
 config.Site.storageSite = 'T2_IT_Rome'
