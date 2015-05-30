@@ -544,7 +544,18 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 
   edm::Handle<reco::VertexCollection> recVtxs;
   iEvent.getByLabel(srcVrtx_,recVtxs);
-  
+
+  //-------------- Event Info -----------------------------------
+  rho_    = *rho;
+  met_    = (*met)[0].et();
+  if ((*met)[0].sumEt() > 0) {
+    metSig_ = (*met)[0].et()/(*met)[0].sumEt();
+  }
+  nVtx_   = recVtxs->size();
+  run_    = iEvent.id().run();
+  evt_    = iEvent.id().event();
+  lumi_   = iEvent.id().luminosityBlock();
+
   //---------- pu -----------------------
   edm::Handle<std::vector<PileupSummaryInfo> > PupInfo;
   if (!iEvent.isRealData()) {
@@ -678,18 +689,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   bool cut_vtx = (recVtxs->size() > 0);
   
   if (cut_vtx) {
-    
-    // Event
-    rho_    = *rho;
-    met_    = (*met)[0].et();
-    if ((*met)[0].sumEt() > 0) {
-      metSig_ = (*met)[0].et()/(*met)[0].sumEt();
-    }
-    nVtx_   = recVtxs->size();
-    run_    = iEvent.id().run();
-    evt_    = iEvent.id().event();
-    lumi_   = iEvent.id().luminosityBlock();
-    
+
     // AK4
     std::vector<double> jecFactorsAK4;
     std::vector<unsigned> sortedAK4JetIdx;
