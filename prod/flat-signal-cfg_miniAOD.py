@@ -7,6 +7,44 @@ process.load('Configuration.EventContent.EventContent_cff')
 process.load('Configuration.StandardSequences.Geometry_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 
+############################################################################
+###### Noise Filters -- load here and apply in process path or before ######
+############################################################################
+#https://twiki.cern.ch/twiki/bin/viewauth/CMS/MissingETOptionalFilters
+
+#process.load('RecoMET.METFilters.CSCTightHaloFilter_cfi') #DOES NOT WORK
+# Error message:
+#Principal::getByToken: Found zero products matching all criteria
+#Looking for type: reco::BeamHaloSummary
+#Looking for module label: BeamHaloSummary
+
+#process.load('RecoMET.METFilters.eeBadScFilter_cfi') #DOES NOT WORK
+# Error message:
+#   [2] Calling event method for module EEBadScFilter/'eeBadScFilter'
+#Exception Message:
+#Principal::getByToken: Found zero products matching all criteria
+#Looking for type: edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> >
+#Looking for module label: reducedEcalRecHitsEE
+
+#process.load('RecoMET.METFilters.trackingFailureFilter_cfi') #DOES NOT WORK
+#process.goodVertices = cms.EDFilter(
+#  "VertexSelector",
+#  filter = cms.bool(False),
+#  src = cms.InputTag("offlinePrimaryVertices"),
+#  cut = cms.string("!isFake && ndof > 4 && abs(z) <= 24 && position.rho < 2")
+#)
+# Error message:
+#   [2] Calling event method for module VertexSelector/'goodVertices'
+#Exception Message:
+#Principal::getByToken: Found zero products matching all criteria
+#Looking for type: std::vector<reco::Vertex>
+#Looking for module label: offlinePrimaryVertice
+
+process.load('RecoMET.METFilters.hcalLaserEventFilter_cfi')
+process.load('RecoMET.METFilters.EcalDeadCellTriggerPrimitiveFilter_cfi')
+process.load('CommonTools/RecoAlgos/HBHENoiseFilter_cfi')
+
+
 ## ----------------- Global Tag ------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
@@ -392,8 +430,18 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 
 
 # ------------------ path --------------------------
-
+process.filter_step = cms.Path(
+              process.EcalDeadCellTriggerPrimitiveFilter*
+              process.hcalLaserEventFilter)
+              
+# Noise filters added first in path as recommended in Twiki
 process.p = cms.Path(
+                     #process.CSCTightHaloFilter* does not work
+                     #process.eeBadScFilter* does not work
+                     #process.goodVertices*process.trackingFailureFilter* does not work
+                     process.HBHENoiseFilter*
+                     
+                     
                      process.prunedGenParticlesDijet*
                      process.chs * 
 
@@ -428,8 +476,4 @@ process.p = cms.Path(
                      # #process.QGTagger *
 
                      process.dijets 
-                     ) 
-
-
-
-
+                     )
