@@ -259,6 +259,7 @@ void DijetTreeProducer::beginJob()
   idLAK8_            = new std::vector<int>;
   idTAK8_            = new std::vector<int>;
   massPrunedAK8_     = new std::vector<float>;
+  massSoftDropAK8_   = new std::vector<float>;
   tau1AK8_           = new std::vector<float>;
   tau2AK8_           = new std::vector<float>;
   tau3AK8_           = new std::vector<float>;
@@ -288,6 +289,7 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("idLAK8"                  ,"vector<int>"      ,&idLAK8_);   
   outTree_->Branch("idTAK8"                  ,"vector<int>"      ,&idTAK8_);   
   outTree_->Branch("jetMassPrunedAK8"        ,"vector<float>"     ,&massPrunedAK8_);
+  outTree_->Branch("jetMassSoftDropAK8"      ,"vector<float>"     ,&massSoftDropAK8_);
   outTree_->Branch("jetTau1AK8"              ,"vector<float>"     ,&tau1AK8_);
   outTree_->Branch("jetTau2AK8"              ,"vector<float>"     ,&tau2AK8_);
   outTree_->Branch("jetTau3AK8"              ,"vector<float>"     ,&tau3AK8_); 
@@ -463,6 +465,7 @@ void DijetTreeProducer::endJob()
   delete idLAK8_;
   delete idTAK8_;
   delete massPrunedAK8_;
+  delete massSoftDropAK8_;
   delete tau1AK8_;
   delete tau2AK8_;
   delete tau3AK8_;
@@ -948,7 +951,8 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
         tau1AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau1"));
         tau2AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau2"));
         tau3AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau3"));
-	massPrunedAK8_    ->push_back(ijet->userFloat("ak8PFJetsCHSPrunedLinks"));
+	massPrunedAK8_    ->push_back(ijet->userFloat("ak8PFJetsCHSPrunedMass"));
+	massSoftDropAK8_  ->push_back(ijet->userFloat("ak8PFJetsCHSSoftDropMass"));
 	chHadMultAK8_     ->push_back(chHadMult);
         chMultAK8_        ->push_back(chMult);
         neHadMultAK8_     ->push_back(neHadMult);  
@@ -1172,6 +1176,7 @@ void DijetTreeProducer::initialize()
   idLAK8_            ->clear();
   idTAK8_            ->clear();
   massPrunedAK8_     ->clear();
+  massSoftDropAK8_   ->clear();
   tau1AK8_           ->clear();
   tau2AK8_           ->clear();
   tau3AK8_           ->clear();
