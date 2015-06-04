@@ -186,8 +186,20 @@ void DijetTreeProducer::beginJob()
   phfAK4_            = new std::vector<float>;
   mufAK4_            = new std::vector<float>;
   elfAK4_            = new std::vector<float>;
+  // Hadronic forward hadrons
+  hf_hfAK4_          = new std::vector<float>;
+  // Hadronic forward electromagnetic fraction
+  hf_emfAK4_         = new std::vector<float>;
+  hofAK4_            = new std::vector<float>;
   idLAK4_            = new std::vector<int>;
   idTAK4_            = new std::vector<int>;
+  chHadMultAK4_     = new std::vector<int>;
+  chMultAK4_         = new std::vector<int>;
+  neHadMultAK4_      = new std::vector<int>;
+  neMultAK4_         = new std::vector<int>;
+  phoMultAK4_        = new std::vector<int>;
+  
+  
   //massPrunedAK4_     = new std::vector<float>;
   //tau1AK4_           = new std::vector<float>;
   //tau2AK4_           = new std::vector<float>;
@@ -208,9 +220,17 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetNhfAK4"               ,"vector<float>"     ,&nhfAK4_);
   outTree_->Branch("jetPhfAK4"               ,"vector<float>"     ,&phfAK4_);
   outTree_->Branch("jetMufAK4"               ,"vector<float>"     ,&mufAK4_);
-  outTree_->Branch("jetElfAK4"               ,"vector<float>"     ,&elfAK4_);   
+  outTree_->Branch("jetElfAK4"               ,"vector<float>"     ,&elfAK4_);
+  outTree_->Branch("jetHf_hfAK4"             ,"vector<float>"     ,&hf_hfAK4_);
+  outTree_->Branch("jetHf_emfAK4"            ,"vector<float>"    ,&hf_emfAK4_);
+  outTree_->Branch("jetHofAK4"               ,"vector<float>"    ,&hofAK4_);
   outTree_->Branch("idLAK4"                  ,"vector<int>"      ,&idLAK4_);   
   outTree_->Branch("idTAK4"                  ,"vector<int>"      ,&idTAK4_);   
+  outTree_->Branch("chHadMultAK4"          ,"vector<int>"      ,&chHadMultAK4_);   
+  outTree_->Branch("chMultAK4"              ,"vector<int>"      ,&chMultAK4_);   
+  outTree_->Branch("neHadMultAK4"           ,"vector<int>"      ,&neHadMultAK4_);   
+  outTree_->Branch("neMultAK4"              ,"vector<int>"      ,&neMultAK4_);   
+  outTree_->Branch("phoMultAK4"             ,"vector<int>"      ,&phoMultAK4_);   
   //outTree_->Branch("jetMassPrunedAK4"        ,"vector<float>"     ,&massPrunedAK4_);
   //outTree_->Branch("jetTau1AK4"              ,"vector<float>"     ,&tau1AK4_);
   //outTree_->Branch("jetTau2AK4"              ,"vector<float>"     ,&tau2AK4_);
@@ -231,6 +251,11 @@ void DijetTreeProducer::beginJob()
   phfAK8_            = new std::vector<float>;
   mufAK8_            = new std::vector<float>;
   elfAK8_            = new std::vector<float>;
+  // Hadronic forward hadrons
+  hf_hfAK8_          = new std::vector<float>;
+  // Hadronic forward photons
+  hf_emfAK8_         = new std::vector<float>;
+  hofAK8_            = new std::vector<float>;
   idLAK8_            = new std::vector<int>;
   idTAK8_            = new std::vector<int>;
   massPrunedAK8_     = new std::vector<float>;
@@ -238,6 +263,12 @@ void DijetTreeProducer::beginJob()
   tau1AK8_           = new std::vector<float>;
   tau2AK8_           = new std::vector<float>;
   tau3AK8_           = new std::vector<float>;
+  chHadMultAK8_      = new std::vector<int>;   
+  chMultAK8_         = new std::vector<int>;
+  neHadMultAK8_      = new std::vector<int>; 
+  neMultAK8_         = new std::vector<int>;
+  phoMultAK8_        = new std::vector<int>;
+ 
   //dRAK8_             = new std::vector<float>;
   outTree_->Branch("jetPtAK8"                ,"vector<float>"     ,&ptAK8_);
   outTree_->Branch("jetJecAK8"               ,"vector<float>"     ,&jecAK8_);
@@ -250,7 +281,11 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetNhfAK8"               ,"vector<float>"     ,&nhfAK8_);
   outTree_->Branch("jetPhfAK8"               ,"vector<float>"     ,&phfAK8_);
   outTree_->Branch("jetMufAK8"               ,"vector<float>"     ,&mufAK8_);
-  outTree_->Branch("jetElfAK8"               ,"vector<float>"     ,&elfAK8_);   
+  outTree_->Branch("jetElfAK8"               ,"vector<float>"     ,&elfAK8_); 
+  outTree_->Branch("jetElfAK8"               ,"vector<float>"     ,&elfAK8_);
+  outTree_->Branch("jetHf_hfAK8"             ,"vector<float>"     ,&hf_hfAK8_);
+  outTree_->Branch("jetHf_emfAK8"            ,"vector<float>"     ,&hf_emfAK8_);
+  outTree_->Branch("jetHofAK8"               ,"vector<float>"     ,&hofAK8_);
   outTree_->Branch("idLAK8"                  ,"vector<int>"      ,&idLAK8_);   
   outTree_->Branch("idTAK8"                  ,"vector<int>"      ,&idTAK8_);   
   outTree_->Branch("jetMassPrunedAK8"        ,"vector<float>"     ,&massPrunedAK8_);
@@ -259,7 +294,12 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetTau2AK8"              ,"vector<float>"     ,&tau2AK8_);
   outTree_->Branch("jetTau3AK8"              ,"vector<float>"     ,&tau3AK8_); 
   //outTree_->Branch("jetDRAK8"                ,"vector<float>"     ,&dRAK8_); 
-
+  outTree_->Branch("chHadMultAK8"          ,"vector<int>"      ,&chHadMultAK8_);   
+  outTree_->Branch("chMultAK8"              ,"vector<int>"      ,&chMultAK8_);   
+  outTree_->Branch("neHadMultAK8"           ,"vector<int>"      ,&neHadMultAK8_);   
+  outTree_->Branch("neMultAK8"              ,"vector<int>"      ,&neMultAK8_);   
+  outTree_->Branch("phoMultAK8"             ,"vector<int>"      ,&phoMultAK8_);   
+ 
   // ptCA8_             = new std::vector<float>;
   // jecCA8_            = new std::vector<float>;
   // etaCA8_            = new std::vector<float>;
@@ -390,8 +430,16 @@ void DijetTreeProducer::endJob()
   delete phfAK4_;
   delete mufAK4_;
   delete elfAK4_;
+  delete hf_hfAK4_;
+  delete hf_emfAK4_;
+  delete hofAK4_;
   delete idLAK4_;
   delete idTAK4_;
+  delete chHadMultAK4_ ;
+  delete chMultAK4_    ;
+  delete neHadMultAK4_ ;
+  delete neMultAK4_    ;
+  delete phoMultAK4_   ;
   //delete massPrunedAK4_;
   //delete tau1AK4_;
   //delete tau2AK4_;
@@ -411,6 +459,9 @@ void DijetTreeProducer::endJob()
   delete phfAK8_;
   delete mufAK8_;
   delete elfAK8_;
+  delete hf_hfAK8_;
+  delete hf_emfAK8_;
+  delete hofAK8_;
   delete idLAK8_;
   delete idTAK8_;
   delete massPrunedAK8_;
@@ -418,6 +469,12 @@ void DijetTreeProducer::endJob()
   delete tau1AK8_;
   delete tau2AK8_;
   delete tau3AK8_;
+  delete chHadMultAK8_;
+  delete chMultAK8_    ;
+  delete neHadMultAK8_ ;
+  delete neMultAK8_    ;
+  delete phoMultAK8_   ;
+
   //delete dRAK8_;
   
   // delete ptCA8_;
@@ -496,7 +553,18 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 
   edm::Handle<reco::VertexCollection> recVtxs;
   iEvent.getByLabel(srcVrtx_,recVtxs);
-  
+
+  //-------------- Event Info -----------------------------------
+  rho_    = *rho;
+  met_    = (*met)[0].et();
+  if ((*met)[0].sumEt() > 0) {
+    metSig_ = (*met)[0].et()/(*met)[0].sumEt();
+  }
+  nVtx_   = recVtxs->size();
+  run_    = iEvent.id().run();
+  evt_    = iEvent.id().event();
+  lumi_   = iEvent.id().luminosityBlock();
+
   //---------- pu -----------------------
   edm::Handle<std::vector<PileupSummaryInfo> > PupInfo;
   if (!iEvent.isRealData()) {
@@ -630,18 +698,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   bool cut_vtx = (recVtxs->size() > 0);
   
   if (cut_vtx) {
-    
-    // Event
-    rho_    = *rho;
-    met_    = (*met)[0].et();
-    if ((*met)[0].sumEt() > 0) {
-      metSig_ = (*met)[0].et()/(*met)[0].sumEt();
-    }
-    nVtx_   = recVtxs->size();
-    run_    = iEvent.id().run();
-    evt_    = iEvent.id().event();
-    lumi_   = iEvent.id().luminosityBlock();
-    
+
     // AK4
     std::vector<double> jecFactorsAK4;
     std::vector<unsigned> sortedAK4JetIdx;
@@ -681,16 +738,39 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 
       edm::View<pat::Jet>::const_iterator ijet = (jetsAK4->begin() + *i);
       double chf = ijet->chargedHadronEnergyFraction();
-      double nhf = ijet->neutralHadronEnergyFraction() + ijet->HFHadronEnergyFraction();
+      double nhf = ijet->neutralHadronEnergyFraction(); // + ijet->HFHadronEnergyFraction();
       double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
       double elf = ijet->electronEnergy()/(ijet->jecFactor(0) * ijet->energy());
       double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
+
+      double hf_hf = ijet->HFHadronEnergyFraction();
+      double hf_emf= ijet->HFEMEnergyFraction();
+      double hof   = ijet->hoEnergyFraction();
+
       int chm    = ijet->chargedHadronMultiplicity();
-      int npr    = ijet->chargedMultiplicity() + ijet->neutralMultiplicity(); 
-      float eta  = fabs(ijet->eta());
-      float pt   = ijet->correctedJet(0).pt()*jecFactorsAK4.at(*i);
-      int idL   = (npr>1 && phf<0.99 && nhf<0.99);
-      int idT   = (idL && ((eta<=2.4 && nhf<0.9 && phf<0.9 && elf<0.99 && muf<0.99 && chf>0 && chm>0) || eta>2.4));
+      
+      int chMult = ijet->chargedMultiplicity();
+      int neMult = ijet->neutralMultiplicity();
+      int npr    = chMult + neMult;
+
+      int chHadMult = chm; //ijet->chargedHadronMultiplicity();
+      int neHadMult = ijet->neutralHadronMultiplicity();
+      int phoMult = ijet->photonMultiplicity();
+      
+      // Juska's added fractions for identical JetID with recommendations
+      double nemf = ijet->neutralEmEnergyFraction();
+      double cemf = ijet->chargedEmEnergyFraction();
+      int NumConst = npr;
+
+      float eta  = ijet->eta(); // removed fabs() -Juska
+      float pt   = ijet->correctedJet(0).pt()*jecFactorsAK4.at(*i); // Is this OK? Correct corrected? -Juska
+
+      // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
+      int idL = (nhf<0.99 && nemf<0.99 && NumConst>1 && muf < 0.8) && ((fabs(eta) <= 2.4 && chf>0 && chMult>0 && cemf<0.99) || fabs(eta)>2.4);
+      int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.4 && chf>0 && chMult>0 && cemf<0.90) || fabs(eta)>2.4);
+
+       
+      
       if (pt > ptMinAK4_) {
         htAK4 += pt;
         nJetsAK4_++;
@@ -701,6 +781,9 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
         phfAK4_           ->push_back(phf);
         elfAK4_           ->push_back(elf);
         mufAK4_           ->push_back(muf);
+        hf_hfAK4_         ->push_back(hf_hf);
+        hf_emfAK4_        ->push_back(hf_emf);
+        hofAK4_           ->push_back(hof);
         jecAK4_           ->push_back(jecFactorsAK4.at(*i));
         ptAK4_            ->push_back(pt);
         phiAK4_           ->push_back(ijet->phi());
@@ -710,7 +793,12 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
         areaAK4_          ->push_back(ijet->jetArea());
 	idLAK4_           ->push_back(idL);
 	idTAK4_           ->push_back(idT);
-        //tau1AK4_          ->push_back(ijet->userFloat("NjettinessAK4:tau1"));
+	chHadMultAK4_     ->push_back(chHadMult);
+        chMultAK4_        ->push_back(chMult);
+        neHadMultAK4_     ->push_back(neHadMult);  
+        neMultAK4_        ->push_back(neMult);
+        phoMultAK4_       ->push_back(phoMult); 
+	//tau1AK4_          ->push_back(ijet->userFloat("NjettinessAK4:tau1"));
         //tau2AK4_          ->push_back(ijet->userFloat("NjettinessAK4:tau2"));
 	//cutbasedJetId_      ->push_back(ijet->userInt("pileupJetIdEvaluator:cutbasedId"));
 	//fullJetId_          ->push_back(ijet->userFloat("pileupJetIdEvaluator:fullDiscriminant"));
@@ -780,28 +868,77 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     vector<TLorentzVector> vP4AK8;
     for(std::vector<unsigned>::const_iterator i = sortedAK8JetIdx.begin(); i != sortedAK8JetIdx.end(); ++i) {
 
+      /*
       edm::View<pat::Jet>::const_iterator ijet = (jetsAK8->begin() + *i);
       double chf = ijet->chargedHadronEnergyFraction();
-      double nhf = ijet->neutralHadronEnergyFraction() + ijet->HFHadronEnergyFraction();
+      double nhf = ijet->neutralHadronEnergyFraction();// + ijet->HFHadronEnergyFraction();
       double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
       double elf = ijet->electronEnergy()/(ijet->jecFactor(0) * ijet->energy());
       double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
+      
+      double hf_hf = ijet->HFHadronEnergyFraction();
+      double hf_emf= ijet->HFEMEnergyFraction();
+      
       int chm    = ijet->chargedHadronMultiplicity();
       int npr    = ijet->chargedMultiplicity() + ijet->neutralMultiplicity(); 
       float eta  = fabs(ijet->eta());
       float pt   = ijet->correctedJet(0).pt()*jecFactorsAK8.at(*i);
       int idL   = (npr>1 && phf<0.99 && nhf<0.99);
       int idT   = (idL && ((eta<=2.4 && nhf<0.9 && phf<0.9 && elf<0.99 && muf<0.99 && chf>0 && chm>0) || eta>2.4));
+      int chHadMult = ijet->chargedHadronMultiplicity();
+      int chMult = ijet->chargedMultiplicity();
+      int neHadMult = ijet->neutralHadronMultiplicity();
+      int neMult = ijet->neutralMultiplicity();
+      int phoMult = ijet->photonMultiplicity();
+      */
+
+      edm::View<pat::Jet>::const_iterator ijet = (jetsAK8->begin() + *i);
+      double chf = ijet->chargedHadronEnergyFraction();
+      double nhf = ijet->neutralHadronEnergyFraction(); // + ijet->HFHadronEnergyFraction();
+      double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
+      double elf = ijet->electronEnergy()/(ijet->jecFactor(0) * ijet->energy());
+      double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
+
+      double hf_hf = ijet->HFHadronEnergyFraction();
+      double hf_emf= ijet->HFEMEnergyFraction();
+      double hof    = ijet->hoEnergyFraction();
+
+      int chm    = ijet->chargedHadronMultiplicity();
+      
+      int chMult = ijet->chargedMultiplicity();
+      int neMult = ijet->neutralMultiplicity();
+      int npr    = chMult + neMult;
+
+      int chHadMult = chm; //ijet->chargedHadronMultiplicity();
+      int neHadMult = ijet->neutralHadronMultiplicity();
+      int phoMult = ijet->photonMultiplicity();
+      
+      // Juska's added fractions for identical JetID with recommendations
+      double nemf = ijet->neutralEmEnergyFraction();
+      double cemf = ijet->chargedEmEnergyFraction();
+      int NumConst = npr;
+
+      float eta  = ijet->eta(); // removed fabs() -Juska
+      float pt   = ijet->correctedJet(0).pt()*jecFactorsAK8.at(*i); // Is this OK? Correct corrected? -Juska
+
+      // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
+      int idL = (nhf<0.99 && nemf<0.99 && NumConst>1 && muf < 0.8) && ((fabs(eta) <= 2.4 && chf>0 && chMult>0 && cemf<0.99) || fabs(eta)>2.4);
+      int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.4 && chf>0 && chMult>0 && cemf<0.90) || fabs(eta)>2.4);
+      
+      
       if (pt > ptMinAK8_) {
-        htAK8 += pt;
-        nJetsAK8_++;
-	
+	htAK8 += pt;
+	nJetsAK8_++;
+
         vP4AK8.push_back(TLorentzVector(ijet->correctedJet(0).px()*jecFactorsAK8.at(*i),ijet->correctedJet(0).py()*jecFactorsAK8.at(*i),ijet->correctedJet(0).pz()*jecFactorsAK8.at(*i),ijet->correctedJet(0).energy()*jecFactorsAK8.at(*i)));
         chfAK8_           ->push_back(chf);
         nhfAK8_           ->push_back(nhf);
         phfAK8_           ->push_back(phf);
         elfAK8_           ->push_back(elf);
         mufAK8_           ->push_back(muf);
+        hf_hfAK8_         ->push_back(hf_hf);
+        hf_emfAK8_        ->push_back(hf_emf);
+        hofAK8_           ->push_back(hof);
         jecAK8_           ->push_back(jecFactorsAK8.at(*i));
         ptAK8_            ->push_back(pt);
         phiAK8_           ->push_back(ijet->phi());
@@ -816,6 +953,25 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
         tau3AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau3"));
 	massPrunedAK8_    ->push_back(ijet->userFloat("ak8PFJetsCHSPrunedMass"));
 	massSoftDropAK8_  ->push_back(ijet->userFloat("ak8PFJetsCHSSoftDropMass"));
+	chHadMultAK8_     ->push_back(chHadMult);
+        chMultAK8_        ->push_back(chMult);
+        neHadMultAK8_     ->push_back(neHadMult);  
+        neMultAK8_        ->push_back(neMult);
+        phoMultAK8_       ->push_back(phoMult); 
+	
+	
+	//---- match with the pruned jet collection -----
+        // double dRmin(1000);
+        // double auxm(0.0);
+        // for(edm::View<pat::Jet>::const_iterator ijetpr = jetsAK8->begin();ijetpr != jetsAK8->end(); ++ijetpr) { 
+        //   float dR = deltaR(ijet->eta(),ijet->phi(),ijetpr->eta(),ijetpr->phi());
+        //   if (dR < dRmin) {
+        //     auxm = ijetpr->mass();
+        //     dRmin = dR;
+        //   } 
+        // } 
+        // massPruned_->push_back(auxm);
+        // dR_->push_back(dRmin);
 	
       }
     }// jet loop  
@@ -973,10 +1129,19 @@ void DijetTreeProducer::initialize()
   phfAK4_            ->clear();
   elfAK4_            ->clear();
   mufAK4_            ->clear();
+  hf_hfAK4_             ->clear();
+  hf_emfAK4_            ->clear();
+  hofAK4_            ->clear();
   jecAK4_            ->clear();
   jecAK4_            ->clear();
   idLAK4_            ->clear();
   idTAK4_            ->clear();
+  // Juska's fix
+  chHadMultAK4_     ->clear();
+  chMultAK4_        ->clear();
+  neHadMultAK4_     ->clear();
+  neMultAK4_        ->clear();
+  phoMultAK4_        ->clear();
   //massPrunedAK4_     ->clear();
   //tau1AK4_           ->clear();
   //tau2AK4_           ->clear();
@@ -1003,6 +1168,9 @@ void DijetTreeProducer::initialize()
   phfAK8_            ->clear();
   elfAK8_            ->clear();
   mufAK8_            ->clear();
+  hf_hfAK8_             ->clear();
+  hf_emfAK8_            ->clear();
+  hofAK8_            ->clear();
   jecAK8_            ->clear();
   jecAK8_            ->clear();
   idLAK8_            ->clear();
@@ -1012,6 +1180,12 @@ void DijetTreeProducer::initialize()
   tau1AK8_           ->clear();
   tau2AK8_           ->clear();
   tau3AK8_           ->clear();
+  // Juska's fix
+  chHadMultAK8_     ->clear();
+  chMultAK8_        ->clear();
+  neHadMultAK8_     ->clear();
+  neMultAK8_        ->clear();
+  phoMultAK8_        ->clear();
   //dRAK8_             ->clear();
   
   
