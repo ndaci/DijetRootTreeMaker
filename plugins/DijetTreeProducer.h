@@ -44,7 +44,7 @@ class DijetTreeProducer : public edm::EDAnalyzer
     FactorizedJetCorrector *JetCorrectorAK8;
     //---- configurable parameters --------   
     double ptMinAK4_,ptMinAK8_,ptMinCA8_;//mjjMin_,,dEtaMax_;
-    edm::InputTag srcJetsAK4_,srcJetsAK8_, srcJetsAK8SoftDrop_, srcJetsCA8_,srcRho_,srcMET_,srcPU_,srcVrtx_, srcGenInfo_, srcGenJetsAK4_, srcGenJetsAK8_, srcGenJetsCA8_, srcPrunedGenParticles_;
+    edm::InputTag srcJetsAK4_,srcJetsAK8_, srcJetsCA8_,srcRho_,srcMET_,srcPU_,srcVrtx_, srcGenInfo_, srcGenJetsAK4_, srcGenJetsAK8_, srcGenJetsCA8_, srcPrunedGenParticles_;
     edm::Service<TFileService> fs_;
     TTree *outTree_; 
     //---- TRIGGER -------------------------
