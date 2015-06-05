@@ -198,7 +198,9 @@ void DijetTreeProducer::beginJob()
   neHadMultAK4_      = new std::vector<int>;
   neMultAK4_         = new std::vector<int>;
   phoMultAK4_        = new std::vector<int>;
-  
+  ptAK4matchCaloJet_  = new std::vector<float>;
+  emfAK4matchCaloJet_ = new std::vector<float>;
+
   
   //massPrunedAK4_     = new std::vector<float>;
   //tau1AK4_           = new std::vector<float>;
@@ -238,6 +240,9 @@ void DijetTreeProducer::beginJob()
   //outTree_->Branch("cutbasedJetId"             ,"vector<float>"     ,&cutbasedJetId_);
   //outTree_->Branch("fullJetId"                 ,"vector<float>"     ,&fullJetId_);
   //outTree_->Branch("fullJetDiscriminant"       ,"vector<float>"     ,&fullJetDiscriminant_);
+  outTree_->Branch("jetPtAK4matchCaloJet"                ,"vector<float>"     ,&ptAK4matchCaloJet_);
+  outTree_->Branch("jetEmfAK4matchCaloJet"               ,"vector<float>"     ,&emfAK4matchCaloJet_);
+
 
   ptAK8_             = new std::vector<float>;
   jecAK8_            = new std::vector<float>;
@@ -440,6 +445,8 @@ void DijetTreeProducer::endJob()
   delete neHadMultAK4_ ;
   delete neMultAK4_    ;
   delete phoMultAK4_   ;
+  delete ptAK4matchCaloJet_;
+  delete emfAK4matchCaloJet_;
   //delete massPrunedAK4_;
   //delete tau1AK4_;
   //delete tau2AK4_;
@@ -806,6 +813,10 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 	//fullJetId_          ->push_back(ijet->userFloat("pileupJetIdEvaluator:fullDiscriminant"));
 	//fullJetDiscriminant_->push_back(ijet->userInt("pileupJetIdEvaluator:fullId"));
 
+	//matched (dR<0.4) CaloJet
+        ptAK4matchCaloJet_            ->push_back(ijet->userFloat("caloJetMap:pt"));
+        emfAK4matchCaloJet_           ->push_back(ijet->userFloat("caloJetMap:emEnergyFraction")); //emEnergyFraction=(1-hadEnergyFraction) 
+
 	//---- match with the pruned jet collection -----
         // already in jettoolbok (?)
 
@@ -1150,7 +1161,8 @@ void DijetTreeProducer::initialize()
   //cutbasedJetId_      ->clear();
   //fullJetId_          ->clear();
   //fullJetDiscriminant_->clear();
-  
+  ptAK4matchCaloJet_  ->clear();
+  emfAK4matchCaloJet_ ->clear(); 
   
   
   nJetsAK8_          = -999;

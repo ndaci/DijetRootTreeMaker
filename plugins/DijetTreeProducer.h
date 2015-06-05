@@ -68,6 +68,7 @@ class DijetTreeProducer : public edm::EDAnalyzer
     std::vector<float> *hf_hfAK4_, *hf_emfAK4_, *hofAK4_;
     //std::vector<float> *cutbasedJetId_, *fullJetId_, *fullJetDiscriminant_;
     std::vector<float> *ptGenAK4_,*etaGenAK4_,*phiGenAK4_,*massGenAK4_,*energyGenAK4_;
+    std::vector<float> *ptAK4matchCaloJet_,*emfAK4matchCaloJet_;
 
     std::vector<float> *ptAK8_,*jecAK8_,*etaAK8_,*phiAK8_,*massAK8_,*energyAK8_,*areaAK8_,*chfAK8_,*nhfAK8_,*phfAK8_,*elfAK8_,*mufAK8_, *massPrunedAK8_, *massSoftDropAK8_, *dR_AK8_,*tau1AK8_,*tau2AK8_, *tau3AK8_ ;
     std::vector<int> *idLAK8_,*idTAK8_, *chHadMultAK8_, *chMultAK8_, *neHadMultAK8_, *neMultAK8_, *phoMultAK8_;
