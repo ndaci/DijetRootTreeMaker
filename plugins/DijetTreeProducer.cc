@@ -534,12 +534,12 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   // edm::View<pat::Jet> pat_jetsCA8 = *jetsCA8;
 
   edm::Handle<edm::View<reco::GenJet> > handle_genJetsAK4;
-  iEvent.getByLabel(srcGenJetsAK4_,handle_genJetsAK4);
-  edm::View<reco::GenJet> genJetsAK4 = *handle_genJetsAK4;
-  
+  if (!iEvent.isRealData())
+    iEvent.getByLabel(srcGenJetsAK4_,handle_genJetsAK4);
+
   edm::Handle<edm::View<reco::GenJet> > handle_genJetsAK8;
-  iEvent.getByLabel(srcGenJetsAK8_,handle_genJetsAK8);
-  edm::View<reco::GenJet> genJetsAK8 = *handle_genJetsAK8;
+  if (!iEvent.isRealData())
+    iEvent.getByLabel(srcGenJetsAK8_,handle_genJetsAK8);
   
   // edm::Handle<edm::View<reco::GenJet> > handle_genJetsCA8;
   // iEvent.getByLabel(srcGenJetsCA8_,handle_genJetsCA8);
@@ -594,18 +594,19 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   
   //-------------- Gen Event Info -----------------------------------
   if (!iEvent.isRealData()) {
+
     edm::Handle<GenEventInfoProduct> genEvtInfo;
     iEvent.getByLabel(srcGenInfo_,genEvtInfo);
     
     if( !genEvtInfo.isValid() ) {
       edm::LogInfo("GenEvtInfo") << "ERROR: genEvtInfo not valid! " << genEvtInfo;
     }
+
     if( genEvtInfo.isValid() ) {
       edm::LogInfo("GenEvtInfo") << "Successfully obtained " << genEvtInfo;
       ptHat_ = (genEvtInfo->hasBinningValues() ? genEvtInfo->binningValues()[0] : -999.);
       processID_ = genEvtInfo->signalProcessID();
-      weight_ = genEvtInfo->weight();      
-      
+      weight_ = genEvtInfo->weight();            
     }
     
 
@@ -618,7 +619,8 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 
 
     edm::Handle<reco::GenParticleCollection> prunedGenParticles;
-    iEvent.getByLabel(srcPrunedGenParticles_, prunedGenParticles);
+    if (!iEvent.isRealData())
+      iEvent.getByLabel(srcPrunedGenParticles_, prunedGenParticles);
     
 
     // std::cout << "-------------------------------" << endl;
@@ -1034,12 +1036,13 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     
     //-------------- Gen Jets Info -----------------------------------
 
-    
-    nGenJetsAK4_ = 0;
-    vector<TLorentzVector> vP4GenAK4;
     if (!iEvent.isRealData()) {
-      for(edm::View<reco::GenJet>::const_iterator ijet = genJetsAK4.begin();ijet != genJetsAK4.end(); ++ijet) { 
-	
+
+      //AK4
+      nGenJetsAK4_ = 0;
+      vector<TLorentzVector> vP4GenAK4;
+      edm::View<reco::GenJet> genJetsAK4 = *handle_genJetsAK4; 
+      for(edm::View<reco::GenJet>::const_iterator ijet = genJetsAK4.begin();ijet != genJetsAK4.end(); ++ijet) { 	
 	//float eta  = fabs(ijet->eta());
 	float pt   = ijet->pt();
 	if (pt > ptMinAK4_) {
@@ -1055,10 +1058,9 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       
       //AK8
       nGenJetsAK8_ = 0;
-      vector<TLorentzVector> vP4GenAK8;
-      
-      for(edm::View<reco::GenJet>::const_iterator ijet = genJetsAK8.begin();ijet != genJetsAK8.end(); ++ijet) { 
-	
+      vector<TLorentzVector> vP4GenAK8;      
+      edm::View<reco::GenJet> genJetsAK8 = *handle_genJetsAK8;      
+      for(edm::View<reco::GenJet>::const_iterator ijet = genJetsAK8.begin();ijet != genJetsAK8.end(); ++ijet) { 	
 	//float eta  = fabs(ijet->eta());
 	float pt   = ijet->pt();
 	if (pt > ptMinAK8_) {
@@ -1073,11 +1075,8 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       }// jet loop  
       
       // nGenJetsCA8_ = 0;
-      // vector<TLorentzVector> vP4GenCA8;
-      
-      // for(edm::View<pat::Jet>::const_iterator ijet = pat_jetsCA8.begin();ijet != pat_jetsCA8.end(); ++ijet) { 
-	
-	
+      // vector<TLorentzVector> vP4GenCA8;      
+      // for(edm::View<pat::Jet>::const_iterator ijet = pat_jetsCA8.begin();ijet != pat_jetsCA8.end(); ++ijet) { 		
       // 	//float eta  = fabs(ijet->eta());
       // 	float pt   = ijet->pt();
       // 	if (pt > ptMinCA8_) {
@@ -1090,7 +1089,9 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       // 	  energyGenCA8_        ->push_back(ijet->energy());
       // 	}
       // }// jet loop  
+
     }//if MC 
+
   }// if vtx
   
   
@@ -1224,6 +1225,9 @@ void DijetTreeProducer::initialize()
   ptHat_ = -999; 
   processID_ = -999; 
   weight_ = -999;
+
+  nGenJetsAK4_ = -999;
+  nGenJetsAK8_ = -999;
   
   ptGenAK4_    ->clear();
   phiGenAK4_   ->clear();
