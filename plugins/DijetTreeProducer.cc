@@ -287,7 +287,6 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetPhfAK8"               ,"vector<float>"     ,&phfAK8_);
   outTree_->Branch("jetMufAK8"               ,"vector<float>"     ,&mufAK8_);
   outTree_->Branch("jetElfAK8"               ,"vector<float>"     ,&elfAK8_); 
-  outTree_->Branch("jetElfAK8"               ,"vector<float>"     ,&elfAK8_);
   outTree_->Branch("jetHf_hfAK8"             ,"vector<float>"     ,&hf_hfAK8_);
   outTree_->Branch("jetHf_emfAK8"            ,"vector<float>"     ,&hf_emfAK8_);
   outTree_->Branch("jetHofAK8"               ,"vector<float>"     ,&hofAK8_);
