@@ -876,17 +876,17 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 	//matched (dR<0.4) CaloJet
         ptAK4matchCaloJet_            ->push_back(ijet->userFloat("caloJetMap:pt"));
         emfAK4matchCaloJet_           ->push_back(ijet->userFloat("caloJetMap:emEnergyFraction")); //emEnergyFraction=(1-hadEnergyFraction) 
-        
+
 	double dRminCalo(1000);
         edm::View<reco::CaloJet>::const_iterator matchCaloJet;
         for(edm::View<reco::CaloJet>::const_iterator ijetpr = jetsAK4Calo->begin();ijetpr != jetsAK4Calo->end(); ++ijetpr) { 
           float dR = deltaR(ijet->eta(),ijet->phi(),ijetpr->eta(),ijetpr->phi());
-          if (dR < dRminCalo && dR < 0.4) {
+          if (dR < dRminCalo && dR < 0.2) {
             matchCaloJet = ijetpr;
             dRminCalo = dR;
           } 
         }
-        if(jetsAK4Calo.isValid() && matchCaloJet>=jetsAK4Calo->begin() && matchCaloJet<jetsAK4Calo->end())
+        if(jetsAK4Calo.isValid() && matchCaloJet>=jetsAK4Calo->begin() && matchCaloJet<jetsAK4Calo->end() && matchCaloJet->pt() > ptMinAK4_)
         {
           ptAK4Calo_            ->push_back(matchCaloJet->pt());
           jecAK4Calo_           ->push_back(1);
@@ -910,12 +910,12 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
         edm::View<reco::Jet>::const_iterator matchPFClusterJet;
         for(edm::View<reco::Jet>::const_iterator ijetpr = jetsAK4PFCluster->begin();ijetpr != jetsAK4PFCluster->end(); ++ijetpr) { 
           float dR = deltaR(ijet->eta(),ijet->phi(),ijetpr->eta(),ijetpr->phi());
-          if (dR < dRminPFCluster && dR < 0.4) {
+          if (dR < dRminPFCluster && dR < 0.2) {
             matchPFClusterJet = ijetpr;
             dRminPFCluster = dR;
           } 
         }
-        if(jetsAK4PFCluster.isValid() && matchPFClusterJet>=jetsAK4PFCluster->begin() && matchPFClusterJet<jetsAK4PFCluster->end())
+        if(jetsAK4PFCluster.isValid() && matchPFClusterJet>=jetsAK4PFCluster->begin() && matchPFClusterJet<jetsAK4PFCluster->end() && matchPFClusterJet->pt() > ptMinAK4_)
         {
           ptAK4PFCluster_            ->push_back(matchPFClusterJet->pt());
           jecAK4PFCluster_           ->push_back(1);
@@ -935,8 +935,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
           areaAK4PFCluster_          ->push_back(-999);
           emfAK4PFCluster_           ->push_back(-999);
         }
-      }// matching with pruned jets
-
+       }
 
     }// jet loop  
     htAK4_     = htAK4;
@@ -1267,6 +1266,23 @@ void DijetTreeProducer::initialize()
   ptAK4matchCaloJet_  ->clear();
   emfAK4matchCaloJet_ ->clear(); 
   
+  ptAK4Calo_             ->clear();
+  etaAK4Calo_            ->clear();
+  phiAK4Calo_            ->clear();
+  massAK4Calo_           ->clear();
+  energyAK4Calo_         ->clear();
+  areaAK4Calo_           ->clear();
+  jecAK4Calo_            ->clear();
+  emfAK4Calo_            ->clear();
+  
+  ptAK4PFCluster_             ->clear();
+  etaAK4PFCluster_            ->clear();
+  phiAK4PFCluster_            ->clear();
+  massAK4PFCluster_           ->clear();
+  energyAK4PFCluster_         ->clear();
+  areaAK4PFCluster_           ->clear();
+  jecAK4PFCluster_            ->clear();
+  emfAK4PFCluster_            ->clear();
   
   nJetsAK8_          = -999;
   htAK8_             = -999;
