@@ -111,8 +111,8 @@ if runOnAOD:
   from PhysicsTools.PatAlgos.slimming.miniAOD_tools import miniAOD_customizeAllData 
   process = miniAOD_customizeAllData(process)
 
-### RUN PFCLUSTERJETS
 if runOnRECO:
+### RUN PFCLUSTERJETS
   process.load("RecoParticleFlow.PFClusterProducer.particleFlowCluster_cff")
   process.load("RecoLocalCalo.HcalRecAlgos.hcalRecAlgoESProd_cfi")
   process.load("RecoLocalCalo.EcalRecAlgos.EcalSeverityLevelESProducer_cfi")
@@ -135,6 +135,7 @@ if runOnRECO:
   process.pfClusterRefsForJets = cms.EDProducer("PFClusterRefCandidateMerger",
     src = cms.VInputTag("pfClusterRefsForJetsHCAL", "pfClusterRefsForJetsECAL", "pfClusterRefsForJetsHF", "pfClusterRefsForJetsHO")
   )
+  process.load( "RecoJets.JetProducers.ak4PFClusterJets_cfi" )
   process.pfClusterRefsForJets_step = cms.Sequence(
    process.particleFlowRecHitECAL*
    process.particleFlowRecHitHBHE*
@@ -146,14 +147,97 @@ if runOnRECO:
    process.particleFlowClusterHCAL*
    process.particleFlowClusterHF*
    process.particleFlowClusterHO*
-
    process.pfClusterRefsForJetsHCAL*
    process.pfClusterRefsForJetsECAL*
    process.pfClusterRefsForJetsHF*
    process.pfClusterRefsForJetsHO*
-   process.pfClusterRefsForJets
+   process.pfClusterRefsForJets*
+   process.ak4PFClusterJets
   )
-  process.load( "RecoJets.JetProducers.ak4PFClusterJets_cfi" )
+### RUN PFCALOJETS
+  ############ need the following setup when running in <CMSSW_7_5_X:
+  # git cms-addpkg RecoParticleFlow/PFProducer
+  # git cherry-pick af5c1ba33e88b3be627c262eb93d678f9f70e729
+
+  process.hltParticleFlowBlock = cms.EDProducer("PFBlockProducer",
+    debug = cms.untracked.bool(False),
+    verbose = cms.untracked.bool(False),
+    elementImporters = cms.VPSet(
+        cms.PSet(
+            source = cms.InputTag("particleFlowClusterECALUncorrected"), #we use uncorrected
+            importerName = cms.string('GenericClusterImporter')
+        ),
+        cms.PSet(
+            source = cms.InputTag("particleFlowClusterHCAL"),
+            importerName = cms.string('GenericClusterImporter')
+        ),
+        cms.PSet(
+            source = cms.InputTag("particleFlowClusterHO"),
+            importerName = cms.string('GenericClusterImporter')
+        ),
+        cms.PSet(
+            source = cms.InputTag("particleFlowClusterHF"),
+            importerName = cms.string('GenericClusterImporter')
+        )
+    ),
+    linkDefinitions = cms.VPSet(
+        cms.PSet(
+            linkType = cms.string('ECAL:HCAL'),
+            useKDTree = cms.bool(False),
+            #linkerName = cms.string('ECALAndHCALLinker')
+            linkerName = cms.string('ECALAndHCALCaloJetLinker') #new ECal and HCal Linker for PFCaloJets
+        ),
+        cms.PSet(
+            linkType = cms.string('HCAL:HO'),
+            useKDTree = cms.bool(False),
+            linkerName = cms.string('HCALAndHOLinker')
+        ),
+        cms.PSet(
+            linkType = cms.string('HFEM:HFHAD'),
+            useKDTree = cms.bool(False),
+            linkerName = cms.string('HFEMAndHFHADLinker')
+        ),
+        cms.PSet(
+            linkType = cms.string('ECAL:ECAL'),
+            useKDTree = cms.bool(False),
+            linkerName = cms.string('ECALAndECALLinker')
+        )
+     )
+  )
+  from RecoParticleFlow.PFProducer.particleFlow_cfi import particleFlowTmp
+  process.hltParticleFlow = particleFlowTmp.clone(
+    GedPhotonValueMap = cms.InputTag(""),
+    useEGammaFilters = cms.bool(False),
+    useEGammaElectrons = cms.bool(False), 
+    useEGammaSupercluster = cms.bool(False),
+    rejectTracks_Step45 = cms.bool(False),
+    usePFNuclearInteractions = cms.bool(False),  
+    blocks = cms.InputTag("hltParticleFlowBlock"), 
+    egammaElectrons = cms.InputTag(""),
+    useVerticesForNeutral = cms.bool(False),
+    PFEGammaCandidates = cms.InputTag(""),
+    useProtectionsForJetMET = cms.bool(False),
+    usePFConversions = cms.bool(False),
+    rejectTracks_Bad = cms.bool(False),
+    muons = cms.InputTag(""),
+    postMuonCleaning = cms.bool(False),
+    usePFSCEleCalib = cms.bool(False)
+    )
+  from RecoJets.JetProducers.PFJetParameters_cfi import *
+  process.PFCaloJetParameters = PFJetParameters.clone(
+    src = cms.InputTag('hltParticleFlow')
+   )
+  from RecoJets.JetProducers.AnomalousCellParameters_cfi import *
+  process.ak4PFCaloJets = cms.EDProducer(
+    "FastjetJetProducer",
+    process.PFCaloJetParameters,
+    AnomalousCellParameters,
+    jetAlgorithm = cms.string("AntiKt"),
+    rParam       = cms.double(0.4)
+    )
+  process.pfClusterRefsForJets_step += process.hltParticleFlowBlock
+  process.pfClusterRefsForJets_step += process.hltParticleFlow
+  process.pfClusterRefsForJets_step += process.ak4PFCaloJets
 
 
 # ----------------------- Jet Tool Box  -----------------
@@ -433,6 +517,7 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   jetsAK4             = cms.InputTag('slimmedJets'), 
   jetsAK4Calo         = cms.InputTag('ak4CaloJets'), 
   jetsAK4PFCluster    = cms.InputTag('ak4PFClusterJets'), 
+  jetsAK4PFCalo    = cms.InputTag('ak4PFCaloJets'), 
   jetsAK8             = cms.InputTag('slimmedJetsAK8'),     
   rho              = cms.InputTag('fixedGridRhoFastjetAll'),
   met              = cms.InputTag('slimmedMETs'),
@@ -500,7 +585,6 @@ process.p = cms.Path()
 
 if runOnRECO:
    process.p += process.pfClusterRefsForJets_step
-   process.p += process.ak4PFClusterJets
 	      
 # Noise filters added first in path as recommended in Twiki
 
