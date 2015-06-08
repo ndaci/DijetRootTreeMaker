@@ -4,8 +4,8 @@ process = cms.Process('jetToolbox')
 
 process.load('PhysicsTools.PatAlgos.producersLayer1.patCandidates_cff')
 process.load('Configuration.EventContent.EventContent_cff')
-process.load('Configuration.StandardSequences.Geometry_cff')
-process.load('Configuration.StandardSequences.MagneticField_38T_cff')
+process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
+process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
 
 ############################################################################
 ###### Noise Filters -- load here and apply in process path or before ######
@@ -44,6 +44,10 @@ process.load('RecoMET.METFilters.hcalLaserEventFilter_cfi')
 process.load('RecoMET.METFilters.EcalDeadCellTriggerPrimitiveFilter_cfi')
 process.load('CommonTools/RecoAlgos/HBHENoiseFilter_cfi')
 
+###################################### Run on AOD instead of MiniAOD? ########
+runOnAOD=True
+###################################### Run on RECO instead of MiniAOD? ########
+runOnRECO=True
 
 ## ----------------- Global Tag ------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
@@ -55,7 +59,7 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 #process.GlobalTag.globaltag = 'PLS170_V7AN1::All'
 #process.GlobalTag.globaltag = 'PHYS14_25_V1::All'
 #process.GlobalTag.globaltag = 'MCRUN2_74_V9A::All'
-process.GlobalTag.globaltag = THISGLOBALTAG
+process.GlobalTag.globaltag = 'GR_P_V56::All'
 
 
 #--------------------- Report and output ---------------------------
@@ -70,8 +74,7 @@ process.TFileService=cms.Service("TFileService",
                                  #fileName=cms.string('dijetTree_signal_M1000.root'),
                                  #fileName=cms.string('dijetTree_signal_M8000.root'),
                                  #fileName=cms.string('dijetTree_QstarToJJ_M_3000_PHYS14.root'),
-                                 #fileName=cms.string('dijetTree_dataTest.root'),
-                                 fileName=cms.string(THISROOTFILE),
+                                 fileName=cms.string('dijetTree_dataTest.root'),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
 
@@ -99,6 +102,58 @@ process.out = cms.OutputModule('PoolOutputModule',
 
 #### NOT RUNNING OUTPUT MODULE ######                                                                                                                              
 # process.endpath = cms.EndPath(process.out)    
+
+### RUN MINIAOD SEQUENCE
+if runOnAOD:
+  from FWCore.ParameterSet.Utilities import convertToUnscheduled
+  process=convertToUnscheduled(process)
+  process.load('Configuration.StandardSequences.PAT_cff')
+  from PhysicsTools.PatAlgos.slimming.miniAOD_tools import miniAOD_customizeAllData 
+  process = miniAOD_customizeAllData(process)
+
+### RUN PFCLUSTERJETS
+if runOnRECO:
+  process.load("RecoParticleFlow.PFClusterProducer.particleFlowCluster_cff")
+  process.load("RecoLocalCalo.HcalRecAlgos.hcalRecAlgoESProd_cfi")
+  process.load("RecoLocalCalo.EcalRecAlgos.EcalSeverityLevelESProducer_cfi")
+  process.pfClusterRefsForJetsHCAL = cms.EDProducer("PFClusterRefCandidateProducer",
+    src          = cms.InputTag('particleFlowClusterHCAL'),
+    particleType = cms.string('pi+')
+  )
+  process.pfClusterRefsForJetsECAL = cms.EDProducer("PFClusterRefCandidateProducer",
+    src          = cms.InputTag('particleFlowClusterECAL'),
+    particleType = cms.string('pi+')
+  )
+  process.pfClusterRefsForJetsHF = cms.EDProducer("PFClusterRefCandidateProducer",
+    src          = cms.InputTag('particleFlowClusterHF'),
+    particleType = cms.string('pi+')
+  )
+  process.pfClusterRefsForJetsHO = cms.EDProducer("PFClusterRefCandidateProducer",
+    src          = cms.InputTag('particleFlowClusterHO'),
+    particleType = cms.string('pi+')
+  )
+  process.pfClusterRefsForJets = cms.EDProducer("PFClusterRefCandidateMerger",
+    src = cms.VInputTag("pfClusterRefsForJetsHCAL", "pfClusterRefsForJetsECAL", "pfClusterRefsForJetsHF", "pfClusterRefsForJetsHO")
+  )
+  process.pfClusterRefsForJets_step = cms.Sequence(
+   process.particleFlowRecHitECAL*
+   process.particleFlowRecHitHBHE*
+   process.particleFlowRecHitHF*
+   process.particleFlowRecHitHO*
+   process.particleFlowClusterECALUncorrected*
+   process.particleFlowClusterECAL*
+   process.particleFlowClusterHBHE*
+   process.particleFlowClusterHCAL*
+   process.particleFlowClusterHF*
+   process.particleFlowClusterHO*
+
+   process.pfClusterRefsForJetsHCAL*
+   process.pfClusterRefsForJetsECAL*
+   process.pfClusterRefsForJetsHF*
+   process.pfClusterRefsForJetsHO*
+   process.pfClusterRefsForJets
+  )
+  process.load( "RecoJets.JetProducers.ak4PFClusterJets_cfi" )
 
 
 # ----------------------- Jet Tool Box  -----------------
@@ -307,7 +362,8 @@ process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:/cmshome/santanas/CMS/data/Spring14drAODSIM__RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8__AODSIM__PU20bx25_POSTLS170_V5-v1__00000__0622C950-58E4-E311-A595-0025904B130A.root')
     #fileNames = cms.untracked.vstring('file:2CEB70D6-D918-E411-B814-003048F30422.root')    
     #fileNames = cms.untracked.vstring('file:QstarToJJ_M_4000_TuneCUETP8M1_13TeV_pythia8__MINIAODSIM__Asympt50ns_MCRUN2_74_V9A-v1__70000__AA35D1E7-FEFE-E411-B1C5-0025905B858A.root')    
-    fileNames = cms.untracked.vstring('file:miniAOD-data_test.root')    
+    #fileNames = cms.untracked.vstring('/store/data/Run2015A/Jet/AOD/PromptReco-v1/000/247/081/00000/804F6C9F-DB0C-E511-B0B6-02163E0143D9.root')
+    fileNames = cms.untracked.vstring('/store/data/Run2015A/Jet/RECO/PromptReco-v1/000/247/081/00000/EA9C98A0-E20C-E511-B59A-02163E011B58.root')
 )
 
 # #Keep statements for valueMaps (link Reco::Jets to associated quantities)
@@ -375,6 +431,8 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   # jetsAK8         = cms.InputTag('patJetsAK8PFCHS'),     
   # jetsCA8         = cms.InputTag('patJetsCA8PFCHS'),
   jetsAK4             = cms.InputTag('slimmedJets'), 
+  jetsAK4Calo         = cms.InputTag('ak4CaloJets'), 
+  jetsAK4PFCluster    = cms.InputTag('ak4PFClusterJets'), 
   jetsAK8             = cms.InputTag('slimmedJetsAK8'),     
   rho              = cms.InputTag('fixedGridRhoFastjetAll'),
   met              = cms.InputTag('slimmedMETs'),
@@ -437,17 +495,23 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 process.filter_step = cms.Path(
               process.EcalDeadCellTriggerPrimitiveFilter*
               process.hcalLaserEventFilter)
-              
+
+process.p = cms.Path()
+
+if runOnRECO:
+   process.p += process.pfClusterRefsForJets_step
+   process.p += process.ak4PFClusterJets
+	      
 # Noise filters added first in path as recommended in Twiki
-process.p = cms.Path(
+
                      #process.CSCTightHaloFilter* does not work
                      #process.eeBadScFilter* does not work
                      #process.goodVertices*process.trackingFailureFilter* does not work
-                     process.HBHENoiseFilter*
+process.p +=                      process.HBHENoiseFilter
                      
                      
                      #process.prunedGenParticlesDijet* #GENPAR REMOVED
-                     process.chs * 
+process.p +=                      process.chs
 
                      #process.slimmedGenJetsAK8 * #GENPAR REMOVED
                      
@@ -479,5 +543,4 @@ process.p = cms.Path(
                      # #process.pileupJetIdEvaluator     ##recipe not working for now
                      # #process.QGTagger *
 
-                     process.dijets 
-                     )
+process.p +=                      process.dijets

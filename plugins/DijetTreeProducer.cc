@@ -33,6 +33,8 @@ using namespace reco;
 DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg) 
 {
   srcJetsAK4_         = cfg.getParameter<edm::InputTag>             ("jetsAK4");
+  srcJetsAK4Calo_         = cfg.getParameter<edm::InputTag>             ("jetsAK4Calo");
+  srcJetsAK4PFCluster_         = cfg.getParameter<edm::InputTag>             ("jetsAK4PFCluster");
   srcJetsAK8_         = cfg.getParameter<edm::InputTag>             ("jetsAK8");
   //srcJetsCA8_         = cfg.getParameter<edm::InputTag>             ("jetsCA8");
   srcGenJetsAK4_      = cfg.getParameter<edm::InputTag>             ("genJetsAK4");
@@ -201,6 +203,23 @@ void DijetTreeProducer::beginJob()
   ptAK4matchCaloJet_  = new std::vector<float>;
   emfAK4matchCaloJet_ = new std::vector<float>;
 
+  ptAK4Calo_             = new std::vector<float>;
+  jecAK4Calo_            = new std::vector<float>;
+  etaAK4Calo_            = new std::vector<float>;
+  phiAK4Calo_            = new std::vector<float>;
+  massAK4Calo_           = new std::vector<float>;
+  energyAK4Calo_         = new std::vector<float>;
+  areaAK4Calo_           = new std::vector<float>;
+  emfAK4Calo_            = new std::vector<float>;
+
+  ptAK4PFCluster_             = new std::vector<float>;
+  jecAK4PFCluster_            = new std::vector<float>;
+  etaAK4PFCluster_            = new std::vector<float>;
+  phiAK4PFCluster_            = new std::vector<float>;
+  massAK4PFCluster_           = new std::vector<float>;
+  energyAK4PFCluster_         = new std::vector<float>;
+  areaAK4PFCluster_           = new std::vector<float>;
+  emfAK4PFCluster_            = new std::vector<float>;
   
   //massPrunedAK4_     = new std::vector<float>;
   //tau1AK4_           = new std::vector<float>;
@@ -243,6 +262,23 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetPtAK4matchCaloJet"                ,"vector<float>"     ,&ptAK4matchCaloJet_);
   outTree_->Branch("jetEmfAK4matchCaloJet"               ,"vector<float>"     ,&emfAK4matchCaloJet_);
 
+  outTree_->Branch("jetPtAK4Calo"                ,"vector<float>"     ,&ptAK4Calo_);
+  outTree_->Branch("jetJecAK4Calo"               ,"vector<float>"     ,&jecAK4Calo_);
+  outTree_->Branch("jetEtaAK4Calo"               ,"vector<float>"     ,&etaAK4Calo_);
+  outTree_->Branch("jetPhiAK4Calo"               ,"vector<float>"     ,&phiAK4Calo_);
+  outTree_->Branch("jetMassAK4Calo"              ,"vector<float>"     ,&massAK4Calo_);
+  outTree_->Branch("jetEnergyAK4Calo"            ,"vector<float>"     ,&energyAK4Calo_);
+  outTree_->Branch("jetAreaAK4Calo"              ,"vector<float>"     ,&areaAK4Calo_);
+  outTree_->Branch("jetEmfAK4Calo"               ,"vector<float>"     ,&emfAK4Calo_);
+
+  outTree_->Branch("jetPtAK4PFCluster"                ,"vector<float>"     ,&ptAK4PFCluster_);
+  outTree_->Branch("jetJecAK4PFCluster"               ,"vector<float>"     ,&jecAK4PFCluster_);
+  outTree_->Branch("jetEtaAK4PFCluster"               ,"vector<float>"     ,&etaAK4PFCluster_);
+  outTree_->Branch("jetPhiAK4PFCluster"               ,"vector<float>"     ,&phiAK4PFCluster_);
+  outTree_->Branch("jetMassAK4PFCluster"              ,"vector<float>"     ,&massAK4PFCluster_);
+  outTree_->Branch("jetEnergyAK4PFCluster"            ,"vector<float>"     ,&energyAK4PFCluster_);
+  outTree_->Branch("jetAreaAK4PFCluster"              ,"vector<float>"     ,&areaAK4PFCluster_);
+  outTree_->Branch("jetEmfAK4PFCluster"               ,"vector<float>"     ,&emfAK4PFCluster_);
 
   ptAK8_             = new std::vector<float>;
   jecAK8_            = new std::vector<float>;
@@ -453,6 +489,25 @@ void DijetTreeProducer::endJob()
   //delete cutbasedJetId_      ;
   //delete fullJetId_          ;
   //delete fullJetDiscriminant_;
+
+  delete ptAK4Calo_;
+  delete jecAK4Calo_;
+  delete etaAK4Calo_;
+  delete phiAK4Calo_;
+  delete massAK4Calo_;
+  delete energyAK4Calo_;
+  delete areaAK4Calo_;
+  delete emfAK4Calo_;
+
+  delete ptAK4PFCluster_;
+  delete jecAK4PFCluster_;
+  delete etaAK4PFCluster_;
+  delete phiAK4PFCluster_;
+  delete massAK4PFCluster_;
+  delete energyAK4PFCluster_;
+  delete areaAK4PFCluster_;
+  delete emfAK4PFCluster_;
+
   delete ptAK8_;
   delete jecAK8_;
   delete etaAK8_;
@@ -531,6 +586,12 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 
   edm::Handle<edm::View<pat::Jet> > jetsAK4;
   iEvent.getByLabel(srcJetsAK4_,jetsAK4);
+
+  edm::Handle<edm::View<reco::CaloJet> > jetsAK4Calo;
+  iEvent.getByLabel(srcJetsAK4Calo_,jetsAK4Calo);
+
+  edm::Handle<edm::View<reco::Jet> > jetsAK4PFCluster;
+  iEvent.getByLabel(srcJetsAK4PFCluster_,jetsAK4PFCluster);
 
   edm::Handle<edm::View<pat::Jet> > jetsAK8;
   iEvent.getByLabel(srcJetsAK8_,jetsAK8);
@@ -815,22 +876,65 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 	//matched (dR<0.4) CaloJet
         ptAK4matchCaloJet_            ->push_back(ijet->userFloat("caloJetMap:pt"));
         emfAK4matchCaloJet_           ->push_back(ijet->userFloat("caloJetMap:emEnergyFraction")); //emEnergyFraction=(1-hadEnergyFraction) 
-
-	//---- match with the pruned jet collection -----
-        // already in jettoolbok (?)
-
-	// double dRmin(1000);
-        // double auxm(0.0);
-        // for(edm::View<pat::Jet>::const_iterator ijetpr = jetsAK8->begin();ijetpr != jetsAK8->end(); ++ijetpr) { 
-        //   float dR = deltaR(ijet->eta(),ijet->phi(),ijetpr->eta(),ijetpr->phi());
-        //   if (dR < dRmin) {
-        //     auxm = ijetpr->mass();
-        //     dRmin = dR;
-        //   } 
-        // } 
-        // massPruned_->push_back(auxm);
-        // dR_->push_back(dRmin);
-
+        
+	double dRminCalo(1000);
+        edm::View<reco::CaloJet>::const_iterator matchCaloJet;
+        for(edm::View<reco::CaloJet>::const_iterator ijetpr = jetsAK4Calo->begin();ijetpr != jetsAK4Calo->end(); ++ijetpr) { 
+          float dR = deltaR(ijet->eta(),ijet->phi(),ijetpr->eta(),ijetpr->phi());
+          if (dR < dRminCalo && dR < 0.4) {
+            matchCaloJet = ijetpr;
+            dRminCalo = dR;
+          } 
+        }
+        if(jetsAK4Calo.isValid() && matchCaloJet>=jetsAK4Calo->begin() && matchCaloJet<jetsAK4Calo->end())
+        {
+          ptAK4Calo_            ->push_back(matchCaloJet->pt());
+          jecAK4Calo_           ->push_back(1);
+          phiAK4Calo_           ->push_back(matchCaloJet->phi());
+          etaAK4Calo_           ->push_back(matchCaloJet->eta());
+          massAK4Calo_          ->push_back(matchCaloJet->mass());
+          energyAK4Calo_        ->push_back(matchCaloJet->energy());
+          areaAK4Calo_          ->push_back(matchCaloJet->jetArea());
+          emfAK4Calo_           ->push_back(matchCaloJet->emEnergyFraction());
+        } else {
+          ptAK4Calo_            ->push_back(-999);
+          jecAK4Calo_           ->push_back(1);
+          phiAK4Calo_           ->push_back(-999);
+          etaAK4Calo_           ->push_back(-999);
+          massAK4Calo_          ->push_back(-999);
+          energyAK4Calo_        ->push_back(-999);
+          areaAK4Calo_          ->push_back(-999);
+          emfAK4Calo_           ->push_back(-999);
+        }
+	double dRminPFCluster(1000);
+        edm::View<reco::Jet>::const_iterator matchPFClusterJet;
+        for(edm::View<reco::Jet>::const_iterator ijetpr = jetsAK4PFCluster->begin();ijetpr != jetsAK4PFCluster->end(); ++ijetpr) { 
+          float dR = deltaR(ijet->eta(),ijet->phi(),ijetpr->eta(),ijetpr->phi());
+          if (dR < dRminPFCluster && dR < 0.4) {
+            matchPFClusterJet = ijetpr;
+            dRminPFCluster = dR;
+          } 
+        }
+        if(jetsAK4PFCluster.isValid() && matchPFClusterJet>=jetsAK4PFCluster->begin() && matchPFClusterJet<jetsAK4PFCluster->end())
+        {
+          ptAK4PFCluster_            ->push_back(matchPFClusterJet->pt());
+          jecAK4PFCluster_           ->push_back(1);
+          phiAK4PFCluster_           ->push_back(matchPFClusterJet->phi());
+          etaAK4PFCluster_           ->push_back(matchPFClusterJet->eta());
+          massAK4PFCluster_          ->push_back(matchPFClusterJet->mass());
+          energyAK4PFCluster_        ->push_back(matchPFClusterJet->energy());
+          areaAK4PFCluster_          ->push_back(matchPFClusterJet->jetArea());
+          emfAK4PFCluster_           ->push_back(-999);
+        } else {
+          ptAK4PFCluster_            ->push_back(-999);
+          jecAK4PFCluster_           ->push_back(1);
+          phiAK4PFCluster_           ->push_back(-999);
+          etaAK4PFCluster_           ->push_back(-999);
+          massAK4PFCluster_          ->push_back(-999);
+          energyAK4PFCluster_        ->push_back(-999);
+          areaAK4PFCluster_          ->push_back(-999);
+          emfAK4PFCluster_           ->push_back(-999);
+        }
       }// matching with pruned jets
 
 
