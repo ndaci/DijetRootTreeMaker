@@ -74,7 +74,10 @@ process.TFileService=cms.Service("TFileService",
                                  #fileName=cms.string('dijetTree_signal_M1000.root'),
                                  #fileName=cms.string('dijetTree_signal_M8000.root'),
                                  #fileName=cms.string('dijetTree_QstarToJJ_M_3000_PHYS14.root'),
-                                 fileName=cms.string('dijetTree_dataTest.root'),
+                                 #fileName=cms.string('dijetTree_data_RunQCD.root'),
+                                 fileName=cms.string('dijetTree_data_Run245155.root'),
+                                 #fileName=cms.string('dijetTree_data_Run246908.root'),
+                                 #fileName=cms.string('dijetTree_data_Run247081.root'),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
 
@@ -135,7 +138,7 @@ if runOnRECO:
   process.pfClusterRefsForJets = cms.EDProducer("PFClusterRefCandidateMerger",
     src = cms.VInputTag("pfClusterRefsForJetsHCAL", "pfClusterRefsForJetsECAL", "pfClusterRefsForJetsHF", "pfClusterRefsForJetsHO")
   )
-  process.load( "RecoJets.JetProducers.ak4PFClusterJets_cfi" )
+  process.load("RecoJets.JetProducers.ak4PFClusterJets_cfi")
   process.pfClusterRefsForJets_step = cms.Sequence(
    process.particleFlowRecHitECAL*
    process.particleFlowRecHitHBHE*
@@ -158,13 +161,13 @@ if runOnRECO:
   ############ need the following setup when running in <CMSSW_7_5_X:
   # git cms-addpkg RecoParticleFlow/PFProducer
   # git cherry-pick af5c1ba33e88b3be627c262eb93d678f9f70e729
-
   process.hltParticleFlowBlock = cms.EDProducer("PFBlockProducer",
     debug = cms.untracked.bool(False),
     verbose = cms.untracked.bool(False),
     elementImporters = cms.VPSet(
         cms.PSet(
-            source = cms.InputTag("particleFlowClusterECALUncorrected"), #we use uncorrected
+            source = cms.InputTag("particleFlowClusterECAL"),
+            #source = cms.InputTag("particleFlowClusterECALUncorrected"), #we use uncorrected
             importerName = cms.string('GenericClusterImporter')
         ),
         cms.PSet(
@@ -447,8 +450,153 @@ process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:2CEB70D6-D918-E411-B814-003048F30422.root')    
     #fileNames = cms.untracked.vstring('file:QstarToJJ_M_4000_TuneCUETP8M1_13TeV_pythia8__MINIAODSIM__Asympt50ns_MCRUN2_74_V9A-v1__70000__AA35D1E7-FEFE-E411-B1C5-0025905B858A.root')    
     #fileNames = cms.untracked.vstring('/store/data/Run2015A/Jet/AOD/PromptReco-v1/000/247/081/00000/804F6C9F-DB0C-E511-B0B6-02163E0143D9.root')
-    fileNames = cms.untracked.vstring('/store/data/Run2015A/Jet/RECO/PromptReco-v1/000/247/081/00000/EA9C98A0-E20C-E511-B59A-02163E011B58.root')
+    #fileNames = cms.untracked.vstring('/store/data/Run2015A/Jet/RECO/PromptReco-v1/000/247/081/00000/EA9C98A0-E20C-E511-B59A-02163E011B58.root')
+fileNames = cms.untracked.vstring(
+'/store/data/Commissioning2015/MinimumBias/RECO/PromptReco-v1/000/245/155/00000/0A4A9D19-CC00-E511-B426-02163E01454B.root',
+'/store/data/Commissioning2015/MinimumBias/RECO/PromptReco-v1/000/245/155/00000/18183AC8-CC00-E511-8313-02163E014338.root',
+'/store/data/Commissioning2015/MinimumBias/RECO/PromptReco-v1/000/245/155/00000/34F0B9F6-D400-E511-A707-02163E01422C.root',
+'/store/data/Commissioning2015/MinimumBias/RECO/PromptReco-v1/000/245/155/00000/44361EC3-CB00-E511-AEDD-02163E014100.root',
+'/store/data/Commissioning2015/MinimumBias/RECO/PromptReco-v1/000/245/155/00000/74BF29D0-CC00-E511-873C-02163E014218.root',
+'/store/data/Commissioning2015/MinimumBias/RECO/PromptReco-v1/000/245/155/00000/7C4EDB4E-CE00-E511-B1A9-02163E0135A8.root',
+'/store/data/Commissioning2015/MinimumBias/RECO/PromptReco-v1/000/245/155/00000/84DFF492-D700-E511-9625-02163E0146A9.root',
+'/store/data/Commissioning2015/MinimumBias/RECO/PromptReco-v1/000/245/155/00000/908B7240-CC00-E511-9590-02163E014682.root',
+'/store/data/Commissioning2015/MinimumBias/RECO/PromptReco-v1/000/245/155/00000/B8BCD533-CC00-E511-AAFA-02163E011DDC.root',
+'/store/data/Commissioning2015/MinimumBias/RECO/PromptReco-v1/000/245/155/00000/B8C6E2E8-CD00-E511-A8CB-02163E01355F.root',
+'/store/data/Commissioning2015/MinimumBias/RECO/PromptReco-v1/000/245/155/00000/BAE71A7C-CB00-E511-B250-02163E0142DC.root',
+'/store/data/Commissioning2015/MinimumBias/RECO/PromptReco-v1/000/245/155/00000/C66D433E-CC00-E511-A025-02163E013976.root',
+'/store/data/Commissioning2015/MinimumBias/RECO/PromptReco-v1/000/245/155/00000/D4B470AC-CC00-E511-9548-02163E014719.root',
+'/store/data/Commissioning2015/MinimumBias/RECO/PromptReco-v1/000/245/155/00000/F6608E71-D000-E511-93A0-02163E011D60.root',
 )
+)
+fileNames = cms.untracked.vstring(
+'/store/relval/CMSSW_7_4_4/RelValQCD_FlatPt_15_3000HS_13/GEN-SIM-RECO/MCRUN2_740TV1_0Tv2-v1/00000/004451DD-E907-E511-8379-0025905AA9CC.root',
+'/store/relval/CMSSW_7_4_4/RelValQCD_FlatPt_15_3000HS_13/GEN-SIM-RECO/MCRUN2_740TV1_0Tv2-v1/00000/1224482F-DC07-E511-88FD-0025905A605E.root',
+'/store/relval/CMSSW_7_4_4/RelValQCD_FlatPt_15_3000HS_13/GEN-SIM-RECO/MCRUN2_740TV1_0Tv2-v1/00000/2ADC4CF1-DB07-E511-B9CD-003048FFD760.root',
+'/store/relval/CMSSW_7_4_4/RelValQCD_FlatPt_15_3000HS_13/GEN-SIM-RECO/MCRUN2_740TV1_0Tv2-v1/00000/346D28AC-DC07-E511-B413-0025905A497A.root',
+'/store/relval/CMSSW_7_4_4/RelValQCD_FlatPt_15_3000HS_13/GEN-SIM-RECO/MCRUN2_740TV1_0Tv2-v1/00000/5AEBFB42-E707-E511-AFDC-0025905A6056.root',
+'/store/relval/CMSSW_7_4_4/RelValQCD_FlatPt_15_3000HS_13/GEN-SIM-RECO/MCRUN2_740TV1_0Tv2-v1/00000/5CE63EA4-DC07-E511-8F07-0025905A6110.root',
+'/store/relval/CMSSW_7_4_4/RelValQCD_FlatPt_15_3000HS_13/GEN-SIM-RECO/MCRUN2_740TV1_0Tv2-v1/00000/6A9EE3C3-ED07-E511-B4C4-0025905A6118.root',
+'/store/relval/CMSSW_7_4_4/RelValQCD_FlatPt_15_3000HS_13/GEN-SIM-RECO/MCRUN2_740TV1_0Tv2-v1/00000/76FBE3E3-DC07-E511-B158-0025905A609A.root',
+'/store/relval/CMSSW_7_4_4/RelValQCD_FlatPt_15_3000HS_13/GEN-SIM-RECO/MCRUN2_740TV1_0Tv2-v1/00000/DCD19734-DD07-E511-A156-0025905A60CE.root',
+'/store/relval/CMSSW_7_4_4/RelValQCD_FlatPt_15_3000HS_13/GEN-SIM-RECO/MCRUN2_740TV1_0Tv2-v1/00000/F6156231-EA07-E511-A1D0-00259059642A.root',
+'/store/relval/CMSSW_7_4_4/RelValQCD_FlatPt_15_3000HS_13/GEN-SIM-RECO/MCRUN2_740TV1_0Tv2-v1/00000/FCFD84E8-DB07-E511-A6C1-003048FFD79C.root',
+)
+fileNames = cms.untracked.vstring(
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/04C73F4E-320B-E511-9820-02163E01374A.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/04C9C349-2E0B-E511-B2D7-02163E01184E.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/08BE08AF-490B-E511-8357-02163E01410A.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/0C71723A-390B-E511-9EFD-02163E01365C.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/16B05D7A-380B-E511-A925-02163E01446F.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/1816AE9A-1E0B-E511-B799-02163E01410A.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/18402E98-3A0B-E511-A447-02163E013837.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/1AA3B0D1-140B-E511-B89F-02163E011D41.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/1C988818-3B0B-E511-B180-02163E01374A.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/1E7689B5-350B-E511-9302-02163E0141D2.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/1E7F85B7-2E0B-E511-B580-02163E014146.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/1EBE0646-300B-E511-B016-02163E01365F.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/205EFAEA-360B-E511-888F-02163E013837.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/221CEB34-320B-E511-AF60-02163E0136A3.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/22B6EE97-360B-E511-BA44-02163E0121C5.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/24936509-A10B-E511-A095-02163E01432F.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/24CB9CB3-320B-E511-9691-02163E0141D2.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/284EC9D9-2B0B-E511-A74E-02163E01186C.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/2A5E6674-4B0B-E511-AD22-02163E0145D2.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/2C1F0FE6-540B-E511-B661-02163E0143EB.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/2C6E5651-350B-E511-8C76-02163E0138D3.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/2C8AC5B4-3C0B-E511-B783-02163E01429D.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/2E5DBA3B-320B-E511-ADBD-02163E011D25.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/30833ECA-2E0B-E511-912A-02163E012BE0.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/329066C0-2E0B-E511-85E2-02163E013613.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/32BFD97C-2F0B-E511-894F-02163E014110.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/32DA01BB-2B0B-E511-8425-02163E0142E6.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/344D6112-2D0B-E511-9C0E-02163E014349.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/3646A6A8-380B-E511-BCF9-02163E013614.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/3800665D-210B-E511-B8A7-02163E013826.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/3C47EB36-590B-E511-8699-02163E0141B9.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/3C6948BA-330B-E511-8190-02163E01288E.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/3C97665B-370B-E511-9297-02163E011ACE.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/3E233BDA-2D0B-E511-B36B-02163E014613.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/3E5B07C3-450B-E511-9D74-02163E0142BC.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/40712BDC-180B-E511-AC6D-02163E01288E.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/422DBA7B-400B-E511-8EB9-02163E0136B3.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/427E56CF-180B-E511-BB45-02163E0145F4.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/42AD048E-3B0B-E511-A10D-02163E0121DA.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/42DC1231-1A0B-E511-9180-02163E01257B.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/46DD66DC-380B-E511-8691-02163E0136C3.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/481E76B7-2E0B-E511-BE82-02163E0133DC.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/54FC7C61-340B-E511-967F-02163E0142D7.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/5ADB5ED2-2E0B-E511-A88C-02163E013729.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/5C4EA8C8-2E0B-E511-B99F-02163E01365F.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/5EEC6712-300B-E511-99D7-02163E012551.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/6046FE45-320B-E511-B260-02163E012AA9.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/66DF374D-1B0B-E511-B1A5-02163E013860.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/6851A60C-4C0B-E511-8B8E-02163E01383E.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/68992D28-480B-E511-995B-02163E012AA9.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/6AFC8165-2E0B-E511-B97D-02163E011D25.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/721F2A67-2C0B-E511-90C6-02163E012808.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/76460718-320B-E511-B2EE-02163E014338.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/7E18B4A2-2F0B-E511-AC3B-02163E014613.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/7E3EE5D8-420B-E511-9F9E-02163E01180A.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/84A0ADEC-2B0B-E511-84DD-02163E011DC2.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/84CB2C1D-330B-E511-A4FB-02163E01184E.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/86949AAE-4F0B-E511-A69D-02163E0136A7.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/887E40EC-340B-E511-9F9F-02163E013570.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/8C2D92DD-340B-E511-AA8D-02163E013999.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/8CF41181-450B-E511-A781-02163E012AA9.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/8E20D2E3-300B-E511-BBD9-02163E014113.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/94AD05E4-370B-E511-AC46-02163E011DA4.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/94ADF5F2-2E0B-E511-B5FC-02163E0136A3.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/98173C0C-2F0B-E511-BFB0-02163E013604.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/987356C3-380B-E511-8627-02163E01374A.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/989275B5-3A0B-E511-97C7-02163E011A9B.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/9E366DF8-3C0B-E511-A2E3-02163E01475D.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/A0FBC451-330B-E511-B97C-02163E0143B6.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/A2970551-320B-E511-8BD1-02163E011D69.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/A41098EB-340B-E511-917C-02163E014503.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/AC370FAF-3E0B-E511-9957-02163E014565.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/AC4AAA2D-300B-E511-81C3-02163E012462.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/ACB2A196-350B-E511-9CF0-02163E012032.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/B0DB22DE-300B-E511-B743-02163E0136A3.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/B21D56FC-4A0B-E511-832E-02163E012AA9.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/B224107E-440B-E511-92BA-02163E0138EB.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/B890FB49-430B-E511-AE45-02163E012925.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/BCDF57CD-420B-E511-9D59-02163E0135CA.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/C6E518D7-350B-E511-B7BE-02163E01180A.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/C6F94C87-380B-E511-855A-02163E014166.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/C875DB32-300B-E511-B3E0-02163E0141CC.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/CAC98058-320B-E511-B55F-02163E011B55.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/CC633A46-350B-E511-8F9E-02163E0141BD.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/CE644C35-4A0B-E511-80EF-02163E012AA9.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/D2A5C31E-680B-E511-BC35-02163E011D69.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/D407BDCF-180B-E511-8EF6-02163E0141CC.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/D40E8A4A-2E0B-E511-A3AE-02163E011926.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/D4A8F746-340B-E511-8B81-02163E0119DC.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/D62DB0AF-4A0B-E511-B99D-02163E01220A.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/D6FE50D5-300B-E511-B787-02163E0136A3.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/DA9EE188-2F0B-E511-AA54-02163E01365C.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/DAE7EA2B-B70B-E511-BBD3-02163E0143EC.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/DC6C4A3F-630B-E511-81C5-02163E01220A.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/DE876ACA-180B-E511-9813-02163E01475C.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/E0937738-300B-E511-8260-02163E014565.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/E0CE74BD-310B-E511-9655-02163E013729.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/E2CC1316-300B-E511-94AE-02163E014374.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/E40307F1-320B-E511-8758-02163E013604.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/E4CF63D4-2B0B-E511-8D9E-02163E01475D.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/E6ACA1A9-2F0B-E511-87AE-02163E0121DA.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/E6E30CB1-3F0B-E511-B9D3-02163E011ACE.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/E87F8442-340B-E511-A612-02163E01383E.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/ECA05354-330B-E511-A02A-02163E0142E6.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/EE165AE1-630B-E511-B134-02163E011D69.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/F04EE6B0-320B-E511-A3A6-02163E014613.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/F0B756D1-4C0B-E511-A18C-02163E012298.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/F0E92325-450B-E511-B9FE-02163E014565.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/F2D229D9-310B-E511-917C-02163E0134D9.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/F41E61AB-570B-E511-A5C0-02163E014793.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/FAD55223-300C-E511-8E06-02163E0138C6.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/FC1660E1-3B0B-E511-98A1-02163E013518.root',
+'/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/908/00000/FC6A78FB-3C0B-E511-B34F-02163E0143FB.root',
+    )
+
 
 # #Keep statements for valueMaps (link Reco::Jets to associated quantities)
 # #You don't have to keep them to deswizzle below
