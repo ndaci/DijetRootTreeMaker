@@ -70,7 +70,7 @@ class DijetTreeProducer : public edm::EDAnalyzer
     std::vector<float> *ptGenAK4_,*etaGenAK4_,*phiGenAK4_,*massGenAK4_,*energyGenAK4_;
     std::vector<float> *ptAK4matchCaloJet_,*emfAK4matchCaloJet_;
     std::vector<float> *ptAK4Calo_,*jecAK4Calo_,*etaAK4Calo_,*phiAK4Calo_,*massAK4Calo_,*energyAK4Calo_,*areaAK4Calo_,*emfAK4Calo_;
-    std::vector<float> *ptAK4PFCluster_,*jecAK4PFCluster_,*etaAK4PFCluster_,*phiAK4PFCluster_,*massAK4PFCluster_,*energyAK4PFCluster_,*areaAK4PFCluster_,*emfAK4PFCluster_;
+    std::vector<float> *ptAK4PFCluster_,*jecAK4PFCluster_,*etaAK4PFCluster_,*phiAK4PFCluster_,*massAK4PFCluster_,*energyAK4PFCluster_,*areaAK4PFCluster_;
     std::vector<float> *ptAK4PFCalo_,*jecAK4PFCalo_,*etaAK4PFCalo_,*phiAK4PFCalo_,*massAK4PFCalo_,*energyAK4PFCalo_,*areaAK4PFCalo_,*emfAK4PFCalo_;
 
     std::vector<float> *ptAK8_,*jecAK8_,*etaAK8_,*phiAK8_,*massAK8_,*energyAK8_,*areaAK8_,*chfAK8_,*nhfAK8_,*phfAK8_,*elfAK8_,*mufAK8_, *massPrunedAK8_, *massSoftDropAK8_, *dR_AK8_,*tau1AK8_,*tau2AK8_, *tau3AK8_ ;

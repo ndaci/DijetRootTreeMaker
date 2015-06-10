@@ -220,7 +220,6 @@ void DijetTreeProducer::beginJob()
   massAK4PFCluster_           = new std::vector<float>;
   energyAK4PFCluster_         = new std::vector<float>;
   areaAK4PFCluster_           = new std::vector<float>;
-  emfAK4PFCluster_            = new std::vector<float>;
   
   ptAK4PFCalo_             = new std::vector<float>;
   jecAK4PFCalo_            = new std::vector<float>;
@@ -288,7 +287,6 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetMassAK4PFCluster"              ,"vector<float>"     ,&massAK4PFCluster_);
   outTree_->Branch("jetEnergyAK4PFCluster"            ,"vector<float>"     ,&energyAK4PFCluster_);
   outTree_->Branch("jetAreaAK4PFCluster"              ,"vector<float>"     ,&areaAK4PFCluster_);
-  outTree_->Branch("jetEmfAK4PFCluster"               ,"vector<float>"     ,&emfAK4PFCluster_);
 
   outTree_->Branch("jetPtAK4PFCalo"                ,"vector<float>"     ,&ptAK4PFCalo_);
   outTree_->Branch("jetJecAK4PFCalo"               ,"vector<float>"     ,&jecAK4PFCalo_);
@@ -525,7 +523,6 @@ void DijetTreeProducer::endJob()
   delete massAK4PFCluster_;
   delete energyAK4PFCluster_;
   delete areaAK4PFCluster_;
-  delete emfAK4PFCluster_;
 
   delete ptAK4PFCalo_;
   delete jecAK4PFCalo_;
@@ -616,13 +613,16 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   iEvent.getByLabel(srcJetsAK4_,jetsAK4);
 
   edm::Handle<edm::View<reco::CaloJet> > jetsAK4Calo;
-  iEvent.getByLabel(srcJetsAK4Calo_,jetsAK4Calo);
+  if(srcJetsAK4Calo_.label()!="")
+    iEvent.getByLabel(srcJetsAK4Calo_,jetsAK4Calo);
 
   edm::Handle<edm::View<reco::Jet> > jetsAK4PFCluster;
-  iEvent.getByLabel(srcJetsAK4PFCluster_,jetsAK4PFCluster);
+  if(srcJetsAK4PFCluster_.label()!="")
+    iEvent.getByLabel(srcJetsAK4PFCluster_,jetsAK4PFCluster);
 
   edm::Handle<edm::View<reco::PFJet> > jetsAK4PFCalo;
-  iEvent.getByLabel(srcJetsAK4PFCalo_,jetsAK4PFCalo);
+  if(srcJetsAK4PFCalo_.label()!="")
+    iEvent.getByLabel(srcJetsAK4PFCalo_,jetsAK4PFCalo);
 
   edm::Handle<edm::View<pat::Jet> > jetsAK8;
   iEvent.getByLabel(srcJetsAK8_,jetsAK8);
@@ -908,6 +908,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
         ptAK4matchCaloJet_            ->push_back(ijet->userFloat("caloJetMap:pt"));
         emfAK4matchCaloJet_           ->push_back(ijet->userFloat("caloJetMap:emEnergyFraction")); //emEnergyFraction=(1-hadEnergyFraction) 
 
+        if(srcJetsAK4Calo_.label()!="") {
 	double dRminCalo(1000);
         edm::View<reco::CaloJet>::const_iterator matchCaloJet;
         for(edm::View<reco::CaloJet>::const_iterator ijetpr = jetsAK4Calo->begin();ijetpr != jetsAK4Calo->end(); ++ijetpr) { 
@@ -937,6 +938,9 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
           areaAK4Calo_          ->push_back(-999);
           emfAK4Calo_           ->push_back(-999);
         }
+        }
+
+        if(srcJetsAK4PFCluster_.label()!="") {
 	double dRminPFCluster(1000);
         edm::View<reco::Jet>::const_iterator matchPFClusterJet;
         for(edm::View<reco::Jet>::const_iterator ijetpr = jetsAK4PFCluster->begin();ijetpr != jetsAK4PFCluster->end(); ++ijetpr) { 
@@ -955,7 +959,6 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
           massAK4PFCluster_          ->push_back(matchPFClusterJet->mass());
           energyAK4PFCluster_        ->push_back(matchPFClusterJet->energy());
           areaAK4PFCluster_          ->push_back(matchPFClusterJet->jetArea());
-          emfAK4PFCluster_           ->push_back(-999);
         } else {
           ptAK4PFCluster_            ->push_back(-999);
           jecAK4PFCluster_           ->push_back(1);
@@ -964,8 +967,10 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
           massAK4PFCluster_          ->push_back(-999);
           energyAK4PFCluster_        ->push_back(-999);
           areaAK4PFCluster_          ->push_back(-999);
-          emfAK4PFCluster_           ->push_back(-999);
         }
+        }
+
+        if(srcJetsAK4PFCalo_.label()!="") {
 	double dRminPFCalo(1000);
         edm::View<reco::PFJet>::const_iterator matchPFCaloJet;
         for(edm::View<reco::PFJet>::const_iterator ijetpr = jetsAK4PFCalo->begin();ijetpr != jetsAK4PFCalo->end(); ++ijetpr) { 
@@ -995,6 +1000,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
           areaAK4PFCalo_          ->push_back(-999);
           emfAK4PFCalo_           ->push_back(-999);
         }
+       }
        }
 
     }// jet loop  
@@ -1342,7 +1348,6 @@ void DijetTreeProducer::initialize()
   energyAK4PFCluster_         ->clear();
   areaAK4PFCluster_           ->clear();
   jecAK4PFCluster_            ->clear();
-  emfAK4PFCluster_            ->clear();
   
   ptAK4PFCalo_             ->clear();
   etaAK4PFCalo_            ->clear();
