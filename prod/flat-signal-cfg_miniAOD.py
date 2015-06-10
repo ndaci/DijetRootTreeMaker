@@ -4,8 +4,8 @@ process = cms.Process('jetToolbox')
 
 process.load('PhysicsTools.PatAlgos.producersLayer1.patCandidates_cff')
 process.load('Configuration.EventContent.EventContent_cff')
-process.load('Configuration.StandardSequences.Geometry_cff')
-process.load('Configuration.StandardSequences.MagneticField_38T_cff')
+process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
+process.load('Configuration.StandardSequences.MagneticField_38T_PostLS1_cff')
 
 ############################################################################
 ###### Noise Filters -- load here and apply in process path or before ######
