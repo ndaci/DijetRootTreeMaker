@@ -5,7 +5,7 @@ process = cms.Process('jetToolbox')
 process.load('PhysicsTools.PatAlgos.producersLayer1.patCandidates_cff')
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
-process.load('Configuration.StandardSequences.MagneticField_38T_PostLS1_cff')
+process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
 
 ############################################################################
 ###### Noise Filters -- load here and apply in process path or before ######
@@ -44,6 +44,11 @@ process.load('RecoMET.METFilters.hcalLaserEventFilter_cfi')
 process.load('RecoMET.METFilters.EcalDeadCellTriggerPrimitiveFilter_cfi')
 process.load('CommonTools/RecoAlgos/HBHENoiseFilter_cfi')
 
+###################################### Run on AOD instead of MiniAOD? ########
+runOnAOD=True
+###################################### Run on RECO instead of MiniAOD? ########
+runOnRECO=False
+if runOnRECO: runOnAOD=True
 
 ## ----------------- Global Tag ------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
@@ -99,6 +104,142 @@ process.out = cms.OutputModule('PoolOutputModule',
 #### NOT RUNNING OUTPUT MODULE ######                                                                                                                              
 # process.endpath = cms.EndPath(process.out)    
 
+
+### RUN MINIAOD SEQUENCE
+if runOnAOD:
+  from FWCore.ParameterSet.Utilities import convertToUnscheduled
+  process=convertToUnscheduled(process)
+  process.load('Configuration.StandardSequences.PAT_cff')
+  from PhysicsTools.PatAlgos.slimming.miniAOD_tools import miniAOD_customizeAllData 
+  process = miniAOD_customizeAllData(process)
+
+if runOnRECO:
+### RUN PFCLUSTERJETS
+  process.load("RecoParticleFlow.PFClusterProducer.particleFlowCluster_cff")
+  process.load("RecoLocalCalo.HcalRecAlgos.hcalRecAlgoESProd_cfi")
+  process.load("RecoLocalCalo.EcalRecAlgos.EcalSeverityLevelESProducer_cfi")
+  process.pfClusterRefsForJetsHCAL = cms.EDProducer("PFClusterRefCandidateProducer",
+    src          = cms.InputTag('particleFlowClusterHCAL'),
+    particleType = cms.string('pi+')
+  )
+  process.pfClusterRefsForJetsECAL = cms.EDProducer("PFClusterRefCandidateProducer",
+    src          = cms.InputTag('particleFlowClusterECAL'),
+    particleType = cms.string('pi+')
+  )
+  process.pfClusterRefsForJetsHF = cms.EDProducer("PFClusterRefCandidateProducer",
+    src          = cms.InputTag('particleFlowClusterHF'),
+    particleType = cms.string('pi+')
+  )
+  process.pfClusterRefsForJetsHO = cms.EDProducer("PFClusterRefCandidateProducer",
+    src          = cms.InputTag('particleFlowClusterHO'),
+    particleType = cms.string('pi+')
+  )
+  process.pfClusterRefsForJets = cms.EDProducer("PFClusterRefCandidateMerger",
+    src = cms.VInputTag("pfClusterRefsForJetsHCAL", "pfClusterRefsForJetsECAL", "pfClusterRefsForJetsHF", "pfClusterRefsForJetsHO")
+  )
+  process.load("RecoJets.JetProducers.ak4PFClusterJets_cfi")
+  process.pfClusterRefsForJets_step = cms.Sequence(
+   process.particleFlowRecHitECAL*
+   process.particleFlowRecHitHBHE*
+   process.particleFlowRecHitHF*
+   process.particleFlowRecHitHO*
+   process.particleFlowClusterECALUncorrected*
+   process.particleFlowClusterECAL*
+   process.particleFlowClusterHBHE*
+   process.particleFlowClusterHCAL*
+   process.particleFlowClusterHF*
+   process.particleFlowClusterHO*
+   process.pfClusterRefsForJetsHCAL*
+   process.pfClusterRefsForJetsECAL*
+   process.pfClusterRefsForJetsHF*
+   process.pfClusterRefsForJetsHO*
+   process.pfClusterRefsForJets*
+   process.ak4PFClusterJets
+  )
+### RUN PFCALOJETS
+  ############ need the following setup when running in <CMSSW_7_5_X:
+  # git cms-addpkg RecoParticleFlow/PFProducer
+  # git cherry-pick af5c1ba33e88b3be627c262eb93d678f9f70e729
+  process.hltParticleFlowBlock = cms.EDProducer("PFBlockProducer",
+    debug = cms.untracked.bool(False),
+    verbose = cms.untracked.bool(False),
+    elementImporters = cms.VPSet(
+        cms.PSet(
+            source = cms.InputTag("particleFlowClusterECAL"),
+            #source = cms.InputTag("particleFlowClusterECALUncorrected"), #we use uncorrected
+            importerName = cms.string('GenericClusterImporter')
+        ),
+        cms.PSet(
+            source = cms.InputTag("particleFlowClusterHCAL"),
+            importerName = cms.string('GenericClusterImporter')
+        ),
+        cms.PSet(
+            source = cms.InputTag("particleFlowClusterHO"),
+            importerName = cms.string('GenericClusterImporter')
+        ),
+        cms.PSet(
+            source = cms.InputTag("particleFlowClusterHF"),
+            importerName = cms.string('GenericClusterImporter')
+        )
+    ),
+    linkDefinitions = cms.VPSet(
+        cms.PSet(
+            linkType = cms.string('ECAL:HCAL'),
+            useKDTree = cms.bool(False),
+            #linkerName = cms.string('ECALAndHCALLinker')
+            linkerName = cms.string('ECALAndHCALCaloJetLinker') #new ECal and HCal Linker for PFCaloJets
+        ),
+        cms.PSet(
+            linkType = cms.string('HCAL:HO'),
+            useKDTree = cms.bool(False),
+            linkerName = cms.string('HCALAndHOLinker')
+        ),
+        cms.PSet(
+            linkType = cms.string('HFEM:HFHAD'),
+            useKDTree = cms.bool(False),
+            linkerName = cms.string('HFEMAndHFHADLinker')
+        ),
+        cms.PSet(
+            linkType = cms.string('ECAL:ECAL'),
+            useKDTree = cms.bool(False),
+            linkerName = cms.string('ECALAndECALLinker')
+        )
+     )
+  )
+  from RecoParticleFlow.PFProducer.particleFlow_cfi import particleFlowTmp
+  process.hltParticleFlow = particleFlowTmp.clone(
+    GedPhotonValueMap = cms.InputTag(""),
+    useEGammaFilters = cms.bool(False),
+    useEGammaElectrons = cms.bool(False), 
+    useEGammaSupercluster = cms.bool(False),
+    rejectTracks_Step45 = cms.bool(False),
+    usePFNuclearInteractions = cms.bool(False),  
+    blocks = cms.InputTag("hltParticleFlowBlock"), 
+    egammaElectrons = cms.InputTag(""),
+    useVerticesForNeutral = cms.bool(False),
+    PFEGammaCandidates = cms.InputTag(""),
+    useProtectionsForJetMET = cms.bool(False),
+    usePFConversions = cms.bool(False),
+    rejectTracks_Bad = cms.bool(False),
+    muons = cms.InputTag(""),
+    postMuonCleaning = cms.bool(False),
+    usePFSCEleCalib = cms.bool(False)
+    )
+  from RecoJets.JetProducers.PFJetParameters_cfi import *
+  process.PFCaloJetParameters = PFJetParameters.clone(
+    src = cms.InputTag('hltParticleFlow')
+   )
+  from RecoJets.JetProducers.AnomalousCellParameters_cfi import *
+  process.ak4PFCaloJets = cms.EDProducer(
+    "FastjetJetProducer",
+    process.PFCaloJetParameters,
+    AnomalousCellParameters,
+    jetAlgorithm = cms.string("AntiKt"),
+    rParam       = cms.double(0.4)
+    )
+  process.pfClusterRefsForJets_step += process.hltParticleFlowBlock
+  process.pfClusterRefsForJets_step += process.hltParticleFlow
+  process.pfClusterRefsForJets_step += process.ak4PFCaloJets
 
 # ----------------------- Jet Tool Box  -----------------
 # ----- giulia test: do not recluster ak4 and ca8 jets to save time --------
@@ -305,7 +446,8 @@ process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:/cmshome/santanas/CMS/data/Spring14miniaod__RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8__MINIAODSIM__PU20bx25_POSTLS170_V5-v1__00000__6AACD832-3707-E411-A167-001E672489D5.root')
     #fileNames = cms.untracked.vstring('file:/cmshome/santanas/CMS/data/Spring14drAODSIM__RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8__AODSIM__PU20bx25_POSTLS170_V5-v1__00000__0622C950-58E4-E311-A595-0025904B130A.root')
     #fileNames = cms.untracked.vstring('file:2CEB70D6-D918-E411-B814-003048F30422.root')    
-    fileNames = cms.untracked.vstring('file:QstarToJJ_M_4000_TuneCUETP8M1_13TeV_pythia8__MINIAODSIM__Asympt50ns_MCRUN2_74_V9A-v1__70000__AA35D1E7-FEFE-E411-B1C5-0025905B858A.root')    
+    #fileNames = cms.untracked.vstring('file:QstarToJJ_M_4000_TuneCUETP8M1_13TeV_pythia8__MINIAODSIM__Asympt50ns_MCRUN2_74_V9A-v1__70000__AA35D1E7-FEFE-E411-B1C5-0025905B858A.root')    
+    fileNames = cms.untracked.vstring('/store/mc/RunIISpring15DR74/QstarToJJ_M_1000_TuneCUETP8M1_13TeV_pythia8/AODSIM/Asympt50ns_MCRUN2_74_V9A-v1/50000/00F85752-BCFB-E411-A29A-000F5327349C.root')
 )
 
 # #Keep statements for valueMaps (link Reco::Jets to associated quantities)
@@ -366,6 +508,18 @@ process.source = cms.Source("PoolSource",
 
 ##-------------------- User analyzer  --------------------------------
 
+if runOnAOD:
+  calo_collection='ak4CaloJets'
+else:
+  calo_collection=''
+   
+if runOnRECO:
+  cluster_collection='ak4PFClusterJets'
+  pfcalo_collection='ak4PFCaloJets'
+else:
+  cluster_collection=''
+  pfcalo_collection=''
+   
 
 process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   ## JETS/MET ########################################
@@ -373,6 +527,9 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   # jetsAK8         = cms.InputTag('patJetsAK8PFCHS'),     
   # jetsCA8         = cms.InputTag('patJetsCA8PFCHS'),
   jetsAK4             = cms.InputTag('slimmedJets'), 
+  jetsAK4Calo         = cms.InputTag(calo_collection),
+  jetsAK4PFCluster    = cms.InputTag(cluster_collection), 
+  jetsAK4PFCalo    = cms.InputTag(pfcalo_collection), 
   jetsAK8             = cms.InputTag('slimmedJetsAK8'),     
   rho              = cms.InputTag('fixedGridRhoFastjetAll'),
   met              = cms.InputTag('slimmedMETs'),
@@ -435,19 +592,24 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 process.filter_step = cms.Path(
               process.EcalDeadCellTriggerPrimitiveFilter*
               process.hcalLaserEventFilter)
+
+process.p = cms.Path()
+
+if runOnRECO:
+   process.p += process.pfClusterRefsForJets_step
               
 # Noise filters added first in path as recommended in Twiki
-process.p = cms.Path(
+
                      #process.CSCTightHaloFilter* does not work
                      #process.eeBadScFilter* does not work
                      #process.goodVertices*process.trackingFailureFilter* does not work
-                     process.HBHENoiseFilter*
+process.p +=                     process.HBHENoiseFilter
                      
                      
-                     process.prunedGenParticlesDijet*
-                     process.chs * 
+process.p +=                     process.prunedGenParticlesDijet
+process.p +=                     process.chs 
 
-                     process.slimmedGenJetsAK8 *
+process.p +=                     process.slimmedGenJetsAK8 
                      
                      #process.ak4PFJetsCHS *
                      #process.ak4GenJets *
@@ -477,5 +639,4 @@ process.p = cms.Path(
                      # #process.pileupJetIdEvaluator     ##recipe not working for now
                      # #process.QGTagger *
 
-                     process.dijets 
-                     )
+process.p +=                     process.dijets 
