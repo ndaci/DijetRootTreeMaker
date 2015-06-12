@@ -913,7 +913,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
         edm::View<reco::CaloJet>::const_iterator matchCaloJet;
         for(edm::View<reco::CaloJet>::const_iterator ijetpr = jetsAK4Calo->begin();ijetpr != jetsAK4Calo->end(); ++ijetpr) { 
           float dR = deltaR(ijet->eta(),ijet->phi(),ijetpr->eta(),ijetpr->phi());
-          if (dR < dRminCalo && dR < 0.2) {
+          if (dR < dRminCalo) {
             matchCaloJet = ijetpr;
             dRminCalo = dR;
           } 
@@ -945,7 +945,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
         edm::View<reco::Jet>::const_iterator matchPFClusterJet;
         for(edm::View<reco::Jet>::const_iterator ijetpr = jetsAK4PFCluster->begin();ijetpr != jetsAK4PFCluster->end(); ++ijetpr) { 
           float dR = deltaR(ijet->eta(),ijet->phi(),ijetpr->eta(),ijetpr->phi());
-          if (dR < dRminPFCluster && dR < 0.2) {
+          if (dR < dRminPFCluster) {
             matchPFClusterJet = ijetpr;
             dRminPFCluster = dR;
           } 
@@ -975,7 +975,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
         edm::View<reco::PFJet>::const_iterator matchPFCaloJet;
         for(edm::View<reco::PFJet>::const_iterator ijetpr = jetsAK4PFCalo->begin();ijetpr != jetsAK4PFCalo->end(); ++ijetpr) { 
           float dR = deltaR(ijet->eta(),ijet->phi(),ijetpr->eta(),ijetpr->phi());
-          if (dR < dRminPFCalo && dR < 0.2) {
+          if (dR < dRminPFCalo) {
             matchPFCaloJet = ijetpr;
             dRminPFCalo = dR;
           } 
