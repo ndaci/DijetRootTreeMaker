@@ -448,8 +448,8 @@ process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:/cmshome/santanas/CMS/data/Spring14miniaod__RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8__MINIAODSIM__PU20bx25_POSTLS170_V5-v1__00000__6AACD832-3707-E411-A167-001E672489D5.root')
     #fileNames = cms.untracked.vstring('file:/cmshome/santanas/CMS/data/Spring14drAODSIM__RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8__AODSIM__PU20bx25_POSTLS170_V5-v1__00000__0622C950-58E4-E311-A595-0025904B130A.root')
     #fileNames = cms.untracked.vstring('file:2CEB70D6-D918-E411-B814-003048F30422.root')    
-    #fileNames = cms.untracked.vstring('file:QstarToJJ_M_4000_TuneCUETP8M1_13TeV_pythia8__MINIAODSIM__Asympt50ns_MCRUN2_74_V9A-v1__70000__AA35D1E7-FEFE-E411-B1C5-0025905B858A.root')    
-    fileNames = cms.untracked.vstring('/store/data/Run2015A/Jet/AOD/PromptReco-v1/000/247/081/00000/804F6C9F-DB0C-E511-B0B6-02163E0143D9.root')
+    fileNames = cms.untracked.vstring('file:miniAOD-data_test.root')    
+    #fileNames = cms.untracked.vstring('/store/data/Run2015A/Jet/AOD/PromptReco-v1/000/247/081/00000/804F6C9F-DB0C-E511-B0B6-02163E0143D9.root')
 )
 
 # #Keep statements for valueMaps (link Reco::Jets to associated quantities)
@@ -559,7 +559,13 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 
   ## trigger ###################################
   #triggerAlias     = cms.vstring('Fat','PFHT650','PFNoPUHT650','HT750','HT550'),
-  triggerAlias     = cms.vstring('PFHT900'),
+  ##### For 0T data  #####
+  triggerAlias     = cms.vstring('L1Jet68','L1Jet52','L1Jet36','L1EG15','L1EG10','L1EG5'),
+  ##### For JetHT PD ##### 
+  #triggerAlias     = cms.vstring('PFHT800','PFHT650','PFHT600','PFHT475','PFHT400','PFHT350','PFHT300','PFHT250','PFHT200',
+  #                               'PFHT650MJJ950','PFHT650MJJ900',
+  #                               'PFJET500','PFJET450','PFJET200',
+  #                               'HT2000','HT2500'),
   triggerSelection = cms.vstring(
      #'HLT_FatDiPFJetMass750_DR1p1_Deta1p5_v*',
      #'HLT_PFHT650_v*', #giulia : commented because not found in new entuples
@@ -569,7 +575,35 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
      #'HLT_PFNoPUHT650_v*',
      #'HLT_HT750_v*',  
      #'HLT_HT550_v*'
-     'HLT_PFHT900_v*'
+     #'HLT_PFHT900_v*'
+     ### For 0T data ###
+     ###
+     'HLT_L1SingleJet68_v*',
+     'HLT_L1SingleJet52_v*',
+     'HLT_L1SingleJet36_v*',
+     'HLT_L1SingleEG15_v*',
+     'HLT_L1SingleEG10_v*',
+     'HLT_L1SingleEG5_v*',
+     ###
+     ### For JetHT PD ###
+     ###
+     #'HLT_PFHT800_v*',
+     #'HLT_PFHT650_v*',
+     #'HLT_PFHT600_v*',
+     #'HLT_PFHT475_v*',
+     #'HLT_PFHT400_v*',
+     #'HLT_PFHT350_v*',
+     #'HLT_PFHT300_v*',
+     #'HLT_PFHT250_v*',
+     #'HLT_PFHT200_v*',
+     #'HLT_PFHT650_WideJetMJJ950DEtaJJ1p5_v*',
+     #'HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v*',
+     #'HLT_PFJet500_v*',
+     #'HLT_PFJet450_v*',
+     #'HLT_PFJet200_v*',
+     #'HLT_HT2000_v*',
+     #'HLT_HT2500_v*',
+     ###
   ),
   triggerConfiguration = cms.PSet(
     hltResults            = cms.InputTag('TriggerResults','','HLT'),
