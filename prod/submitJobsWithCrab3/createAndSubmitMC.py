@@ -104,7 +104,7 @@ for line in ins:
     with open(template_cmssw, "rt") as fin:
       for line_ in fin:
 	#fout.write(line_)
-	line_=line_.strip()
+	#line_=line_.strip() #Francesco (keep same python file indentation)
 	for k,v in dict.items():
 	  line_ = re.sub(k,v,line_)
 	fout.write(line_+"\n")
