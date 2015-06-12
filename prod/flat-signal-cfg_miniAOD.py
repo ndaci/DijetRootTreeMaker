@@ -45,7 +45,7 @@ process.load('RecoMET.METFilters.EcalDeadCellTriggerPrimitiveFilter_cfi')
 process.load('CommonTools/RecoAlgos/HBHENoiseFilter_cfi')
 
 ###################################### Run on AOD instead of MiniAOD? ########
-runOnAOD=True
+runOnAOD=False
 ###################################### Run on RECO instead of MiniAOD? ########
 runOnRECO=False
 if runOnRECO: runOnAOD=True
