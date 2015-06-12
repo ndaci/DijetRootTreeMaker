@@ -591,9 +591,9 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 
 
 # ------------------ path --------------------------
-process.filter_step = cms.Path(
-              process.EcalDeadCellTriggerPrimitiveFilter*
-              process.hcalLaserEventFilter)
+#process.filter_step = cms.Path(
+#              process.EcalDeadCellTriggerPrimitiveFilter*
+#              process.hcalLaserEventFilter)
 
 process.p = cms.Path()
 
@@ -605,7 +605,7 @@ if runOnRECO:
                      #process.CSCTightHaloFilter* does not work
                      #process.eeBadScFilter* does not work
                      #process.goodVertices*process.trackingFailureFilter* does not work
-process.p +=                      process.HBHENoiseFilter
+#process.p +=                      process.HBHENoiseFilter
                      
                      
                      #process.prunedGenParticlesDijet* #GENPAR REMOVED
