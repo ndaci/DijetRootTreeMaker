@@ -45,7 +45,7 @@ process.load('RecoMET.METFilters.EcalDeadCellTriggerPrimitiveFilter_cfi')
 process.load('CommonTools/RecoAlgos/HBHENoiseFilter_cfi')
 
 ###################################### Run on AOD instead of MiniAOD? ########
-runOnAOD=True
+runOnAOD=False
 ###################################### Run on RECO instead of MiniAOD? ########
 runOnRECO=False
 if runOnRECO: runOnAOD=True
@@ -60,7 +60,8 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 #process.GlobalTag.globaltag = 'PLS170_V7AN1::All'
 #process.GlobalTag.globaltag = 'PHYS14_25_V1::All'
 #process.GlobalTag.globaltag = 'MCRUN2_74_V9A::All'
-process.GlobalTag.globaltag = 'GR_P_V56::All'
+#process.GlobalTag.globaltag = 'GR_P_V56::All'
+process.GlobalTag.globaltag = THISGLOBALTAG
 
 
 #--------------------- Report and output ---------------------------
@@ -75,7 +76,8 @@ process.TFileService=cms.Service("TFileService",
                                  #fileName=cms.string('dijetTree_signal_M1000.root'),
                                  #fileName=cms.string('dijetTree_signal_M8000.root'),
                                  #fileName=cms.string('dijetTree_QstarToJJ_M_3000_PHYS14.root'),
-                                 fileName=cms.string('dijetTree_dataTest.root'),
+                                 #fileName=cms.string('dijetTree_dataTest.root'),
+                                 fileName=cms.string(THISROOTFILE),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
 
