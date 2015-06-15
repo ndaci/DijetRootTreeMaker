@@ -60,7 +60,7 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 #process.GlobalTag.globaltag = 'PLS170_V7AN1::All'
 #process.GlobalTag.globaltag = 'PHYS14_25_V1::All'
 process.GlobalTag.globaltag = THISGLOBALTAG
-#process.GlobalTag.globaltag = 'MCRUN2_74_V9A::All'
+#process.GlobalTag.globaltag = 'MCRUN2_74_V9::All'
 
 
 #--------------------- Report and output ---------------------------
@@ -77,6 +77,7 @@ process.TFileService=cms.Service("TFileService",
                                  #fileName=cms.string('dijetTree_QstarToJJ_M_3000_PHYS14.root'),
                                  #fileName=cms.string('dijetTree_QstarToJJ_M_4000_RunIISpring15_mod.root'),
                                  fileName=cms.string(THISROOTFILE),
+                                 #fileName=cms.string('localtest_AK4cors_v2.root'),
                                  #fileName=cms.string("dijetTree_Qstar_MINIAODSIM.root"),
                                  #fileName=cms.string("dijetTree_Qstar_AODSIM.root"),
                                  closeFileFast = cms.untracked.bool(True)
@@ -446,10 +447,8 @@ process.out.outputCommands.append("keep *_slimmedGenJetsAK8_*_*")
 
 process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:miniAOD_RSGravToJJ_kMpl01_M-8000.root')
-    #fileNames = cms.untracked.vstring('file:/cmshome/santanas/CMS/data/Spring14miniaod__RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8__MINIAODSIM__PU20bx25_POSTLS170_V5-v1__00000__6AACD832-3707-E411-A167-001E672489D5.root')
-    #fileNames = cms.untracked.vstring('file:/cmshome/santanas/CMS/data/Spring14drAODSIM__RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8__AODSIM__PU20bx25_POSTLS170_V5-v1__00000__0622C950-58E4-E311-A595-0025904B130A.root')
     #fileNames = cms.untracked.vstring('file:2CEB70D6-D918-E411-B814-003048F30422.root')    
-    fileNames = cms.untracked.vstring('file:QstarToJJ_M_4000_TuneCUETP8M1_13TeV_pythia8__MINIAODSIM__Asympt50ns_MCRUN2_74_V9A-v1__70000__AA35D1E7-FEFE-E411-B1C5-0025905B858A.root')    
+    fileNames = cms.untracked.vstring('file:/afs/cern.ch/user/j/juska/work/sample_spring15_rsgqq2000_25asympt_py8.root')
     #fileNames = cms.untracked.vstring('file:QstarToJJ_M_4000_TuneCUETP8M1_13TeV_pythia8__AODSIM__Asympt50ns_MCRUN2_74_V9A-v1__70000__E0A71360-F6FE-E411-B342-00259029E84C.root')    
     #fileNames = cms.untracked.vstring('/store/mc/RunIISpring15DR74/QstarToJJ_M_1000_TuneCUETP8M1_13TeV_pythia8/AODSIM/Asympt50ns_MCRUN2_74_V9A-v1/50000/00F85752-BCFB-E411-A29A-000F5327349C.root')
 )
@@ -592,14 +591,15 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
     l1techIgnorePrescales = cms.bool(False),
     throw                 = cms.bool(False)
   ),
-  ## JECs ######################################
+  ## JECs ################
+  ## Version Summer15_V3_MC
   redoJECs  = cms.bool(True),
-  L1corrAK4 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/PHYS14_25_V2_L1FastJet_AK4PFchs.txt'),
-  L2corrAK4 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/PHYS14_25_V2_L2Relative_AK4PFchs.txt'),
-  L3corrAK4 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/PHYS14_25_V2_L3Absolute_AK4PFchs.txt'),
-  L1corrAK8 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/PHYS14_25_V2_L1FastJet_AK8PFchs.txt'),
-  L2corrAK8 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/PHYS14_25_V2_L2Relative_AK8PFchs.txt'),
-  L3corrAK8 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/PHYS14_25_V2_L3Absolute_AK8PFchs.txt')
+  L1corrAK4 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_AK4/Summer15_V3_MC_L1FastJet_AK4PFchs.txt'),
+  L2corrAK4 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_AK4/Summer15_V3_MC_L2Relative_AK4PFchs.txt'),
+  L3corrAK4 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_AK4/Summer15_V3_MC_L3Absolute_AK4PFchs.txt'),
+  L1corrAK8 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_AK4/Summer15_V3_MC_L1FastJet_AK8PFchs.txt'),
+  L2corrAK8 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_AK4/Summer15_V3_MC_L2Relative_AK8PFchs.txt'),
+  L3corrAK8 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_AK4/Summer15_V3_MC_L3Absolute_AK8PFchs.txt')
 )
 
 
