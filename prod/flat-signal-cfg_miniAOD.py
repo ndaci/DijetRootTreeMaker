@@ -40,9 +40,10 @@ process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 #Looking for type: std::vector<reco::Vertex>
 #Looking for module label: offlinePrimaryVertice
 
-process.load('RecoMET.METFilters.hcalLaserEventFilter_cfi')
-process.load('RecoMET.METFilters.EcalDeadCellTriggerPrimitiveFilter_cfi')
-process.load('CommonTools/RecoAlgos/HBHENoiseFilter_cfi')
+#### OLD #####
+#process.load('RecoMET.METFilters.hcalLaserEventFilter_cfi')
+#process.load('RecoMET.METFilters.EcalDeadCellTriggerPrimitiveFilter_cfi')
+#process.load('CommonTools/RecoAlgos/HBHENoiseFilter_cfi')
 
 ###################################### Run on AOD instead of MiniAOD? ########
 runOnAOD=False
@@ -60,7 +61,7 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 #process.GlobalTag.globaltag = 'PLS170_V7AN1::All'
 #process.GlobalTag.globaltag = 'PHYS14_25_V1::All'
 process.GlobalTag.globaltag = THISGLOBALTAG
-#process.GlobalTag.globaltag = 'MCRUN2_74_V9::All'
+#process.GlobalTag.globaltag = 'MCRUN2_74_V9A::All'
 
 
 #--------------------- Report and output ---------------------------
@@ -448,8 +449,9 @@ process.out.outputCommands.append("keep *_slimmedGenJetsAK8_*_*")
 process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:miniAOD_RSGravToJJ_kMpl01_M-8000.root')
     #fileNames = cms.untracked.vstring('file:2CEB70D6-D918-E411-B814-003048F30422.root')    
-    fileNames = cms.untracked.vstring('file:/afs/cern.ch/user/j/juska/work/sample_spring15_rsgqq2000_25asympt_py8.root')
-    #fileNames = cms.untracked.vstring('file:QstarToJJ_M_4000_TuneCUETP8M1_13TeV_pythia8__AODSIM__Asympt50ns_MCRUN2_74_V9A-v1__70000__E0A71360-F6FE-E411-B342-00259029E84C.root')    
+    #fileNames = cms.untracked.vstring('file:/afs/cern.ch/user/j/juska/work/sample_spring15_rsgqq2000_25asympt_py8.root')
+    #fileNames = cms.untracked.vstring('file:QstarToJJ_M_4000_TuneCUETP8M1_13TeV_pythia8__AODSIM__Asympt50ns_MCRUN2_74_V9A-v1__70000__E0A71360-F6FE-E411-B342-00259029E84C.root')   
+    fileNames = cms.untracked.vstring('file:QstarToJJ_M_4000_TuneCUETP8M1_13TeV_pythia8__MINIAODSIM__Asympt50ns_MCRUN2_74_V9A-v1__70000__AA35D1E7-FEFE-E411-B1C5-0025905B858A.root')    
     #fileNames = cms.untracked.vstring('/store/mc/RunIISpring15DR74/QstarToJJ_M_1000_TuneCUETP8M1_13TeV_pythia8/AODSIM/Asympt50ns_MCRUN2_74_V9A-v1/50000/00F85752-BCFB-E411-A29A-000F5327349C.root')
 )
 
@@ -591,6 +593,33 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
     l1techIgnorePrescales = cms.bool(False),
     throw                 = cms.bool(False)
   ),
+
+  ## Noise Filters ###################################
+  noiseFilterSelection_HBHENoiseFilter = cms.string('Flag_HBHENoiseFilter'),
+  noiseFilterSelection_CSCTightHaloFilter = cms.string('Flag_CSCTightHaloFilter'),
+  noiseFilterSelection_hcalLaserEventFilter = cms.string('Flag_hcalLaserEventFilter'),
+  noiseFilterSelection_EcalDeadCellTriggerPrimitiveFilter = cms.string('Flag_EcalDeadCellTriggerPrimitiveFilter'),
+  noiseFilterSelection_goodVertices = cms.string('Flag_goodVertices'),
+  noiseFilterSelection_trackingFailureFilter = cms.string('Flag_trackingFailureFilter'),
+  noiseFilterSelection_eeBadScFilter = cms.string('Flag_eeBadScFilter'),
+  noiseFilterSelection_ecalLaserCorrFilter = cms.string('Flag_ecalLaserCorrFilter'),
+  noiseFilterSelection_trkPOGFilters = cms.string('Flag_trkPOGFilters'),
+  # and the sub-filters
+  noiseFilterSelection_trkPOG_manystripclus53X = cms.string('Flag_trkPOG_manystripclus53X'),
+  noiseFilterSelection_trkPOG_toomanystripclus53X = cms.string('Flag_trkPOG_toomanystripclus53X'),
+  noiseFilterSelection_trkPOG_logErrorTooManyClusters = cms.string('Flag_trkPOG_logErrorTooManyClusters'),
+
+  noiseFilterConfiguration = cms.PSet(
+    hltResults            = cms.InputTag('TriggerResults','','PAT'),
+    #hltResults            = cms.InputTag('TriggerResults','','jetToolbox'),
+    l1tResults            = cms.InputTag(''),
+    daqPartitions         = cms.uint32(1),
+    l1tIgnoreMask         = cms.bool(False),
+    l1techIgnorePrescales = cms.bool(False),
+    throw                 = cms.bool(False)
+  ),
+
+
   ## JECs ################
   ## Version Summer15_V3_MC
   redoJECs  = cms.bool(True),
@@ -607,25 +636,12 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 #process.filter_step = cms.Path(
 #              process.EcalDeadCellTriggerPrimitiveFilter*
 #              process.hcalLaserEventFilter)
-
-process.p = cms.Path()
-
-if runOnRECO:
-   process.p += process.pfClusterRefsForJets_step
-              
 # Noise filters added first in path as recommended in Twiki
-
                      #process.CSCTightHaloFilter* does not work
                      #process.eeBadScFilter* does not work
                      #process.goodVertices*process.trackingFailureFilter* does not work
 #process.p +=                     process.HBHENoiseFilter
-                     
-                     
-process.p +=                     process.prunedGenParticlesDijet
-process.p +=                     process.chs 
 
-process.p +=                     process.slimmedGenJetsAK8 
-                     
                      #process.ak4PFJetsCHS *
                      #process.ak4GenJets *
                      #process.patJetsAK4PFCHS *
@@ -654,4 +670,12 @@ process.p +=                     process.slimmedGenJetsAK8
                      # #process.pileupJetIdEvaluator     ##recipe not working for now
                      # #process.QGTagger *
 
+process.p = cms.Path()
+
+if runOnRECO:
+   process.p += process.pfClusterRefsForJets_step
+                                                        
+process.p +=                     process.prunedGenParticlesDijet
+process.p +=                     process.chs 
+process.p +=                     process.slimmedGenJetsAK8                      
 process.p +=                     process.dijets 

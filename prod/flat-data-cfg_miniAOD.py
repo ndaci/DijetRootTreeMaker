@@ -40,9 +40,10 @@ process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 #Looking for type: std::vector<reco::Vertex>
 #Looking for module label: offlinePrimaryVertice
 
-process.load('RecoMET.METFilters.hcalLaserEventFilter_cfi')
-process.load('RecoMET.METFilters.EcalDeadCellTriggerPrimitiveFilter_cfi')
-process.load('CommonTools/RecoAlgos/HBHENoiseFilter_cfi')
+#### OLD #####
+#process.load('RecoMET.METFilters.hcalLaserEventFilter_cfi')
+#process.load('RecoMET.METFilters.EcalDeadCellTriggerPrimitiveFilter_cfi')
+#process.load('CommonTools/RecoAlgos/HBHENoiseFilter_cfi')
 
 ###################################### Run on AOD instead of MiniAOD? ########
 runOnAOD=False
@@ -448,7 +449,7 @@ process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:/cmshome/santanas/CMS/data/Spring14miniaod__RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8__MINIAODSIM__PU20bx25_POSTLS170_V5-v1__00000__6AACD832-3707-E411-A167-001E672489D5.root')
     #fileNames = cms.untracked.vstring('file:/cmshome/santanas/CMS/data/Spring14drAODSIM__RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8__AODSIM__PU20bx25_POSTLS170_V5-v1__00000__0622C950-58E4-E311-A595-0025904B130A.root')
     #fileNames = cms.untracked.vstring('file:2CEB70D6-D918-E411-B814-003048F30422.root')    
-    fileNames = cms.untracked.vstring('file:miniAOD-data_test.root')    
+    fileNames = cms.untracked.vstring('file:miniAOD-prod_PAT_56.root')    
     #fileNames = cms.untracked.vstring('/store/data/Run2015A/Jet/AOD/PromptReco-v1/000/247/081/00000/804F6C9F-DB0C-E511-B0B6-02163E0143D9.root')
 )
 
@@ -613,6 +614,34 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
     l1techIgnorePrescales = cms.bool(False),
     throw                 = cms.bool(False)
   ),
+
+
+  ## Noise Filters ###################################
+  noiseFilterSelection_HBHENoiseFilter = cms.string('Flag_HBHENoiseFilter'),
+  noiseFilterSelection_CSCTightHaloFilter = cms.string('Flag_CSCTightHaloFilter'),
+  noiseFilterSelection_hcalLaserEventFilter = cms.string('Flag_hcalLaserEventFilter'),
+  noiseFilterSelection_EcalDeadCellTriggerPrimitiveFilter = cms.string('Flag_EcalDeadCellTriggerPrimitiveFilter'),
+  noiseFilterSelection_goodVertices = cms.string('Flag_goodVertices'),
+  noiseFilterSelection_trackingFailureFilter = cms.string('Flag_trackingFailureFilter'),
+  noiseFilterSelection_eeBadScFilter = cms.string('Flag_eeBadScFilter'),
+  noiseFilterSelection_ecalLaserCorrFilter = cms.string('Flag_ecalLaserCorrFilter'),
+  noiseFilterSelection_trkPOGFilters = cms.string('Flag_trkPOGFilters'),
+  # and the sub-filters
+  noiseFilterSelection_trkPOG_manystripclus53X = cms.string('Flag_trkPOG_manystripclus53X'),
+  noiseFilterSelection_trkPOG_toomanystripclus53X = cms.string('Flag_trkPOG_toomanystripclus53X'),
+  noiseFilterSelection_trkPOG_logErrorTooManyClusters = cms.string('Flag_trkPOG_logErrorTooManyClusters'),
+
+  noiseFilterConfiguration = cms.PSet(
+    hltResults            = cms.InputTag('TriggerResults','','PAT'),
+    #hltResults            = cms.InputTag('TriggerResults','','jetToolbox'),
+    l1tResults            = cms.InputTag(''),
+    daqPartitions         = cms.uint32(1),
+    l1tIgnoreMask         = cms.bool(False),
+    l1techIgnorePrescales = cms.bool(False),
+    throw                 = cms.bool(False)
+  ),
+
+
   ## JECs ################
   ## Version Summer15_V3_MC
   redoJECs  = cms.bool(True),
@@ -630,11 +659,6 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 #              process.EcalDeadCellTriggerPrimitiveFilter*
 #              process.hcalLaserEventFilter)
 
-process.p = cms.Path()
-
-if runOnRECO:
-   process.p += process.pfClusterRefsForJets_step
-	      
 # Noise filters added first in path as recommended in Twiki
 
                      #process.CSCTightHaloFilter* does not work
@@ -644,7 +668,7 @@ if runOnRECO:
                      
                      
                      #process.prunedGenParticlesDijet* #GENPAR REMOVED
-process.p +=                      process.chs
+
 
                      #process.slimmedGenJetsAK8 * #GENPAR REMOVED
                      
@@ -676,4 +700,14 @@ process.p +=                      process.chs
                      # #process.pileupJetIdEvaluator     ##recipe not working for now
                      # #process.QGTagger *
 
+
+process.p = cms.Path()
+
+if runOnRECO:
+   process.p += process.pfClusterRefsForJets_step
+
+process.p +=                      process.chs
 process.p +=                      process.dijets
+	      
+
+

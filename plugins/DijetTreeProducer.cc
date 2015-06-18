@@ -56,12 +56,25 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
   triggerCache_       = triggerExpression::Data(cfg.getParameterSet("triggerConfiguration"),consumesCollector());
   vtriggerAlias_      = cfg.getParameter<std::vector<std::string> > ("triggerAlias");
   vtriggerSelection_  = cfg.getParameter<std::vector<std::string> > ("triggerSelection");
+  noiseFilterCache_   = triggerExpression::Data(cfg.getParameterSet("noiseFilterConfiguration"),consumesCollector());
+
+  HBHENoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_HBHENoiseFilter") );
+  CSCHaloNoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_CSCTightHaloFilter") );
+  HCALlaserNoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_hcalLaserEventFilter") );
+  ECALDeadCellNoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_EcalDeadCellTriggerPrimitiveFilter") );
+  GoodVtxNoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_goodVertices") );
+  TrkFailureNoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_trackingFailureFilter") );
+  EEBadScNoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_eeBadScFilter") );
+  ECALlaserNoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_ecalLaserCorrFilter") );
+  TrkPOGNoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_trkPOGFilters") );
+  TrkPOG_manystrip_NoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_trkPOG_manystripclus53X") );
+  TrkPOG_toomanystrip_NoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_trkPOG_toomanystripclus53X") );
+  TrkPOG_logError_NoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_trkPOG_logErrorTooManyClusters") );
 
   if (vtriggerAlias_.size() != vtriggerSelection_.size()) {
     cout<<"ERROR: the number of trigger aliases does not match the number of trigger names !!!"<<endl;
     return;
   }
-
   for(unsigned i=0;i<vtriggerSelection_.size();i++) {
     vtriggerSelector_.push_back(triggerExpression::parse(vtriggerSelection_[i]));
   }
@@ -400,6 +413,21 @@ void DijetTreeProducer::beginJob()
   triggerResult_ = new std::vector<bool>;
   outTree_->Branch("triggerResult","vector<bool>",&triggerResult_);
 
+  //------------------------------------------------------------------
+  outTree_->Branch("passFilterHBHE"                 ,&passFilterHBHE_                ,"passFilterHBHE_/O");
+  outTree_->Branch("passFilterCSCHalo"              ,&passFilterCSCHalo_             ,"passFilterCSCHalo_/O");
+  outTree_->Branch("passFilterHCALlaser"            ,&passFilterHCALlaser_           ,"passFilterHCALlaser_/O");
+  outTree_->Branch("passFilterECALDeadCell"         ,&passFilterECALDeadCell_        ,"passFilterECALDeadCell_/O");
+  outTree_->Branch("passFilterGoodVtx"              ,&passFilterGoodVtx_             ,"passFilterGoodVtx_/O");
+  outTree_->Branch("passFilterTrkFailure"           ,&passFilterTrkFailure_          ,"passFilterTrkFailure_/O");
+  outTree_->Branch("passFilterEEBadSc"              ,&passFilterEEBadSc_             ,"passFilterEEBadSc_/O");
+  outTree_->Branch("passFilterECALlaser"            ,&passFilterECALlaser_           ,"passFilterECALlaser_/O");
+  outTree_->Branch("passFilterTrkPOG"               ,&passFilterTrkPOG_              ,"passFilterTrkPOG_/O");
+  outTree_->Branch("passFilterTrkPOG_manystrip"     ,&passFilterTrkPOG_manystrip_    ,"passFilterTrkPOG_manystrip_/O");
+  outTree_->Branch("passFilterTrkPOG_toomanystrip"  ,&passFilterTrkPOG_toomanystrip_ ,"passFilterTrkPOG_toomanystrip_/O");
+  outTree_->Branch("passFilterTrkPOG_logError"      ,&passFilterTrkPOG_logError_     ,"passFilterTrkPOG_logError_/O");
+
+
   //------------------- MC ---------------------------------
   npu_                = new std::vector<float>;  
   Number_interactions = new std::vector<int>;
@@ -603,6 +631,20 @@ void DijetTreeProducer::endJob()
   for(unsigned i=0;i<vtriggerSelector_.size();i++) {
     delete vtriggerSelector_[i];
   }
+
+  delete HBHENoiseFilter_Selector_;
+  delete CSCHaloNoiseFilter_Selector_;
+  delete HCALlaserNoiseFilter_Selector_;
+  delete ECALDeadCellNoiseFilter_Selector_;
+  delete GoodVtxNoiseFilter_Selector_;
+  delete TrkFailureNoiseFilter_Selector_;
+  delete EEBadScNoiseFilter_Selector_;
+  delete ECALlaserNoiseFilter_Selector_;
+  delete TrkPOGNoiseFilter_Selector_;
+  delete TrkPOG_manystrip_NoiseFilter_Selector_;
+  delete TrkPOG_toomanystrip_NoiseFilter_Selector_;
+  delete TrkPOG_logError_NoiseFilter_Selector_;
+
 }
 //////////////////////////////////////////////////////////////////////////////////////////
 void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetup) 
@@ -793,122 +835,158 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       triggerResult_->push_back(result);
     }
   }
-     
-  //----- at least one good vertex -----------
-  bool cut_vtx = (recVtxs->size() > 0);
-  
-  if (cut_vtx) {
 
-    // AK4
-    std::vector<double> jecFactorsAK4;
-    std::vector<unsigned> sortedAK4JetIdx;
-    if(redoJECs_)
+  if (!iEvent.isRealData())
+    {
+      
+      //-------------- Noise Filter Info -----------------------------------
+      if (noiseFilterCache_.setEvent(iEvent,iSetup)) {
+	
+	if(noiseFilterCache_.configurationUpdated()) {
+	  HBHENoiseFilter_Selector_->init(noiseFilterCache_);
+	  CSCHaloNoiseFilter_Selector_->init(noiseFilterCache_);
+	  HCALlaserNoiseFilter_Selector_->init(noiseFilterCache_);
+	  ECALDeadCellNoiseFilter_Selector_->init(noiseFilterCache_);
+	  GoodVtxNoiseFilter_Selector_->init(noiseFilterCache_);
+	  TrkFailureNoiseFilter_Selector_->init(noiseFilterCache_);
+	  EEBadScNoiseFilter_Selector_->init(noiseFilterCache_);
+	  ECALlaserNoiseFilter_Selector_->init(noiseFilterCache_);
+	  TrkPOGNoiseFilter_Selector_->init(noiseFilterCache_);
+	  TrkPOG_manystrip_NoiseFilter_Selector_->init(noiseFilterCache_);
+	  TrkPOG_toomanystrip_NoiseFilter_Selector_->init(noiseFilterCache_);
+	  TrkPOG_logError_NoiseFilter_Selector_->init(noiseFilterCache_);
+	}
+	
+	passFilterHBHE_ = (*HBHENoiseFilter_Selector_)(noiseFilterCache_);    
+	passFilterCSCHalo_ = (*CSCHaloNoiseFilter_Selector_)(noiseFilterCache_);    
+	passFilterHCALlaser_ = (*HCALlaserNoiseFilter_Selector_)(noiseFilterCache_);    
+	passFilterECALDeadCell_ = (*ECALDeadCellNoiseFilter_Selector_)(noiseFilterCache_);    
+	passFilterGoodVtx_ = (*GoodVtxNoiseFilter_Selector_)(noiseFilterCache_);    
+	passFilterTrkFailure_ = (*TrkFailureNoiseFilter_Selector_)(noiseFilterCache_);    
+	passFilterEEBadSc_ = (*EEBadScNoiseFilter_Selector_)(noiseFilterCache_);    
+	passFilterECALlaser_ = (*ECALlaserNoiseFilter_Selector_)(noiseFilterCache_);    
+	passFilterTrkPOG_ = (*TrkPOGNoiseFilter_Selector_)(noiseFilterCache_);    
+	passFilterTrkPOG_manystrip_ = (*TrkPOG_manystrip_NoiseFilter_Selector_)(noiseFilterCache_);    
+	passFilterTrkPOG_toomanystrip_ = (*TrkPOG_toomanystrip_NoiseFilter_Selector_)(noiseFilterCache_);    
+	passFilterTrkPOG_logError_ = (*TrkPOG_logError_NoiseFilter_Selector_)(noiseFilterCache_);    
+      }
+    }
+  
+  //----- at least one good vertex -----------
+  //bool cut_vtx = (recVtxs->size() > 0);
+  
+  //if (cut_vtx) {
+
+  // AK4
+  std::vector<double> jecFactorsAK4;
+  std::vector<unsigned> sortedAK4JetIdx;
+  if(redoJECs_)
     {
       // sort AK4 jets by increasing pT
       std::multimap<double, unsigned> sortedAK4Jets;
       for(edm::View<pat::Jet>::const_iterator ijet = jetsAK4->begin();ijet != jetsAK4->end(); ++ijet)
-      {
-        JetCorrectorAK4->setJetEta(ijet->eta());
-        JetCorrectorAK4->setJetPt(ijet->correctedJet(0).pt());
-        JetCorrectorAK4->setJetA(ijet->jetArea());
-        JetCorrectorAK4->setRho(rho_);
+	{
+	  JetCorrectorAK4->setJetEta(ijet->eta());
+	  JetCorrectorAK4->setJetPt(ijet->correctedJet(0).pt());
+	  JetCorrectorAK4->setJetA(ijet->jetArea());
+	  JetCorrectorAK4->setRho(rho_);
 
-        double correction = JetCorrectorAK4->getCorrection();
+	  double correction = JetCorrectorAK4->getCorrection();
 
-        jecFactorsAK4.push_back(correction);
-        sortedAK4Jets.insert(std::make_pair(ijet->correctedJet(0).pt()*correction, ijet - jetsAK4->begin()));
-      }
+	  jecFactorsAK4.push_back(correction);
+	  sortedAK4Jets.insert(std::make_pair(ijet->correctedJet(0).pt()*correction, ijet - jetsAK4->begin()));
+	}
       // get jet indices in decreasing pT order
       for(std::multimap<double, unsigned>::const_reverse_iterator it = sortedAK4Jets.rbegin(); it != sortedAK4Jets.rend(); ++it)
         sortedAK4JetIdx.push_back(it->second);
     }
-    else
+  else
     {
       for(edm::View<pat::Jet>::const_iterator ijet = jetsAK4->begin();ijet != jetsAK4->end(); ++ijet)
-      {
-        jecFactorsAK4.push_back(1./ijet->jecFactor(0));
-        sortedAK4JetIdx.push_back(ijet - jetsAK4->begin());
-      }
+	{
+	  jecFactorsAK4.push_back(1./ijet->jecFactor(0));
+	  sortedAK4JetIdx.push_back(ijet - jetsAK4->begin());
+	}
     }
 
-    nJetsAK4_ = 0;
-    float htAK4(0.0);
-    vector<TLorentzVector> vP4AK4;
-    for(std::vector<unsigned>::const_iterator i = sortedAK4JetIdx.begin(); i != sortedAK4JetIdx.end(); ++i) {
+  nJetsAK4_ = 0;
+  float htAK4(0.0);
+  vector<TLorentzVector> vP4AK4;
+  for(std::vector<unsigned>::const_iterator i = sortedAK4JetIdx.begin(); i != sortedAK4JetIdx.end(); ++i) {
 
-      edm::View<pat::Jet>::const_iterator ijet = (jetsAK4->begin() + *i);
-      double chf = ijet->chargedHadronEnergyFraction();
-      double nhf = ijet->neutralHadronEnergyFraction(); // + ijet->HFHadronEnergyFraction();
-      double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
-      double elf = ijet->electronEnergy()/(ijet->jecFactor(0) * ijet->energy());
-      double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
+    edm::View<pat::Jet>::const_iterator ijet = (jetsAK4->begin() + *i);
+    double chf = ijet->chargedHadronEnergyFraction();
+    double nhf = ijet->neutralHadronEnergyFraction(); // + ijet->HFHadronEnergyFraction();
+    double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
+    double elf = ijet->electronEnergy()/(ijet->jecFactor(0) * ijet->energy());
+    double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
 
-      double hf_hf = ijet->HFHadronEnergyFraction();
-      double hf_emf= ijet->HFEMEnergyFraction();
-      double hof   = ijet->hoEnergyFraction();
+    double hf_hf = ijet->HFHadronEnergyFraction();
+    double hf_emf= ijet->HFEMEnergyFraction();
+    double hof   = ijet->hoEnergyFraction();
 
-      int chm    = ijet->chargedHadronMultiplicity();
+    int chm    = ijet->chargedHadronMultiplicity();
       
-      int chMult = ijet->chargedMultiplicity();
-      int neMult = ijet->neutralMultiplicity();
-      int npr    = chMult + neMult;
+    int chMult = ijet->chargedMultiplicity();
+    int neMult = ijet->neutralMultiplicity();
+    int npr    = chMult + neMult;
 
-      int chHadMult = chm; //ijet->chargedHadronMultiplicity();
-      int neHadMult = ijet->neutralHadronMultiplicity();
-      int phoMult = ijet->photonMultiplicity();
+    int chHadMult = chm; //ijet->chargedHadronMultiplicity();
+    int neHadMult = ijet->neutralHadronMultiplicity();
+    int phoMult = ijet->photonMultiplicity();
       
-      // Juska's added fractions for identical JetID with recommendations
-      double nemf = ijet->neutralEmEnergyFraction();
-      double cemf = ijet->chargedEmEnergyFraction();
-      int NumConst = npr;
+    // Juska's added fractions for identical JetID with recommendations
+    double nemf = ijet->neutralEmEnergyFraction();
+    double cemf = ijet->chargedEmEnergyFraction();
+    int NumConst = npr;
 
-      float eta  = ijet->eta(); // removed fabs() -Juska
-      float pt   = ijet->correctedJet(0).pt()*jecFactorsAK4.at(*i); // Is this OK? Correct corrected? -Juska
+    float eta  = ijet->eta(); // removed fabs() -Juska
+    float pt   = ijet->correctedJet(0).pt()*jecFactorsAK4.at(*i); // Is this OK? Correct corrected? -Juska
 
-      // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
-      int idL = (nhf<0.99 && nemf<0.99 && NumConst>1 && muf < 0.8) && ((fabs(eta) <= 2.4 && chf>0 && chMult>0 && cemf<0.99) || fabs(eta)>2.4);
-      int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.4 && chf>0 && chMult>0 && cemf<0.90) || fabs(eta)>2.4);
+    // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
+    int idL = (nhf<0.99 && nemf<0.99 && NumConst>1 && muf < 0.8) && ((fabs(eta) <= 2.4 && chf>0 && chMult>0 && cemf<0.99) || fabs(eta)>2.4);
+    int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.4 && chf>0 && chMult>0 && cemf<0.90) || fabs(eta)>2.4);
 
        
       
-      if (pt > ptMinAK4_) {
-        htAK4 += pt;
-        nJetsAK4_++;
+    if (pt > ptMinAK4_) {
+      htAK4 += pt;
+      nJetsAK4_++;
 
-        vP4AK4.push_back(TLorentzVector(ijet->correctedJet(0).px()*jecFactorsAK4.at(*i),ijet->correctedJet(0).py()*jecFactorsAK4.at(*i),ijet->correctedJet(0).pz()*jecFactorsAK4.at(*i),ijet->correctedJet(0).energy()*jecFactorsAK4.at(*i)));
-        chfAK4_           ->push_back(chf);
-        nhfAK4_           ->push_back(nhf);
-        phfAK4_           ->push_back(phf);
-        elfAK4_           ->push_back(elf);
-        mufAK4_           ->push_back(muf);
-        hf_hfAK4_         ->push_back(hf_hf);
-        hf_emfAK4_        ->push_back(hf_emf);
-        hofAK4_           ->push_back(hof);
-        jecAK4_           ->push_back(jecFactorsAK4.at(*i));
-        ptAK4_            ->push_back(pt);
-        phiAK4_           ->push_back(ijet->phi());
-        etaAK4_           ->push_back(ijet->eta());
-        massAK4_          ->push_back(ijet->correctedJet(0).mass()*jecFactorsAK4.at(*i));
-        energyAK4_        ->push_back(ijet->correctedJet(0).energy()*jecFactorsAK4.at(*i));
-        areaAK4_          ->push_back(ijet->jetArea());
-	idLAK4_           ->push_back(idL);
-	idTAK4_           ->push_back(idT);
-	chHadMultAK4_     ->push_back(chHadMult);
-        chMultAK4_        ->push_back(chMult);
-        neHadMultAK4_     ->push_back(neHadMult);  
-        neMultAK4_        ->push_back(neMult);
-        phoMultAK4_       ->push_back(phoMult); 
-	//tau1AK4_          ->push_back(ijet->userFloat("NjettinessAK4:tau1"));
-        //tau2AK4_          ->push_back(ijet->userFloat("NjettinessAK4:tau2"));
-	//cutbasedJetId_      ->push_back(ijet->userInt("pileupJetIdEvaluator:cutbasedId"));
-	//fullJetId_          ->push_back(ijet->userFloat("pileupJetIdEvaluator:fullDiscriminant"));
-	//fullJetDiscriminant_->push_back(ijet->userInt("pileupJetIdEvaluator:fullId"));
+      vP4AK4.push_back(TLorentzVector(ijet->correctedJet(0).px()*jecFactorsAK4.at(*i),ijet->correctedJet(0).py()*jecFactorsAK4.at(*i),ijet->correctedJet(0).pz()*jecFactorsAK4.at(*i),ijet->correctedJet(0).energy()*jecFactorsAK4.at(*i)));
+      chfAK4_           ->push_back(chf);
+      nhfAK4_           ->push_back(nhf);
+      phfAK4_           ->push_back(phf);
+      elfAK4_           ->push_back(elf);
+      mufAK4_           ->push_back(muf);
+      hf_hfAK4_         ->push_back(hf_hf);
+      hf_emfAK4_        ->push_back(hf_emf);
+      hofAK4_           ->push_back(hof);
+      jecAK4_           ->push_back(jecFactorsAK4.at(*i));
+      ptAK4_            ->push_back(pt);
+      phiAK4_           ->push_back(ijet->phi());
+      etaAK4_           ->push_back(ijet->eta());
+      massAK4_          ->push_back(ijet->correctedJet(0).mass()*jecFactorsAK4.at(*i));
+      energyAK4_        ->push_back(ijet->correctedJet(0).energy()*jecFactorsAK4.at(*i));
+      areaAK4_          ->push_back(ijet->jetArea());
+      idLAK4_           ->push_back(idL);
+      idTAK4_           ->push_back(idT);
+      chHadMultAK4_     ->push_back(chHadMult);
+      chMultAK4_        ->push_back(chMult);
+      neHadMultAK4_     ->push_back(neHadMult);  
+      neMultAK4_        ->push_back(neMult);
+      phoMultAK4_       ->push_back(phoMult); 
+      //tau1AK4_          ->push_back(ijet->userFloat("NjettinessAK4:tau1"));
+      //tau2AK4_          ->push_back(ijet->userFloat("NjettinessAK4:tau2"));
+      //cutbasedJetId_      ->push_back(ijet->userInt("pileupJetIdEvaluator:cutbasedId"));
+      //fullJetId_          ->push_back(ijet->userFloat("pileupJetIdEvaluator:fullDiscriminant"));
+      //fullJetDiscriminant_->push_back(ijet->userInt("pileupJetIdEvaluator:fullId"));
 
-	//matched (dR<0.4) CaloJet
-        ptAK4matchCaloJet_            ->push_back(ijet->userFloat("caloJetMap:pt"));
-        emfAK4matchCaloJet_           ->push_back(ijet->userFloat("caloJetMap:emEnergyFraction")); //emEnergyFraction=(1-hadEnergyFraction) 
+      //matched (dR<0.4) CaloJet
+      ptAK4matchCaloJet_            ->push_back(ijet->userFloat("caloJetMap:pt"));
+      emfAK4matchCaloJet_           ->push_back(ijet->userFloat("caloJetMap:emEnergyFraction")); //emEnergyFraction=(1-hadEnergyFraction) 
 
-        if(srcJetsAK4Calo_.label()!="") {
+      if(srcJetsAK4Calo_.label()!="") {
 	double dRminCalo(1000);
         edm::View<reco::CaloJet>::const_iterator matchCaloJet;
         for(edm::View<reco::CaloJet>::const_iterator ijetpr = jetsAK4Calo->begin();ijetpr != jetsAK4Calo->end(); ++ijetpr) { 
@@ -919,16 +997,16 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
           } 
         }
         if(jetsAK4Calo.isValid() && matchCaloJet>=jetsAK4Calo->begin() && matchCaloJet<jetsAK4Calo->end() && matchCaloJet->pt() > ptMinAK4_)
-        {
-          ptAK4Calo_            ->push_back(matchCaloJet->pt());
-          jecAK4Calo_           ->push_back(1);
-          phiAK4Calo_           ->push_back(matchCaloJet->phi());
-          etaAK4Calo_           ->push_back(matchCaloJet->eta());
-          massAK4Calo_          ->push_back(matchCaloJet->mass());
-          energyAK4Calo_        ->push_back(matchCaloJet->energy());
-          areaAK4Calo_          ->push_back(matchCaloJet->jetArea());
-          emfAK4Calo_           ->push_back(matchCaloJet->emEnergyFraction());
-        } else {
+	  {
+	    ptAK4Calo_            ->push_back(matchCaloJet->pt());
+	    jecAK4Calo_           ->push_back(1);
+	    phiAK4Calo_           ->push_back(matchCaloJet->phi());
+	    etaAK4Calo_           ->push_back(matchCaloJet->eta());
+	    massAK4Calo_          ->push_back(matchCaloJet->mass());
+	    energyAK4Calo_        ->push_back(matchCaloJet->energy());
+	    areaAK4Calo_          ->push_back(matchCaloJet->jetArea());
+	    emfAK4Calo_           ->push_back(matchCaloJet->emEnergyFraction());
+	  } else {
           ptAK4Calo_            ->push_back(-999);
           jecAK4Calo_           ->push_back(1);
           phiAK4Calo_           ->push_back(-999);
@@ -938,9 +1016,9 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
           areaAK4Calo_          ->push_back(-999);
           emfAK4Calo_           ->push_back(-999);
         }
-        }
+      }
 
-        if(srcJetsAK4PFCluster_.label()!="") {
+      if(srcJetsAK4PFCluster_.label()!="") {
 	double dRminPFCluster(1000);
         edm::View<reco::Jet>::const_iterator matchPFClusterJet;
         for(edm::View<reco::Jet>::const_iterator ijetpr = jetsAK4PFCluster->begin();ijetpr != jetsAK4PFCluster->end(); ++ijetpr) { 
@@ -951,15 +1029,15 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
           } 
         }
         if(jetsAK4PFCluster.isValid() && matchPFClusterJet>=jetsAK4PFCluster->begin() && matchPFClusterJet<jetsAK4PFCluster->end() && matchPFClusterJet->pt() > ptMinAK4_)
-        {
-          ptAK4PFCluster_            ->push_back(matchPFClusterJet->pt());
-          jecAK4PFCluster_           ->push_back(1);
-          phiAK4PFCluster_           ->push_back(matchPFClusterJet->phi());
-          etaAK4PFCluster_           ->push_back(matchPFClusterJet->eta());
-          massAK4PFCluster_          ->push_back(matchPFClusterJet->mass());
-          energyAK4PFCluster_        ->push_back(matchPFClusterJet->energy());
-          areaAK4PFCluster_          ->push_back(matchPFClusterJet->jetArea());
-        } else {
+	  {
+	    ptAK4PFCluster_            ->push_back(matchPFClusterJet->pt());
+	    jecAK4PFCluster_           ->push_back(1);
+	    phiAK4PFCluster_           ->push_back(matchPFClusterJet->phi());
+	    etaAK4PFCluster_           ->push_back(matchPFClusterJet->eta());
+	    massAK4PFCluster_          ->push_back(matchPFClusterJet->mass());
+	    energyAK4PFCluster_        ->push_back(matchPFClusterJet->energy());
+	    areaAK4PFCluster_          ->push_back(matchPFClusterJet->jetArea());
+	  } else {
           ptAK4PFCluster_            ->push_back(-999);
           jecAK4PFCluster_           ->push_back(1);
           phiAK4PFCluster_           ->push_back(-999);
@@ -968,9 +1046,9 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
           energyAK4PFCluster_        ->push_back(-999);
           areaAK4PFCluster_          ->push_back(-999);
         }
-        }
+      }
 
-        if(srcJetsAK4PFCalo_.label()!="") {
+      if(srcJetsAK4PFCalo_.label()!="") {
 	double dRminPFCalo(1000);
         edm::View<reco::PFJet>::const_iterator matchPFCaloJet;
         for(edm::View<reco::PFJet>::const_iterator ijetpr = jetsAK4PFCalo->begin();ijetpr != jetsAK4PFCalo->end(); ++ijetpr) { 
@@ -981,16 +1059,16 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
           } 
         }
         if(jetsAK4PFCalo.isValid() && matchPFCaloJet>=jetsAK4PFCalo->begin() && matchPFCaloJet<jetsAK4PFCalo->end() && matchPFCaloJet->pt() > ptMinAK4_)
-        {
-          ptAK4PFCalo_            ->push_back(matchPFCaloJet->pt());
-          jecAK4PFCalo_           ->push_back(1);
-          phiAK4PFCalo_           ->push_back(matchPFCaloJet->phi());
-          etaAK4PFCalo_           ->push_back(matchPFCaloJet->eta());
-          massAK4PFCalo_          ->push_back(matchPFCaloJet->mass());
-          energyAK4PFCalo_        ->push_back(matchPFCaloJet->energy());
-          areaAK4PFCalo_          ->push_back(matchPFCaloJet->jetArea());
-          emfAK4PFCalo_           ->push_back(matchPFCaloJet->photonEnergyFraction()+matchPFCaloJet->electronEnergyFraction());
-        } else {
+	  {
+	    ptAK4PFCalo_            ->push_back(matchPFCaloJet->pt());
+	    jecAK4PFCalo_           ->push_back(1);
+	    phiAK4PFCalo_           ->push_back(matchPFCaloJet->phi());
+	    etaAK4PFCalo_           ->push_back(matchPFCaloJet->eta());
+	    massAK4PFCalo_          ->push_back(matchPFCaloJet->mass());
+	    energyAK4PFCalo_        ->push_back(matchPFCaloJet->energy());
+	    areaAK4PFCalo_          ->push_back(matchPFCaloJet->jetArea());
+	    emfAK4PFCalo_           ->push_back(matchPFCaloJet->photonEnergyFraction()+matchPFCaloJet->electronEnergyFraction());
+	  } else {
           ptAK4PFCalo_            ->push_back(-999);
           jecAK4PFCalo_           ->push_back(1);
           phiAK4PFCalo_           ->push_back(-999);
@@ -1000,56 +1078,56 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
           areaAK4PFCalo_          ->push_back(-999);
           emfAK4PFCalo_           ->push_back(-999);
         }
-       }
-       }
-
-    }// jet loop  
-    htAK4_     = htAK4;
-    if (nJetsAK4_ > 1) { //assuming jets are ordered by pt in the pat collection
-      mjjAK4_    = (vP4AK4[0]+vP4AK4[1]).M();
-      dEtajjAK4_ = fabs((*etaAK4_)[0]-(*etaAK4_)[1]); 
-      dPhijjAK4_ = fabs(deltaPhi((*phiAK4_)[0],(*phiAK4_)[1]));
+      }
     }
 
+  }// jet loop  
+  htAK4_     = htAK4;
+  if (nJetsAK4_ > 1) { //assuming jets are ordered by pt in the pat collection
+    mjjAK4_    = (vP4AK4[0]+vP4AK4[1]).M();
+    dEtajjAK4_ = fabs((*etaAK4_)[0]-(*etaAK4_)[1]); 
+    dPhijjAK4_ = fabs(deltaPhi((*phiAK4_)[0],(*phiAK4_)[1]));
+  }
 
-    // AK8
-    std::vector<double> jecFactorsAK8;
-    std::vector<unsigned> sortedAK8JetIdx;
-    if(redoJECs_)
+
+  // AK8
+  std::vector<double> jecFactorsAK8;
+  std::vector<unsigned> sortedAK8JetIdx;
+  if(redoJECs_)
     {
       // sort AK8 jets by increasing pT
       std::multimap<double, unsigned> sortedAK8Jets;
       for(edm::View<pat::Jet>::const_iterator ijet = jetsAK8->begin();ijet != jetsAK8->end(); ++ijet)
-      {
-        JetCorrectorAK8->setJetEta(ijet->eta());
-        JetCorrectorAK8->setJetPt(ijet->correctedJet(0).pt());
-        JetCorrectorAK8->setJetA(ijet->jetArea());
-        JetCorrectorAK8->setRho(rho_);
+	{
+	  JetCorrectorAK8->setJetEta(ijet->eta());
+	  JetCorrectorAK8->setJetPt(ijet->correctedJet(0).pt());
+	  JetCorrectorAK8->setJetA(ijet->jetArea());
+	  JetCorrectorAK8->setRho(rho_);
 
-        double correction = JetCorrectorAK8->getCorrection();
+	  double correction = JetCorrectorAK8->getCorrection();
 
-        jecFactorsAK8.push_back(correction);
-        sortedAK8Jets.insert(std::make_pair(ijet->correctedJet(0).pt()*correction, ijet - jetsAK8->begin()));
-      }
+	  jecFactorsAK8.push_back(correction);
+	  sortedAK8Jets.insert(std::make_pair(ijet->correctedJet(0).pt()*correction, ijet - jetsAK8->begin()));
+	}
       // get jet indices in decreasing pT order
       for(std::multimap<double, unsigned>::const_reverse_iterator it = sortedAK8Jets.rbegin(); it != sortedAK8Jets.rend(); ++it)
         sortedAK8JetIdx.push_back(it->second);
     }
-    else
+  else
     {
       for(edm::View<pat::Jet>::const_iterator ijet = jetsAK8->begin();ijet != jetsAK8->end(); ++ijet)
-      {
-        jecFactorsAK8.push_back(1./ijet->jecFactor(0));
-        sortedAK8JetIdx.push_back(ijet - jetsAK8->begin());
-      }
+	{
+	  jecFactorsAK8.push_back(1./ijet->jecFactor(0));
+	  sortedAK8JetIdx.push_back(ijet - jetsAK8->begin());
+	}
     }
 
-    nJetsAK8_ = 0;
-    float htAK8(0.0);
-    vector<TLorentzVector> vP4AK8;
-    for(std::vector<unsigned>::const_iterator i = sortedAK8JetIdx.begin(); i != sortedAK8JetIdx.end(); ++i) {
+  nJetsAK8_ = 0;
+  float htAK8(0.0);
+  vector<TLorentzVector> vP4AK8;
+  for(std::vector<unsigned>::const_iterator i = sortedAK8JetIdx.begin(); i != sortedAK8JetIdx.end(); ++i) {
 
-      /*
+    /*
       edm::View<pat::Jet>::const_iterator ijet = (jetsAK8->begin() + *i);
       double chf = ijet->chargedHadronEnergyFraction();
       double nhf = ijet->neutralHadronEnergyFraction();// + ijet->HFHadronEnergyFraction();
@@ -1071,207 +1149,207 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       int neHadMult = ijet->neutralHadronMultiplicity();
       int neMult = ijet->neutralMultiplicity();
       int phoMult = ijet->photonMultiplicity();
-      */
+    */
 
-      edm::View<pat::Jet>::const_iterator ijet = (jetsAK8->begin() + *i);
-      double chf = ijet->chargedHadronEnergyFraction();
-      double nhf = ijet->neutralHadronEnergyFraction(); // + ijet->HFHadronEnergyFraction();
-      double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
-      double elf = ijet->electronEnergy()/(ijet->jecFactor(0) * ijet->energy());
-      double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
+    edm::View<pat::Jet>::const_iterator ijet = (jetsAK8->begin() + *i);
+    double chf = ijet->chargedHadronEnergyFraction();
+    double nhf = ijet->neutralHadronEnergyFraction(); // + ijet->HFHadronEnergyFraction();
+    double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
+    double elf = ijet->electronEnergy()/(ijet->jecFactor(0) * ijet->energy());
+    double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
 
-      double hf_hf = ijet->HFHadronEnergyFraction();
-      double hf_emf= ijet->HFEMEnergyFraction();
-      double hof    = ijet->hoEnergyFraction();
+    double hf_hf = ijet->HFHadronEnergyFraction();
+    double hf_emf= ijet->HFEMEnergyFraction();
+    double hof    = ijet->hoEnergyFraction();
 
-      int chm    = ijet->chargedHadronMultiplicity();
+    int chm    = ijet->chargedHadronMultiplicity();
       
-      int chMult = ijet->chargedMultiplicity();
-      int neMult = ijet->neutralMultiplicity();
-      int npr    = chMult + neMult;
+    int chMult = ijet->chargedMultiplicity();
+    int neMult = ijet->neutralMultiplicity();
+    int npr    = chMult + neMult;
 
-      int chHadMult = chm; //ijet->chargedHadronMultiplicity();
-      int neHadMult = ijet->neutralHadronMultiplicity();
-      int phoMult = ijet->photonMultiplicity();
+    int chHadMult = chm; //ijet->chargedHadronMultiplicity();
+    int neHadMult = ijet->neutralHadronMultiplicity();
+    int phoMult = ijet->photonMultiplicity();
       
-      // Juska's added fractions for identical JetID with recommendations
-      double nemf = ijet->neutralEmEnergyFraction();
-      double cemf = ijet->chargedEmEnergyFraction();
-      int NumConst = npr;
+    // Juska's added fractions for identical JetID with recommendations
+    double nemf = ijet->neutralEmEnergyFraction();
+    double cemf = ijet->chargedEmEnergyFraction();
+    int NumConst = npr;
 
-      float eta  = ijet->eta(); // removed fabs() -Juska
-      float pt   = ijet->correctedJet(0).pt()*jecFactorsAK8.at(*i); // Is this OK? Correct corrected? -Juska
+    float eta  = ijet->eta(); // removed fabs() -Juska
+    float pt   = ijet->correctedJet(0).pt()*jecFactorsAK8.at(*i); // Is this OK? Correct corrected? -Juska
 
-      // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
-      int idL = (nhf<0.99 && nemf<0.99 && NumConst>1 && muf < 0.8) && ((fabs(eta) <= 2.4 && chf>0 && chMult>0 && cemf<0.99) || fabs(eta)>2.4);
-      int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.4 && chf>0 && chMult>0 && cemf<0.90) || fabs(eta)>2.4);
+    // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
+    int idL = (nhf<0.99 && nemf<0.99 && NumConst>1 && muf < 0.8) && ((fabs(eta) <= 2.4 && chf>0 && chMult>0 && cemf<0.99) || fabs(eta)>2.4);
+    int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.4 && chf>0 && chMult>0 && cemf<0.90) || fabs(eta)>2.4);
       
       
-      if (pt > ptMinAK8_) {
-	htAK8 += pt;
-	nJetsAK8_++;
+    if (pt > ptMinAK8_) {
+      htAK8 += pt;
+      nJetsAK8_++;
 
-        vP4AK8.push_back(TLorentzVector(ijet->correctedJet(0).px()*jecFactorsAK8.at(*i),ijet->correctedJet(0).py()*jecFactorsAK8.at(*i),ijet->correctedJet(0).pz()*jecFactorsAK8.at(*i),ijet->correctedJet(0).energy()*jecFactorsAK8.at(*i)));
-        chfAK8_           ->push_back(chf);
-        nhfAK8_           ->push_back(nhf);
-        phfAK8_           ->push_back(phf);
-        elfAK8_           ->push_back(elf);
-        mufAK8_           ->push_back(muf);
-        hf_hfAK8_         ->push_back(hf_hf);
-        hf_emfAK8_        ->push_back(hf_emf);
-        hofAK8_           ->push_back(hof);
-        jecAK8_           ->push_back(jecFactorsAK8.at(*i));
-        ptAK8_            ->push_back(pt);
-        phiAK8_           ->push_back(ijet->phi());
-        etaAK8_           ->push_back(ijet->eta());
-        massAK8_          ->push_back(ijet->correctedJet(0).mass()*jecFactorsAK8.at(*i));
-        energyAK8_        ->push_back(ijet->correctedJet(0).energy()*jecFactorsAK8.at(*i));
-        areaAK8_          ->push_back(ijet->jetArea());
-	idLAK8_           ->push_back(idL);
-	idTAK8_           ->push_back(idT);
-        tau1AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau1"));
-        tau2AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau2"));
-        tau3AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau3"));
-	massPrunedAK8_    ->push_back(ijet->userFloat("ak8PFJetsCHSPrunedMass"));
-	massSoftDropAK8_  ->push_back(ijet->userFloat("ak8PFJetsCHSSoftDropMass"));
-	chHadMultAK8_     ->push_back(chHadMult);
-        chMultAK8_        ->push_back(chMult);
-        neHadMultAK8_     ->push_back(neHadMult);  
-        neMultAK8_        ->push_back(neMult);
-        phoMultAK8_       ->push_back(phoMult); 
+      vP4AK8.push_back(TLorentzVector(ijet->correctedJet(0).px()*jecFactorsAK8.at(*i),ijet->correctedJet(0).py()*jecFactorsAK8.at(*i),ijet->correctedJet(0).pz()*jecFactorsAK8.at(*i),ijet->correctedJet(0).energy()*jecFactorsAK8.at(*i)));
+      chfAK8_           ->push_back(chf);
+      nhfAK8_           ->push_back(nhf);
+      phfAK8_           ->push_back(phf);
+      elfAK8_           ->push_back(elf);
+      mufAK8_           ->push_back(muf);
+      hf_hfAK8_         ->push_back(hf_hf);
+      hf_emfAK8_        ->push_back(hf_emf);
+      hofAK8_           ->push_back(hof);
+      jecAK8_           ->push_back(jecFactorsAK8.at(*i));
+      ptAK8_            ->push_back(pt);
+      phiAK8_           ->push_back(ijet->phi());
+      etaAK8_           ->push_back(ijet->eta());
+      massAK8_          ->push_back(ijet->correctedJet(0).mass()*jecFactorsAK8.at(*i));
+      energyAK8_        ->push_back(ijet->correctedJet(0).energy()*jecFactorsAK8.at(*i));
+      areaAK8_          ->push_back(ijet->jetArea());
+      idLAK8_           ->push_back(idL);
+      idTAK8_           ->push_back(idT);
+      tau1AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau1"));
+      tau2AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau2"));
+      tau3AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau3"));
+      massPrunedAK8_    ->push_back(ijet->userFloat("ak8PFJetsCHSPrunedMass"));
+      massSoftDropAK8_  ->push_back(ijet->userFloat("ak8PFJetsCHSSoftDropMass"));
+      chHadMultAK8_     ->push_back(chHadMult);
+      chMultAK8_        ->push_back(chMult);
+      neHadMultAK8_     ->push_back(neHadMult);  
+      neMultAK8_        ->push_back(neMult);
+      phoMultAK8_       ->push_back(phoMult); 
 	
 	
-	//---- match with the pruned jet collection -----
-        // double dRmin(1000);
-        // double auxm(0.0);
-        // for(edm::View<pat::Jet>::const_iterator ijetpr = jetsAK8->begin();ijetpr != jetsAK8->end(); ++ijetpr) { 
-        //   float dR = deltaR(ijet->eta(),ijet->phi(),ijetpr->eta(),ijetpr->phi());
-        //   if (dR < dRmin) {
-        //     auxm = ijetpr->mass();
-        //     dRmin = dR;
-        //   } 
-        // } 
-        // massPruned_->push_back(auxm);
-        // dR_->push_back(dRmin);
+      //---- match with the pruned jet collection -----
+      // double dRmin(1000);
+      // double auxm(0.0);
+      // for(edm::View<pat::Jet>::const_iterator ijetpr = jetsAK8->begin();ijetpr != jetsAK8->end(); ++ijetpr) { 
+      //   float dR = deltaR(ijet->eta(),ijet->phi(),ijetpr->eta(),ijetpr->phi());
+      //   if (dR < dRmin) {
+      //     auxm = ijetpr->mass();
+      //     dRmin = dR;
+      //   } 
+      // } 
+      // massPruned_->push_back(auxm);
+      // dR_->push_back(dRmin);
 	
-      }
-    }// jet loop  
-    htAK8_     = htAK8;
-    if (nJetsAK8_ > 1) { //assuming jets are ordered by pt in the pat collection
-      mjjAK8_    = (vP4AK8[0]+vP4AK8[1]).M();
-      dEtajjAK8_ = fabs((*etaAK8_)[0]-(*etaAK8_)[1]); 
-      dPhijjAK8_ = fabs(deltaPhi((*phiAK8_)[0],(*phiAK8_)[1]));
     }
+  }// jet loop  
+  htAK8_     = htAK8;
+  if (nJetsAK8_ > 1) { //assuming jets are ordered by pt in the pat collection
+    mjjAK8_    = (vP4AK8[0]+vP4AK8[1]).M();
+    dEtajjAK8_ = fabs((*etaAK8_)[0]-(*etaAK8_)[1]); 
+    dPhijjAK8_ = fabs(deltaPhi((*phiAK8_)[0],(*phiAK8_)[1]));
+  }
 
     
-    // // CA8
-    // nJetsCA8_ = 0;
-    // float htCA8(0.0);
-    // vector<TLorentzVector> vP4CA8;
-    // for(edm::View<pat::Jet>::const_iterator ijet = pat_jetsCA8.begin();ijet != pat_jetsCA8.end(); ++ijet) { 
-    //   double chf = ijet->chargedHadronEnergyFraction();
-    //   double nhf = ijet->neutralHadronEnergyFraction() + ijet->HFHadronEnergyFraction();
-    //   double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
-    //   double elf = ijet->electronEnergy()/(ijet->jecFactor(0) * ijet->energy());
-    //   double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
-    //   int chm    = ijet->chargedHadronMultiplicity();
-    //   int npr    = ijet->chargedMultiplicity() + ijet->neutralMultiplicity(); 
-    //   float eta  = fabs(ijet->eta());
-    //   float pt   = ijet->pt();
-    //   int idL   = (npr>1 && phf<0.99 && nhf<0.99);
-    //   int idT   = (idL && ((eta<=2.4 && nhf<0.9 && phf<0.9 && elf<0.99 && muf<0.99 && chf>0 && chm>0) || eta>2.4));
-    //   if (pt > ptMinCA8_) {
-    //     htCA8 += pt;
-    //     nJetsCA8_++;
+  // // CA8
+  // nJetsCA8_ = 0;
+  // float htCA8(0.0);
+  // vector<TLorentzVector> vP4CA8;
+  // for(edm::View<pat::Jet>::const_iterator ijet = pat_jetsCA8.begin();ijet != pat_jetsCA8.end(); ++ijet) { 
+  //   double chf = ijet->chargedHadronEnergyFraction();
+  //   double nhf = ijet->neutralHadronEnergyFraction() + ijet->HFHadronEnergyFraction();
+  //   double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
+  //   double elf = ijet->electronEnergy()/(ijet->jecFactor(0) * ijet->energy());
+  //   double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
+  //   int chm    = ijet->chargedHadronMultiplicity();
+  //   int npr    = ijet->chargedMultiplicity() + ijet->neutralMultiplicity(); 
+  //   float eta  = fabs(ijet->eta());
+  //   float pt   = ijet->pt();
+  //   int idL   = (npr>1 && phf<0.99 && nhf<0.99);
+  //   int idT   = (idL && ((eta<=2.4 && nhf<0.9 && phf<0.9 && elf<0.99 && muf<0.99 && chf>0 && chm>0) || eta>2.4));
+  //   if (pt > ptMinCA8_) {
+  //     htCA8 += pt;
+  //     nJetsCA8_++;
 	
-    //     vP4CA8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
-    //     chfCA8_           ->push_back(chf);
-    //     nhfCA8_           ->push_back(nhf);
-    //     phfCA8_           ->push_back(phf);
-    //     elfCA8_           ->push_back(elf);
-    //     mufCA8_           ->push_back(muf);
-    //     jecCA8_           ->push_back(1./ijet->jecFactor(0));
-    //     ptCA8_            ->push_back(pt);
-    //     phiCA8_           ->push_back(ijet->phi());
-    //     etaCA8_           ->push_back(ijet->eta());
-    //     massCA8_          ->push_back(ijet->mass());
-    //     energyCA8_        ->push_back(ijet->energy());
-    // 	idLCA8_           ->push_back(idL);
-    // 	idTCA8_           ->push_back(idT);
-    //     tau1CA8_          ->push_back(ijet->userFloat("NjettinessCA8:tau1"));
-    //     tau2CA8_          ->push_back(ijet->userFloat("NjettinessCA8:tau2"));
-    //     tau3CA8_          ->push_back(ijet->userFloat("NjettinessCA8:tau3"));
-    // 	massPrunedCA8_    ->push_back(ijet->userFloat("ca8PFJetsCHSPrunedLinks"));
+  //     vP4CA8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
+  //     chfCA8_           ->push_back(chf);
+  //     nhfCA8_           ->push_back(nhf);
+  //     phfCA8_           ->push_back(phf);
+  //     elfCA8_           ->push_back(elf);
+  //     mufCA8_           ->push_back(muf);
+  //     jecCA8_           ->push_back(1./ijet->jecFactor(0));
+  //     ptCA8_            ->push_back(pt);
+  //     phiCA8_           ->push_back(ijet->phi());
+  //     etaCA8_           ->push_back(ijet->eta());
+  //     massCA8_          ->push_back(ijet->mass());
+  //     energyCA8_        ->push_back(ijet->energy());
+  // 	idLCA8_           ->push_back(idL);
+  // 	idTCA8_           ->push_back(idT);
+  //     tau1CA8_          ->push_back(ijet->userFloat("NjettinessCA8:tau1"));
+  //     tau2CA8_          ->push_back(ijet->userFloat("NjettinessCA8:tau2"));
+  //     tau3CA8_          ->push_back(ijet->userFloat("NjettinessCA8:tau3"));
+  // 	massPrunedCA8_    ->push_back(ijet->userFloat("ca8PFJetsCHSPrunedLinks"));
 	
-    //   } 
-    // }// jet loop  
-    // htCA8_     = htCA8;
-    // if (nJetsCA8_ > 1) { //assuming jets are ordered by pt in the pat collection
-    //   mjjCA8_    = (vP4CA8[0]+vP4CA8[1]).M();
-    //   dEtajjCA8_ = fabs((*etaCA8_)[0]-(*etaCA8_)[1]); 
-    //   dPhijjCA8_ = fabs(deltaPhi((*phiCA8_)[0],(*phiCA8_)[1]));
-    // }
+  //   } 
+  // }// jet loop  
+  // htCA8_     = htCA8;
+  // if (nJetsCA8_ > 1) { //assuming jets are ordered by pt in the pat collection
+  //   mjjCA8_    = (vP4CA8[0]+vP4CA8[1]).M();
+  //   dEtajjCA8_ = fabs((*etaCA8_)[0]-(*etaCA8_)[1]); 
+  //   dPhijjCA8_ = fabs(deltaPhi((*phiCA8_)[0],(*phiCA8_)[1]));
+  // }
   
     
-    //-------------- Gen Jets Info -----------------------------------
+  //-------------- Gen Jets Info -----------------------------------
 
-    if (!iEvent.isRealData()) {
+  if (!iEvent.isRealData()) {
 
-      //AK4
-      nGenJetsAK4_ = 0;
-      vector<TLorentzVector> vP4GenAK4;
-      edm::View<reco::GenJet> genJetsAK4 = *handle_genJetsAK4; 
-      for(edm::View<reco::GenJet>::const_iterator ijet = genJetsAK4.begin();ijet != genJetsAK4.end(); ++ijet) { 	
-	//float eta  = fabs(ijet->eta());
-	float pt   = ijet->pt();
-	if (pt > ptMinAK4_) {
-	  nGenJetsAK4_++;
-	  vP4GenAK4.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
-	  ptGenAK4_            ->push_back(pt);
-	  phiGenAK4_           ->push_back(ijet->phi());
-	  etaGenAK4_           ->push_back(ijet->eta());
-	  massGenAK4_          ->push_back(ijet->mass());
-	  energyGenAK4_        ->push_back(ijet->energy());
-	}
-      }// jet loop  
+    //AK4
+    nGenJetsAK4_ = 0;
+    vector<TLorentzVector> vP4GenAK4;
+    edm::View<reco::GenJet> genJetsAK4 = *handle_genJetsAK4; 
+    for(edm::View<reco::GenJet>::const_iterator ijet = genJetsAK4.begin();ijet != genJetsAK4.end(); ++ijet) { 	
+      //float eta  = fabs(ijet->eta());
+      float pt   = ijet->pt();
+      if (pt > ptMinAK4_) {
+	nGenJetsAK4_++;
+	vP4GenAK4.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
+	ptGenAK4_            ->push_back(pt);
+	phiGenAK4_           ->push_back(ijet->phi());
+	etaGenAK4_           ->push_back(ijet->eta());
+	massGenAK4_          ->push_back(ijet->mass());
+	energyGenAK4_        ->push_back(ijet->energy());
+      }
+    }// jet loop  
       
-      //AK8
-      nGenJetsAK8_ = 0;
-      vector<TLorentzVector> vP4GenAK8;      
-      edm::View<reco::GenJet> genJetsAK8 = *handle_genJetsAK8;      
-      for(edm::View<reco::GenJet>::const_iterator ijet = genJetsAK8.begin();ijet != genJetsAK8.end(); ++ijet) { 	
-	//float eta  = fabs(ijet->eta());
-	float pt   = ijet->pt();
-	if (pt > ptMinAK8_) {
-	  nGenJetsAK8_++;
-	  vP4GenAK8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
-	  ptGenAK8_            ->push_back(pt);
-	  phiGenAK8_           ->push_back(ijet->phi());
-	  etaGenAK8_           ->push_back(ijet->eta());
-	  massGenAK8_          ->push_back(ijet->mass());
-	  energyGenAK8_        ->push_back(ijet->energy());
-	}
-      }// jet loop  
+    //AK8
+    nGenJetsAK8_ = 0;
+    vector<TLorentzVector> vP4GenAK8;      
+    edm::View<reco::GenJet> genJetsAK8 = *handle_genJetsAK8;      
+    for(edm::View<reco::GenJet>::const_iterator ijet = genJetsAK8.begin();ijet != genJetsAK8.end(); ++ijet) { 	
+      //float eta  = fabs(ijet->eta());
+      float pt   = ijet->pt();
+      if (pt > ptMinAK8_) {
+	nGenJetsAK8_++;
+	vP4GenAK8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
+	ptGenAK8_            ->push_back(pt);
+	phiGenAK8_           ->push_back(ijet->phi());
+	etaGenAK8_           ->push_back(ijet->eta());
+	massGenAK8_          ->push_back(ijet->mass());
+	energyGenAK8_        ->push_back(ijet->energy());
+      }
+    }// jet loop  
       
-      // nGenJetsCA8_ = 0;
-      // vector<TLorentzVector> vP4GenCA8;      
-      // for(edm::View<pat::Jet>::const_iterator ijet = pat_jetsCA8.begin();ijet != pat_jetsCA8.end(); ++ijet) { 		
-      // 	//float eta  = fabs(ijet->eta());
-      // 	float pt   = ijet->pt();
-      // 	if (pt > ptMinCA8_) {
-      // 	  nGenJetsCA8_++;
-      // 	  vP4GenCA8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
-      // 	  ptGenCA8_            ->push_back(pt);
-      // 	  phiGenCA8_           ->push_back(ijet->phi());
-      // 	  etaGenCA8_           ->push_back(ijet->eta());
-      // 	  massGenCA8_          ->push_back(ijet->mass());
-      // 	  energyGenCA8_        ->push_back(ijet->energy());
-      // 	}
-      // }// jet loop  
+    // nGenJetsCA8_ = 0;
+    // vector<TLorentzVector> vP4GenCA8;      
+    // for(edm::View<pat::Jet>::const_iterator ijet = pat_jetsCA8.begin();ijet != pat_jetsCA8.end(); ++ijet) { 		
+    // 	//float eta  = fabs(ijet->eta());
+    // 	float pt   = ijet->pt();
+    // 	if (pt > ptMinCA8_) {
+    // 	  nGenJetsCA8_++;
+    // 	  vP4GenCA8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
+    // 	  ptGenCA8_            ->push_back(pt);
+    // 	  phiGenCA8_           ->push_back(ijet->phi());
+    // 	  etaGenCA8_           ->push_back(ijet->eta());
+    // 	  massGenCA8_          ->push_back(ijet->mass());
+    // 	  energyGenCA8_        ->push_back(ijet->energy());
+    // 	}
+    // }// jet loop  
 
-    }//if MC 
+  }//if MC 
 
-  }// if vtx
+  //  }// if vtx
   
   
   //---- Fill Tree ---
@@ -1422,6 +1500,19 @@ void DijetTreeProducer::initialize()
   
   triggerResult_     ->clear();
   
+  passFilterHBHE_                  = false;
+  passFilterCSCHalo_               = false;
+  passFilterHCALlaser_             = false;
+  passFilterECALDeadCell_          = false;
+  passFilterGoodVtx_               = false;
+  passFilterTrkFailure_            = false;
+  passFilterEEBadSc_               = false;
+  passFilterECALlaser_             = false;
+  passFilterTrkPOG_                = false;
+  passFilterTrkPOG_manystrip_      = false;
+  passFilterTrkPOG_toomanystrip_   = false;
+  passFilterTrkPOG_logError_       = false;
+
   //----- MC -------
   npu_ ->clear();
   Number_interactions ->clear();
