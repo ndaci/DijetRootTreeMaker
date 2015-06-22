@@ -59,6 +59,7 @@ ins = open(args.inputList,"r")
 
 current_time = datetime.datetime.now()
 namedir = tagname+"_%04d%02d%02d_%02d%02d" % (current_time.year,current_time.month,current_time.day,current_time.hour,current_time.minute)  
+os.system("mkdir -p "+storagedir)
 os.system("mkdir "+storagedir+"/"+namedir)
 os.system("mkdir "+storagedir+"/"+namedir+"/cfg")
 os.system("mkdir "+storagedir+"/"+namedir+"/workdir")
@@ -121,6 +122,8 @@ for line in ins:
         fout.write(line_+"\n")
 
   if submit:
+    print "Submitting jobs....."
+    #print crab_cfgfile
     os.system("crab submit -c "+crab_cfgfile)
 
 
