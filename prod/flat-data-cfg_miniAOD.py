@@ -561,7 +561,7 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   ## trigger ###################################
   #triggerAlias     = cms.vstring('Fat','PFHT650','PFNoPUHT650','HT750','HT550'),
   ##### For 0T data  #####
-  triggerAlias     = cms.vstring('L1Jet68','L1Jet52','L1Jet36','L1EG15','L1EG10','L1EG5'),
+  triggerAlias     = cms.vstring('L1Jet68','L1Jet36','L1Jet16','L1EG20','L1EG5'),
   ##### For JetHT PD ##### 
   #triggerAlias     = cms.vstring('PFHT800','PFHT650','PFHT600','PFHT475','PFHT400','PFHT350','PFHT300','PFHT250','PFHT200',
   #                               'PFHT650MJJ950','PFHT650MJJ900',
@@ -580,10 +580,9 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
      ### For 0T data ###
      ###
      'HLT_L1SingleJet68_v*',
-     'HLT_L1SingleJet52_v*',
      'HLT_L1SingleJet36_v*',
-     'HLT_L1SingleEG15_v*',
-     'HLT_L1SingleEG10_v*',
+     'HLT_L1SingleJet16_v*',
+     'HLT_L1SingleEG20_v*',
      'HLT_L1SingleEG5_v*',
      ###
      ### For JetHT PD ###
