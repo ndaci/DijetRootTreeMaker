@@ -202,6 +202,8 @@ void DijetTreeProducer::beginJob()
   phfAK4_            = new std::vector<float>;
   mufAK4_            = new std::vector<float>;
   elfAK4_            = new std::vector<float>;
+  nemfAK4_           = new std::vector<float>;
+  cemfAK4_           = new std::vector<float>;
   // Hadronic forward hadrons
   hf_hfAK4_          = new std::vector<float>;
   // Hadronic forward electromagnetic fraction
@@ -264,6 +266,8 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetPhfAK4"               ,"vector<float>"     ,&phfAK4_);
   outTree_->Branch("jetMufAK4"               ,"vector<float>"     ,&mufAK4_);
   outTree_->Branch("jetElfAK4"               ,"vector<float>"     ,&elfAK4_);
+  outTree_->Branch("jetNemfAK4"              ,"vector<float>"     ,&nemfAK4_);
+  outTree_->Branch("jetCemfAK4"              ,"vector<float>"     ,&cemfAK4_);
   outTree_->Branch("jetHf_hfAK4"             ,"vector<float>"     ,&hf_hfAK4_);
   outTree_->Branch("jetHf_emfAK4"            ,"vector<float>"    ,&hf_emfAK4_);
   outTree_->Branch("jetHofAK4"               ,"vector<float>"    ,&hofAK4_);
@@ -322,6 +326,8 @@ void DijetTreeProducer::beginJob()
   phfAK8_            = new std::vector<float>;
   mufAK8_            = new std::vector<float>;
   elfAK8_            = new std::vector<float>;
+  nemfAK8_           = new std::vector<float>;
+  cemfAK8_           = new std::vector<float>;
   // Hadronic forward hadrons
   hf_hfAK8_          = new std::vector<float>;
   // Hadronic forward photons
@@ -353,6 +359,8 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetPhfAK8"               ,"vector<float>"     ,&phfAK8_);
   outTree_->Branch("jetMufAK8"               ,"vector<float>"     ,&mufAK8_);
   outTree_->Branch("jetElfAK8"               ,"vector<float>"     ,&elfAK8_); 
+  outTree_->Branch("jetNemfAK8"              ,"vector<float>"     ,&nemfAK8_);
+  outTree_->Branch("jetCemfAK8"              ,"vector<float>"     ,&cemfAK8_);
   outTree_->Branch("jetHf_hfAK8"             ,"vector<float>"     ,&hf_hfAK8_);
   outTree_->Branch("jetHf_emfAK8"            ,"vector<float>"     ,&hf_emfAK8_);
   outTree_->Branch("jetHofAK8"               ,"vector<float>"     ,&hofAK8_);
@@ -515,6 +523,8 @@ void DijetTreeProducer::endJob()
   delete phfAK4_;
   delete mufAK4_;
   delete elfAK4_;
+  delete nemfAK4_;
+  delete cemfAK4_;
   delete hf_hfAK4_;
   delete hf_emfAK4_;
   delete hofAK4_;
@@ -573,6 +583,8 @@ void DijetTreeProducer::endJob()
   delete phfAK8_;
   delete mufAK8_;
   delete elfAK8_;
+  delete nemfAK8_;
+  delete cemfAK8_;
   delete hf_hfAK8_;
   delete hf_emfAK8_;
   delete hofAK8_;
@@ -836,41 +848,41 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     }
   }
 
-  if (!iEvent.isRealData())
-    {
+  // if (!iEvent.isRealData())
+  //   {
       
-      //-------------- Noise Filter Info -----------------------------------
-      if (noiseFilterCache_.setEvent(iEvent,iSetup)) {
-	
-	if(noiseFilterCache_.configurationUpdated()) {
-	  HBHENoiseFilter_Selector_->init(noiseFilterCache_);
-	  CSCHaloNoiseFilter_Selector_->init(noiseFilterCache_);
-	  HCALlaserNoiseFilter_Selector_->init(noiseFilterCache_);
-	  ECALDeadCellNoiseFilter_Selector_->init(noiseFilterCache_);
-	  GoodVtxNoiseFilter_Selector_->init(noiseFilterCache_);
-	  TrkFailureNoiseFilter_Selector_->init(noiseFilterCache_);
-	  EEBadScNoiseFilter_Selector_->init(noiseFilterCache_);
-	  ECALlaserNoiseFilter_Selector_->init(noiseFilterCache_);
-	  TrkPOGNoiseFilter_Selector_->init(noiseFilterCache_);
-	  TrkPOG_manystrip_NoiseFilter_Selector_->init(noiseFilterCache_);
-	  TrkPOG_toomanystrip_NoiseFilter_Selector_->init(noiseFilterCache_);
-	  TrkPOG_logError_NoiseFilter_Selector_->init(noiseFilterCache_);
-	}
-	
-	passFilterHBHE_ = (*HBHENoiseFilter_Selector_)(noiseFilterCache_);    
-	passFilterCSCHalo_ = (*CSCHaloNoiseFilter_Selector_)(noiseFilterCache_);    
-	passFilterHCALlaser_ = (*HCALlaserNoiseFilter_Selector_)(noiseFilterCache_);    
-	passFilterECALDeadCell_ = (*ECALDeadCellNoiseFilter_Selector_)(noiseFilterCache_);    
-	passFilterGoodVtx_ = (*GoodVtxNoiseFilter_Selector_)(noiseFilterCache_);    
-	passFilterTrkFailure_ = (*TrkFailureNoiseFilter_Selector_)(noiseFilterCache_);    
-	passFilterEEBadSc_ = (*EEBadScNoiseFilter_Selector_)(noiseFilterCache_);    
-	passFilterECALlaser_ = (*ECALlaserNoiseFilter_Selector_)(noiseFilterCache_);    
-	passFilterTrkPOG_ = (*TrkPOGNoiseFilter_Selector_)(noiseFilterCache_);    
-	passFilterTrkPOG_manystrip_ = (*TrkPOG_manystrip_NoiseFilter_Selector_)(noiseFilterCache_);    
-	passFilterTrkPOG_toomanystrip_ = (*TrkPOG_toomanystrip_NoiseFilter_Selector_)(noiseFilterCache_);    
-	passFilterTrkPOG_logError_ = (*TrkPOG_logError_NoiseFilter_Selector_)(noiseFilterCache_);    
-      }
+  //-------------- Noise Filter Info -----------------------------------
+  if (noiseFilterCache_.setEvent(iEvent,iSetup)) {
+    
+    if(noiseFilterCache_.configurationUpdated()) {
+      HBHENoiseFilter_Selector_->init(noiseFilterCache_);
+      CSCHaloNoiseFilter_Selector_->init(noiseFilterCache_);
+      HCALlaserNoiseFilter_Selector_->init(noiseFilterCache_);
+      ECALDeadCellNoiseFilter_Selector_->init(noiseFilterCache_);
+      GoodVtxNoiseFilter_Selector_->init(noiseFilterCache_);
+      TrkFailureNoiseFilter_Selector_->init(noiseFilterCache_);
+      EEBadScNoiseFilter_Selector_->init(noiseFilterCache_);
+      ECALlaserNoiseFilter_Selector_->init(noiseFilterCache_);
+      TrkPOGNoiseFilter_Selector_->init(noiseFilterCache_);
+      TrkPOG_manystrip_NoiseFilter_Selector_->init(noiseFilterCache_);
+      TrkPOG_toomanystrip_NoiseFilter_Selector_->init(noiseFilterCache_);
+      TrkPOG_logError_NoiseFilter_Selector_->init(noiseFilterCache_);
     }
+	
+    passFilterHBHE_ = (*HBHENoiseFilter_Selector_)(noiseFilterCache_);    
+    passFilterCSCHalo_ = (*CSCHaloNoiseFilter_Selector_)(noiseFilterCache_);    
+    passFilterHCALlaser_ = (*HCALlaserNoiseFilter_Selector_)(noiseFilterCache_);    
+    passFilterECALDeadCell_ = (*ECALDeadCellNoiseFilter_Selector_)(noiseFilterCache_);    
+    passFilterGoodVtx_ = (*GoodVtxNoiseFilter_Selector_)(noiseFilterCache_);    
+    passFilterTrkFailure_ = (*TrkFailureNoiseFilter_Selector_)(noiseFilterCache_);    
+    passFilterEEBadSc_ = (*EEBadScNoiseFilter_Selector_)(noiseFilterCache_);    
+    passFilterECALlaser_ = (*ECALlaserNoiseFilter_Selector_)(noiseFilterCache_);    
+    passFilterTrkPOG_ = (*TrkPOGNoiseFilter_Selector_)(noiseFilterCache_);    
+    passFilterTrkPOG_manystrip_ = (*TrkPOG_manystrip_NoiseFilter_Selector_)(noiseFilterCache_);    
+    passFilterTrkPOG_toomanystrip_ = (*TrkPOG_toomanystrip_NoiseFilter_Selector_)(noiseFilterCache_);    
+    passFilterTrkPOG_logError_ = (*TrkPOG_logError_NoiseFilter_Selector_)(noiseFilterCache_);    
+  }
+      //    }
   
   //----- at least one good vertex -----------
   //bool cut_vtx = (recVtxs->size() > 0);
@@ -919,7 +931,8 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     double nhf = ijet->neutralHadronEnergyFraction(); // + ijet->HFHadronEnergyFraction();
     double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
     double elf = ijet->electronEnergy()/(ijet->jecFactor(0) * ijet->energy());
-    double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
+    //double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
+    double muf = ijet->muonEnergyFraction();
 
     double hf_hf = ijet->HFHadronEnergyFraction();
     double hf_emf= ijet->HFEMEnergyFraction();
@@ -959,6 +972,8 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       phfAK4_           ->push_back(phf);
       elfAK4_           ->push_back(elf);
       mufAK4_           ->push_back(muf);
+      nemfAK4_          ->push_back(nemf);
+      cemfAK4_          ->push_back(cemf);
       hf_hfAK4_         ->push_back(hf_hf);
       hf_emfAK4_        ->push_back(hf_emf);
       hofAK4_           ->push_back(hof);
@@ -1156,7 +1171,8 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     double nhf = ijet->neutralHadronEnergyFraction(); // + ijet->HFHadronEnergyFraction();
     double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
     double elf = ijet->electronEnergy()/(ijet->jecFactor(0) * ijet->energy());
-    double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
+    //double muf = ijet->muonEnergy()/(ijet->jecFactor(0) * ijet->energy());
+    double muf = ijet->muonEnergyFraction();
 
     double hf_hf = ijet->HFHadronEnergyFraction();
     double hf_emf= ijet->HFEMEnergyFraction();
@@ -1195,6 +1211,8 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       phfAK8_           ->push_back(phf);
       elfAK8_           ->push_back(elf);
       mufAK8_           ->push_back(muf);
+      nemfAK8_          ->push_back(nemf);
+      cemfAK8_          ->push_back(cemf);
       hf_hfAK8_         ->push_back(hf_hf);
       hf_emfAK8_        ->push_back(hf_emf);
       hofAK8_           ->push_back(hof);
@@ -1387,6 +1405,8 @@ void DijetTreeProducer::initialize()
   phfAK4_            ->clear();
   elfAK4_            ->clear();
   mufAK4_            ->clear();
+  nemfAK4_           ->clear();
+  cemfAK4_           ->clear();
   hf_hfAK4_             ->clear();
   hf_emfAK4_            ->clear();
   hofAK4_            ->clear();
@@ -1452,8 +1472,10 @@ void DijetTreeProducer::initialize()
   phfAK8_            ->clear();
   elfAK8_            ->clear();
   mufAK8_            ->clear();
-  hf_hfAK8_             ->clear();
-  hf_emfAK8_            ->clear();
+  nemfAK8_           ->clear();
+  cemfAK8_           ->clear();
+  hf_hfAK8_          ->clear();
+  hf_emfAK8_         ->clear();
   hofAK8_            ->clear();
   jecAK8_            ->clear();
   jecAK8_            ->clear();
