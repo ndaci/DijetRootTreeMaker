@@ -78,7 +78,7 @@ process.TFileService=cms.Service("TFileService",
                                  #fileName=cms.string('dijetTree_QstarToJJ_M_3000_PHYS14.root'),
                                  #fileName=cms.string('dijetTree_QstarToJJ_M_4000_RunIISpring15_mod.root'),
                                  fileName=cms.string(THISROOTFILE),
-                                 #fileName=cms.string('localtest_AK4cors_v2.root'),
+                                 #fileName=cms.string('localtest_V5cors.root'),
                                  #fileName=cms.string("dijetTree_Qstar_MINIAODSIM.root"),
                                  #fileName=cms.string("dijetTree_Qstar_AODSIM.root"),
                                  closeFileFast = cms.untracked.bool(True)
@@ -449,9 +449,9 @@ process.out.outputCommands.append("keep *_slimmedGenJetsAK8_*_*")
 process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:miniAOD_RSGravToJJ_kMpl01_M-8000.root')
     #fileNames = cms.untracked.vstring('file:2CEB70D6-D918-E411-B814-003048F30422.root')    
-    #fileNames = cms.untracked.vstring('file:/afs/cern.ch/user/j/juska/work/sample_spring15_rsgqq2000_25asympt_py8.root')
+    fileNames = cms.untracked.vstring('file:/afs/cern.ch/user/j/juska/work/sample_spring15_rsgqq2000_25asympt_py8.root')
     #fileNames = cms.untracked.vstring('file:QstarToJJ_M_4000_TuneCUETP8M1_13TeV_pythia8__AODSIM__Asympt50ns_MCRUN2_74_V9A-v1__70000__E0A71360-F6FE-E411-B342-00259029E84C.root')   
-    fileNames = cms.untracked.vstring('file:QstarToJJ_M_4000_TuneCUETP8M1_13TeV_pythia8__MINIAODSIM__Asympt50ns_MCRUN2_74_V9A-v1__70000__AA35D1E7-FEFE-E411-B1C5-0025905B858A.root')    
+    #fileNames = cms.untracked.vstring('file:QstarToJJ_M_4000_TuneCUETP8M1_13TeV_pythia8__MINIAODSIM__Asympt50ns_MCRUN2_74_V9A-v1__70000__AA35D1E7-FEFE-E411-B1C5-0025905B858A.root')    
     #fileNames = cms.untracked.vstring('/store/mc/RunIISpring15DR74/QstarToJJ_M_1000_TuneCUETP8M1_13TeV_pythia8/AODSIM/Asympt50ns_MCRUN2_74_V9A-v1/50000/00F85752-BCFB-E411-A29A-000F5327349C.root')
 )
 
@@ -621,14 +621,14 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 
 
   ## JECs ################
-  ## Version Summer15_V3_MC
+  ## Version Summer15_V5 data/Summer15_V5/
   redoJECs  = cms.bool(True),
-  L1corrAK4 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_AK4/Summer15_V3_MC_L1FastJet_AK4PFchs.txt'),
-  L2corrAK4 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_AK4/Summer15_V3_MC_L2Relative_AK4PFchs.txt'),
-  L3corrAK4 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_AK4/Summer15_V3_MC_L3Absolute_AK4PFchs.txt'),
-  L1corrAK8 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_AK4/Summer15_V3_MC_L1FastJet_AK8PFchs.txt'),
-  L2corrAK8 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_AK4/Summer15_V3_MC_L2Relative_AK8PFchs.txt'),
-  L3corrAK8 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_AK4/Summer15_V3_MC_L3Absolute_AK8PFchs.txt')
+  L1corrAK4 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_V5/Summer15_V5_MC_L1FastJet_AK4PFchs.txt'),
+  L2corrAK4 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_V5/Summer15_V5_MC_L2Relative_AK4PFchs.txt'),
+  L3corrAK4 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_V5/Summer15_V5_MC_L3Absolute_AK4PFchs.txt'),
+  L1corrAK8 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_V5/Summer15_V5_MC_L1FastJet_AK8PFchs.txt'),
+  L2corrAK8 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_V5/Summer15_V5_MC_L2Relative_AK8PFchs.txt'),
+  L3corrAK8 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_V5/Summer15_V5_MC_L3Absolute_AK8PFchs.txt')
 )
 
 
