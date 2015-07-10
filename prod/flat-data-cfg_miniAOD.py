@@ -631,7 +631,7 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   noiseFilterSelection_trkPOG_logErrorTooManyClusters = cms.string('Flag_trkPOG_logErrorTooManyClusters'),
 
   noiseFilterConfiguration = cms.PSet(
-    hltResults            = cms.InputTag('TriggerResults','','PAT'),
+    hltResults            = cms.InputTag('TriggerResults','','RECO'),
     #hltResults            = cms.InputTag('TriggerResults','','jetToolbox'),
     l1tResults            = cms.InputTag(''),
     daqPartitions         = cms.uint32(1),
