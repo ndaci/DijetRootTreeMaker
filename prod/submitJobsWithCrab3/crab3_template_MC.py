@@ -10,7 +10,7 @@ config.JobType.pluginName = 'Analysis'
 config.JobType.outputFiles = ['OUTFILENAME']
 config.section_('Data')
 config.Data.inputDataset = 'INPUTDATASET'
-config.Data.unitsPerJob = 1
+config.Data.unitsPerJob = FILESPERJOB #without '' since it must be an int
 config.Data.splitting = 'FileBased'
 config.Data.publication = False
 config.Data.outLFNDirBase = '/store/group/phys_exotica/dijet/Dijet13TeV/juska/Spring15/'

@@ -1,0 +1,15 @@
+
+
+#----------------------------------------------------------- 
+#  Run2015B ExpressPhysics - 8June2015DCSJson
+#----------------------------------------------------------- 
+python createAndSubmitMC.py -d Outputs_Run2015B -v Run2015B_ExpressPhysics_8June2015DCSJson_JECV5_8f033ec -i Inputs_Run2015B/InputList_Run2015B_ExpressPhysics.txt -t Inputs_Run2015B/crab3_template_data.py -c ../flat-data-cfg_miniAOD.py -n $USER -p Run2015B_ExpressPhysics_8June2015DCSJson_JECV5_8f033ec --submit
+
+
+#----------------------------------------------------------- 
+#  Run2015B JetHT - ... 
+#----------------------------------------------------------- 
+python createAndSubmitMC.py -d Outputs_Run2015B -v Run2015B_JetHT_10June2015DCSJson_JECV5_5a70fc3 -i Inputs_Run2015B/InputList_Run2015B_JetHT.txt -t Inputs_Run2015B/crab3_template_data.py -c ../flat-data-cfg_miniAOD.py -n $USER -p Run2015B_JetHT_10June2015DCSJson_JECV5_5a70fc3 --submit
+
+
+

@@ -93,6 +93,7 @@ for line in ins:
   dict = {
       "THISROOTFILE":"\""+sample+"__"+dataset.split("/")[2]+"__"+dataset.split("/")[3]+".root"+"\"",
       "THISGLOBALTAG":"\""+globaltag+"\"",
+      "FILESPERJOB":filesperjob,
       "WORKINGAREA":storagedir+"/"+namedir+"/workdir", 
       "WORKINGDIR":sample+"__"+dataset.split("/")[2]+"__"+dataset.split("/")[3], 
       "CMSSWCFG":storagedir+"/"+namedir+"/cfg/"+sample+"_cmssw.py",

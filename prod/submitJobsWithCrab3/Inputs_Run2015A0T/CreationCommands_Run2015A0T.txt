@@ -12,8 +12,14 @@
 
 
 #----------------------------------------------------------- 
-#  Run2015A Jet PromptReco
+#  Run2015A Jet PromptReco - 246908-247381
 #----------------------------------------------------------- 
 python createAndSubmitMC.py -d Outputs_Run2015A0T -v Run2015A0T_Jet_246908-247381_V1_Tagab2e8e9 -i Inputs_Run2015A0T/InputList_Run2015A0T_Jet.txt -t Inputs_Run2015A0T/crab3_template_data.py -c ../flat-data-cfg_miniAOD.py -n $USER -p Run2015A0T_Jet_246908-247381_V1_Tagab2e8e9 --submit
+
+#----------------------------------------------------------- 
+#  Run2015A Jet PromptReco - 246908-248005 (full 0T run)
+#----------------------------------------------------------- 
+python createAndSubmitMC.py -d Outputs_Run2015A0T -v Run2015A0T_Jet_246908-248005_V1_Tagf0be56e -i Inputs_Run2015A0T/InputList_Run2015A0T_Jet.txt -t Inputs_Run2015A0T/crab3_template_data.py -c ../flat-data-cfg_miniAOD.py -n $USER -p Run2015A0T_Jet_246908-248005_V1_Tagf0be56e --submit
+
 
 
