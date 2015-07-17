@@ -1,1 +1,1 @@
-/JetHT/Run2015B-PromptReco-v1/MINIAOD -1 5 GR_P_V56::All
+/JetHT/Run2015B-PromptReco-v1/MINIAOD -1 20 GR_P_V56::All
