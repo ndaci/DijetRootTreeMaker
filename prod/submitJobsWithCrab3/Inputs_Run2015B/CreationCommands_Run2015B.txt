@@ -18,6 +18,23 @@ python createAndSubmitMC.py -d Outputs_Run2015B -v Run2015B_JetHT17Jul_25July201
 
 python createAndSubmitMC.py -d Outputs_Run2015B -v Run2015B_JetHT_25July2015-CertJson-251586-251883_JEC-Summer15_50nsV2_501dfb2 -i Inputs_Run2015B/InputList_Run2015B_JetHT.txt -t Inputs_Run2015B/crab3_template_data.py -c ../flat-data-cfg_miniAOD.py -n $USER -p Run2015B_JetHT_25July2015-CertJson-251586-251883_JEC-Summer15_50nsV2_501dfb2 --submit
 
+#----------------------------------------------------------- 
+#  Run2015B SingleMuon - Certified Json full 50ns run
+#----------------------------------------------------------- 
+python createAndSubmitMC.py -d Outputs_Run2015B -v Run2015B_SingleMuon17Jul_07Aug2015-CertJson-251244-251585_JEC-Summer15_50nsV2_501dfb2 -i Inputs_Run2015B/InputList_Run2015B_SingleMuon_Jul17.txt -t Inputs_Run2015B/crab3_template_data.py -c ../flat-data-cfg_miniAOD.py -n $USER -p Run2015B_SingleMuon17Jul_07Aug2015-CertJson-251244-251585_JEC-Summer15_50nsV2_501dfb2 --submit
+
+python createAndSubmitMC.py -d Outputs_Run2015B -v Run2015B_SingleMuon_07Aug2015-CertJson-251586-251883_JEC-Summer15_50nsV2_501dfb2 -i Inputs_Run2015B/InputList_Run2015B_SingleMuon.txt -t Inputs_Run2015B/crab3_template_data.py -c ../flat-data-cfg_miniAOD.py -n $USER -p Run2015B_SingleMuon_07Aug2015-CertJson-251586-251883_JEC-Summer15_50nsV2_501dfb2 --submit
+
+#----------------------------------------------------------- 
+#  Run2015B SingleElectron - Certified Json full 50ns run
+#----------------------------------------------------------- 
+python createAndSubmitMC.py -d Outputs_Run2015B -v Run2015B_SingleElectron17Jul_07Aug2015-CertJson-251244-251585_JEC-Summer15_50nsV2_501dfb2 -i Inputs_Run2015B/InputList_Run2015B_SingleElectron_Jul17.txt -t Inputs_Run2015B/crab3_template_data.py -c ../flat-data-cfg_miniAOD.py -n $USER -p Run2015B_SingleElectron17Jul_07Aug2015-CertJson-251244-251585_JEC-Summer15_50nsV2_501dfb2 --submit
+
+python createAndSubmitMC.py -d Outputs_Run2015B -v Run2015B_SingleElectron_07Aug2015-CertJson-251586-251883_JEC-Summer15_50nsV2_501dfb2 -i Inputs_Run2015B/InputList_Run2015B_SingleElectron.txt -t Inputs_Run2015B/crab3_template_data.py -c ../flat-data-cfg_miniAOD.py -n $USER -p Run2015B_SingleElectron_07Aug2015-CertJson-251586-251883_JEC-Summer15_50nsV2_501dfb2 --submit
+
+
+
+
 
 
 

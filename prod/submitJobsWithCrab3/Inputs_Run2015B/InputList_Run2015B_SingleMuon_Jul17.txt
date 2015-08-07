@@ -1,0 +1,1 @@
+/SingleMuon/Run2015B-17Jul2015-v1/MINIAOD -1 20 74X_dataRun2_Prompt_v0
