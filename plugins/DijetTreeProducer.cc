@@ -85,10 +85,12 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
   L1corrAK4_ = cfg.getParameter<edm::FileInPath>("L1corrAK4");
   L2corrAK4_ = cfg.getParameter<edm::FileInPath>("L2corrAK4");
   L3corrAK4_ = cfg.getParameter<edm::FileInPath>("L3corrAK4");
+  ResCorrAK4_ = cfg.getParameter<edm::FileInPath>("ResCorrAK4");
   // AK8
   L1corrAK8_ = cfg.getParameter<edm::FileInPath>("L1corrAK8");
   L2corrAK8_ = cfg.getParameter<edm::FileInPath>("L2corrAK8");
   L3corrAK8_ = cfg.getParameter<edm::FileInPath>("L3corrAK8");
+  ResCorrAK8_ = cfg.getParameter<edm::FileInPath>("ResCorrAK8");
 
   if(redoJECs_)
   {
@@ -96,11 +98,13 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
     L1ParAK4 = new JetCorrectorParameters(L1corrAK4_.fullPath());
     L2ParAK4 = new JetCorrectorParameters(L2corrAK4_.fullPath());
     L3ParAK4 = new JetCorrectorParameters(L3corrAK4_.fullPath());
+    L2L3ResAK4 = new JetCorrectorParameters(ResCorrAK4_.fullPath());
 
     std::vector<JetCorrectorParameters> vParAK4;
     vParAK4.push_back(*L1ParAK4);
     vParAK4.push_back(*L2ParAK4);
     vParAK4.push_back(*L3ParAK4);
+    vParAK4.push_back(*L2L3ResAK4);
 
     JetCorrectorAK4 = new FactorizedJetCorrector(vParAK4);
 
@@ -108,11 +112,13 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
     L1ParAK8 = new JetCorrectorParameters(L1corrAK8_.fullPath());
     L2ParAK8 = new JetCorrectorParameters(L2corrAK8_.fullPath());
     L3ParAK8 = new JetCorrectorParameters(L3corrAK8_.fullPath());
+    L2L3ResAK8 = new JetCorrectorParameters(ResCorrAK8_.fullPath());
 
     std::vector<JetCorrectorParameters> vParAK8;
     vParAK8.push_back(*L1ParAK8);
     vParAK8.push_back(*L2ParAK8);
     vParAK8.push_back(*L3ParAK8);
+    vParAK8.push_back(*L2L3ResAK8);
 
     JetCorrectorAK8 = new FactorizedJetCorrector(vParAK8);
   }
