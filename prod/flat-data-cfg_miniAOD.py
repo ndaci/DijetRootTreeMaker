@@ -451,7 +451,10 @@ process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:/cmshome/santanas/CMS/data/Spring14miniaod__RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8__MINIAODSIM__PU20bx25_POSTLS170_V5-v1__00000__6AACD832-3707-E411-A167-001E672489D5.root')
     #fileNames = cms.untracked.vstring('file:/cmshome/santanas/CMS/data/Spring14drAODSIM__RSGravToJJ_kMpl01_M-1000_Tune4C_13TeV-pythia8__AODSIM__PU20bx25_POSTLS170_V5-v1__00000__0622C950-58E4-E311-A595-0025904B130A.root')
     #fileNames = cms.untracked.vstring('file:2CEB70D6-D918-E411-B814-003048F30422.root')    
-    fileNames = cms.untracked.vstring('file:/tmp/8867A4E4-9E2E-E511-8F9D-0026189438A7.root')    
+    #fileNames = cms.untracked.vstring('file:/tmp/8867A4E4-9E2E-E511-8F9D-0026189438A7.root')    
+    #fileNames = cms.untracked.vstring('root://xrootd.unl.edu//store/data/Run2015B/JetHT/MINIAOD/PromptReco-v1/000/251/883/00000/62DCDC81-2B2D-E511-AEAD-02163E0126A0.root')
+    #fileNames = cms.untracked.vstring('root://xrootd.unl.edu//store/data/Run2015B/SingleMuon/MINIAOD/PromptReco-v1/000/251/883/00000/E2546D9E-492D-E511-9977-02163E011D46.root')
+    fileNames = cms.untracked.vstring('root://xrootd.unl.edu//store/data/Run2015B/SingleMuon/MINIAOD/PromptReco-v1/000/251/883/00000/62919ECB-1F2D-E511-B387-02163E013796.root')
     #fileNames = cms.untracked.vstring('/store/data/Run2015A/Jet/AOD/PromptReco-v1/000/247/081/00000/804F6C9F-DB0C-E511-B0B6-02163E0143D9.root')
 )
 
@@ -568,7 +571,7 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   triggerAlias     = cms.vstring('PFHT800','PFHT650','PFHT600','PFHT475','PFHT400','PFHT350','PFHT300','PFHT250','PFHT200',
                                  'PFHT650MJJ950','PFHT650MJJ900',
                                  'PFJET500','PFJET450','PFJET200',
-                                 'HT2000','HT2500'),
+                                 'HT2000','HT2500','Mu45Eta2p1'),
   triggerSelection = cms.vstring(
      #'HLT_FatDiPFJetMass750_DR1p1_Deta1p5_v*',
      #'HLT_PFHT650_v*', #giulia : commented because not found in new entuples
@@ -605,6 +608,7 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
      'HLT_PFJet200_v*',
      'HLT_HT2000_v*',
      'HLT_HT2500_v*',
+     'HLT_Mu45_eta2p1_v*',
      ###
   ),
   triggerConfiguration = cms.PSet(
