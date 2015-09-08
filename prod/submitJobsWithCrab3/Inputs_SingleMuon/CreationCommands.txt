@@ -1,0 +1,30 @@
+#----------------------------------------------------------- 
+#  Run2015B (50ns)
+#----------------------------------------------------------- 
+
+python createAndSubmitMC.py -d Outputs_SingleMuon -v Run2015B_SingleMuon17JulReReco_08Sep2015-CertJson50ns-XXXXXX-YYYYYY_JEC-Summer15_50nsV4_0d7d556 -i Inputs_SingleMuon/InputList_Run2015B_SingleMuon_Jul17.txt -t Inputs_SingleMuon/crab3_template_data.py -c ../flat-data-cfg_miniAOD.py -n $USER -p Run2015B_SingleMuon17JulReReco_08Sep2015-CertJson50ns-XXXXXX-YYYYYY_JEC-Summer15_50nsV4_0d7d556 --submit
+
+python createAndSubmitMC.py -d Outputs_SingleMuon -v Run2015B_SingleMuonPromptReco_08Sep2015-CertJson50ns-XXXXXX-YYYYYY_JEC-Summer15_50nsV4_0d7d556 -i Inputs_SingleMuon/InputList_Run2015B_SingleMuon.txt -t Inputs_SingleMuon/crab3_template_data.py -c ../flat-data-cfg_miniAOD.py -n $USER -p Run2015B_SingleMuonPromptReco_08Sep2015-CertJson50ns-XXXXXX-YYYYYY_JEC-Summer15_50nsV4_0d7d556 --submit
+
+#----------------------------------------------------------- 
+#  Run2015C (50ns)
+#----------------------------------------------------------- 
+
+python createAndSubmitMC.py -d Outputs_SingleMuon -v Run2015C_SingleMuonPromptReco_08Sep2015-CertJson50ns-XXXXXX-YYYYYY_JEC-Summer15_50nsV4_0d7d556 -i Inputs_SingleMuon/InputList_Run2015C_SingleMuon.txt -t Inputs_SingleMuon/crab3_template_data.py -c ../flat-data-cfg_miniAOD.py -n $USER -p Run2015C_SingleMuonPromptReco_08Sep2015-CertJson50ns-XXXXXX-YYYYYY_JEC-Summer15_50nsV4_0d7d556 --submit
+
+#----------------------------------------------------------- 
+#  Run2015C (25ns)
+#----------------------------------------------------------- 
+
+#----------------------------------------------------------- 
+#  Run2015D (25ns)
+#----------------------------------------------------------- 
+
+
+
+
+
+
+
+
+
