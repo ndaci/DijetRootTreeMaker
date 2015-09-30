@@ -1,0 +1,7 @@
+#----------------------------------------------------------- 
+#  Example
+#----------------------------------------------------------- 
+
+python createAndSubmitMC.py -d Outputs_JetHT -v Run2015B_JetHT17JulReReco_30Sep2015-DCSJson_7ef5ecc -i Inputs_JetHT/InputList_Run2015B_JetHT_Jul17.txt -t Inputs_JetHT/crab3_template_data.py -c ../flat-data-cfg_miniAOD.py -n $USER -p Run2015B_JetHT17JulReReco_30Sep2015-DCSJson_7ef5ecc --submit
+
+python createAndSubmitMC.py -d Outputs_JetHT -v Run2015B_JetHT_30Sep2015-DCSJson_7ef5ecc -i Inputs_JetHT/InputList_Run2015B_JetHT.txt -t Inputs_JetHT/crab3_template_data.py -c ../flat-data-cfg_miniAOD.py -n $USER -p Run2015B_JetHT_30Sep2015-DCSJson_7ef5ecc --submit
