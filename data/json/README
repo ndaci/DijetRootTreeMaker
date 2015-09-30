@@ -1,4 +1,20 @@
+===================
 DCS json processing
+===================
+
+The sum of all lumi sections processed so far is 
+
+lumiSummary_so_far.json
+
+(
+Example.
+To sum 
+lumiSummary_1.json , lumiSummary_2.json , lumiSummary_3.json 
+do:
+compareJSON.py --or lumiSummary_1.json lumiSummary_2.json temp.json 
+compareJSON.py --or temp.json lumiSummary_3.json lumiSummary_so_far.json
+)
+
 
 ==
 
