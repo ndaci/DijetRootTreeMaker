@@ -1,0 +1,21 @@
+DCS json processing
+
+==
+
+/JetHT/Run2015B-17Jul2015-v1/MINIAOD	
+lumiSummary_crab_JetHT__Run2015B-17Jul2015-v1__MINIAOD__150925_093041.json
+(Rome T2) /pnfs/roma1.infn.it/data/cms/store/user/gdimperi/Dijet/rootTrees/data/Run2015B/Run2015B_50ns_JEC_Summer15_50nsV4_DCSonly_Tag1f17e1/JetHT/crab_JetHT__Run2015B-17Jul2015-v1__MINIAOD/150925_093041/0000/ 
+(CERN eos)...  	
+lumi...
+1f17e1	
+3855197 events
+
+==
+
+/JetHT/Run2015C-PromptReco-v1/MINIAOD
+lumiSummary_crab_JetHT__Run2015C-PromptReco-v1__MINIAOD__150922_220844.json
+(Rome T2) /pnfs/roma1.infn.it/data/cms/store/user/gdimperi/Dijet/rootTrees/data/Run2015C/Run2015C_25ns_JEC_Summer15_25nsV3_DCSonlyJson_Tag1f17e1/JetHT/crab_JetHT__Run2015C-PromptReco-v1__MINIAOD/150922_220844/0000/
+(CERN eos)...
+lumi...
+1f17e1	
+5601931 events
