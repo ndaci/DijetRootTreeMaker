@@ -17,16 +17,17 @@ config.Data.publication = False
 #config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-248005_13TeV_PromptReco_Collisions15_ZeroTesla_JSON_CaloOnly.txt'
 #config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/DCSOnly/json_DCSONLY_Run2015B.txt'
 #config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-255031_13TeV_PromptReco_Collisions15_50ns_JSON.txt'
-config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_254833_13TeV_PromptReco_Collisions15_JSON.txt'
-#config.Data.lumiMask = 'json_JetHT17Jul_missingLumiSummary.json' ## if you downloaded the file in the working directory
+config.Data.lumiMask = 'https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions15/13TeV/Cert_246908-255031_13TeV_PromptReco_Collisions15_25ns_JSON_v2.txt'
+#config.Data.lumiMask = 'newJSON.txt' ## if you downloaded the file in the working directory
 #config.Data.runRange = '251244-251585' # '193093-194075'                             
 #config.Data.runRange = '251586-251883' # '193093-194075'                             
 ##
 #config.Data.outLFNDirBase = '/store/group/phys_exotica/dijet/Dijet13TeV/santanas/rootTrees/Run2015B_SingleMuonPromptReco_08Sep2015-CertJson50ns-XXXXXX-YYYYYY_JEC-Summer15_50nsV4_0d7d556/'
-config.Data.outLFNDirBase = '/store/group/phys_exotica/dijet/Dijet13TeV/santanas/rootTrees/Run2015C_SingleMuonPromptReco_08Sep2015-CertJson50ns-XXXXXX-YYYYYY_JEC-Summer15_50nsV4_0d7d556/'
+#config.Data.outLFNDirBase = '/store/group/phys_exotica/dijet/Dijet13TeV/santanas/rootTrees/Run2015B_SingleMuonPromptReco_08Sep2015-CertJson50ns-XXXXXX-YYYYYY_JEC-Summer15_50nsV4_0d7d556/'
 #config.Data.outLFNDirBase = '/store/user/santanas/rootTrees/Run2015B_SingleElectron_07Aug2015-CertJson-251586-251883_JEC-Summer15_50nsV2_501dfb2/'
+config.Data.outLFNDirBase = '/store/user/santanas/rootTrees/Run2015C_SingleMuonPromptReco_22Sep2015-CertJson25ns-XXXXXX-YYYYYY_JEC-Summer15_50nsV4_1f17e12/'
 ##
 config.section_('User')
 config.section_('Site')
-config.Site.storageSite = 'T2_CH_CERN'
-#config.Site.storageSite = 'T2_IT_Rome'
+#config.Site.storageSite = 'T2_CH_CERN'
+config.Site.storageSite = 'T2_IT_Rome'
