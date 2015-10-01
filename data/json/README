@@ -5,16 +5,7 @@ DCS json processing
 The sum of all lumi sections processed so far is in the file: 
 
 lumiSummary_so_far.json
-98.373 /pb
-
-(
-Example.
-To sum 
-lumiSummary_1.json , lumiSummary_2.json , lumiSummary_3.json 
-do:
-compareJSON.py --or lumiSummary_1.json lumiSummary_2.json temp.json 
-compareJSON.py --or temp.json lumiSummary_3.json lumiSummary_so_far.json
-)
+487.612 /pb
 
 ==
 1)
@@ -53,8 +44,12 @@ lumiSummary_crab_JetHT__Run2015C-PromptReco-v1__MINIAOD__150922_220844.json
 4)
 
 /JetHT/Run2015D-PromptReco-v3/MINIAOD
-
-submitted
+lumiSummary_crab_JetHT__Run2015D-PromptReco-v3__MINIAOD__150930_155913.json
+(Rome T2) /pnfs/roma1.infn.it/data/cms/store/user/santanas/rootTrees/Run2015D_JetHT_30Sep2015-DCSJson_7ef5ecc/JetHT/crab_JetHT__Run2015D-PromptReco-v3__MINIAOD/150930_155913/0000/
+(CERN eos)...
+389.239 /pb
+7ef5ecc	
+15581351 events
 
 ==
 
