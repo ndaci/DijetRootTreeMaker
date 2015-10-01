@@ -35,7 +35,7 @@ lumiSummary_crab_JetHT__Run2015B-PromptReco-v1__MINIAOD__150930_151346.json
 /JetHT/Run2015C-PromptReco-v1/MINIAOD
 lumiSummary_crab_JetHT__Run2015C-PromptReco-v1__MINIAOD__150922_220844.json
 (Rome T2) /pnfs/roma1.infn.it/data/cms/store/user/gdimperi/Dijet/rootTrees/data/Run2015C/Run2015C_25ns_JEC_Summer15_25nsV3_DCSonlyJson_Tag1f17e1/JetHT/crab_JetHT__Run2015C-PromptReco-v1__MINIAOD/150922_220844/0000/
-(CERN eos)...
+(CERN eos) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/santanas/crab_JetHT__Run2015C-PromptReco-v1__MINIAOD__150922_220844
 47.267 /pb
 1f17e1	
 5601931 events
@@ -46,7 +46,7 @@ lumiSummary_crab_JetHT__Run2015C-PromptReco-v1__MINIAOD__150922_220844.json
 /JetHT/Run2015D-PromptReco-v3/MINIAOD
 lumiSummary_crab_JetHT__Run2015D-PromptReco-v3__MINIAOD__150930_155913.json
 (Rome T2) /pnfs/roma1.infn.it/data/cms/store/user/santanas/rootTrees/Run2015D_JetHT_30Sep2015-DCSJson_7ef5ecc/JetHT/crab_JetHT__Run2015D-PromptReco-v3__MINIAOD/150930_155913/0000/
-(CERN eos)...
+(CERN eos) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/santanas/crab_JetHT__Run2015D-PromptReco-v3__MINIAOD__150930_155913
 389.986 /pb
 7ef5ecc	
 15612081 events
