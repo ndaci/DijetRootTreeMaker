@@ -16,6 +16,9 @@ python createAndSubmitMC.py -d Outputs_SingleMuon -v Run2015C_SingleMuonPromptRe
 #  Run2015C (25ns)
 #----------------------------------------------------------- 
 
+python createAndSubmitMC.py -d Outputs_SingleMuon -v Run2015C_SingleMuonPromptReco_22Sep2015-CertJson25ns-XXXXXX-YYYYYY_JEC-Summer15_50nsV4_1f17e12 -i Inputs_SingleMuon/InputList_Run2015C_SingleMuon.txt -t Inputs_SingleMuon/crab3_template_data.py -c ../flat-data-cfg_miniAOD.py -n $USER -p Run2015C_SingleMuonPromptReco_22Sep2015-CertJson25ns-XXXXXX-YYYYYY_JEC-Summer15_50nsV4_1f17e12 --submit
+
+
 #----------------------------------------------------------- 
 #  Run2015D (25ns)
 #----------------------------------------------------------- 
