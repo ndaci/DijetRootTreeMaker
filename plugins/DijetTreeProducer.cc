@@ -81,46 +81,70 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
   
   // For JECs
   redoJECs_ = cfg.getParameter<bool>("redoJECs");
-  // AK4
-  L1corrAK4_ = cfg.getParameter<edm::FileInPath>("L1corrAK4");
-  L2corrAK4_ = cfg.getParameter<edm::FileInPath>("L2corrAK4");
-  L3corrAK4_ = cfg.getParameter<edm::FileInPath>("L3corrAK4");
-  ResCorrAK4_ = cfg.getParameter<edm::FileInPath>("ResCorrAK4");
-  // AK8
-  L1corrAK8_ = cfg.getParameter<edm::FileInPath>("L1corrAK8");
-  L2corrAK8_ = cfg.getParameter<edm::FileInPath>("L2corrAK8");
-  L3corrAK8_ = cfg.getParameter<edm::FileInPath>("L3corrAK8");
-  ResCorrAK8_ = cfg.getParameter<edm::FileInPath>("ResCorrAK8");
+  // AK4 DATA
+  L1corrAK4_DATA_ = cfg.getParameter<edm::FileInPath>("L1corrAK4_DATA");
+  L2corrAK4_DATA_ = cfg.getParameter<edm::FileInPath>("L2corrAK4_DATA");
+  L3corrAK4_DATA_ = cfg.getParameter<edm::FileInPath>("L3corrAK4_DATA");
+  ResCorrAK4_DATA_ = cfg.getParameter<edm::FileInPath>("ResCorrAK4_DATA");
+  // AK4 MC 
+  L1corrAK4_MC_ = cfg.getParameter<edm::FileInPath>("L1corrAK4_MC");
+  L2corrAK4_MC_ = cfg.getParameter<edm::FileInPath>("L2corrAK4_MC");
+  L3corrAK4_MC_ = cfg.getParameter<edm::FileInPath>("L3corrAK4_MC");
+  // AK8 DATA
+  L1corrAK8_DATA_ = cfg.getParameter<edm::FileInPath>("L1corrAK8_DATA");
+  L2corrAK8_DATA_ = cfg.getParameter<edm::FileInPath>("L2corrAK8_DATA");
+  L3corrAK8_DATA_ = cfg.getParameter<edm::FileInPath>("L3corrAK8_DATA");
+  ResCorrAK8_DATA_ = cfg.getParameter<edm::FileInPath>("ResCorrAK8_DATA");
+  // AK8 MC
+  L1corrAK8_MC_ = cfg.getParameter<edm::FileInPath>("L1corrAK8_MC");
+  L2corrAK8_MC_ = cfg.getParameter<edm::FileInPath>("L2corrAK8_MC");
+  L3corrAK8_MC_ = cfg.getParameter<edm::FileInPath>("L3corrAK8_MC");
 
   if(redoJECs_)
   {
     // AK4
-    L1ParAK4 = new JetCorrectorParameters(L1corrAK4_.fullPath());
-    L2ParAK4 = new JetCorrectorParameters(L2corrAK4_.fullPath());
-    L3ParAK4 = new JetCorrectorParameters(L3corrAK4_.fullPath());
-    L2L3ResAK4 = new JetCorrectorParameters(ResCorrAK4_.fullPath());
+    L1ParAK4_DATA = new JetCorrectorParameters(L1corrAK4_DATA_.fullPath());
+    L2ParAK4_DATA = new JetCorrectorParameters(L2corrAK4_DATA_.fullPath());
+    L3ParAK4_DATA = new JetCorrectorParameters(L3corrAK4_DATA_.fullPath());
+    L2L3ResAK4_DATA = new JetCorrectorParameters(ResCorrAK4_DATA_.fullPath());
+    L1ParAK4_MC = new JetCorrectorParameters(L1corrAK4_MC_.fullPath());
+    L2ParAK4_MC = new JetCorrectorParameters(L2corrAK4_MC_.fullPath());
+    L3ParAK4_MC = new JetCorrectorParameters(L3corrAK4_MC_.fullPath());
 
-    std::vector<JetCorrectorParameters> vParAK4;
-    vParAK4.push_back(*L1ParAK4);
-    vParAK4.push_back(*L2ParAK4);
-    vParAK4.push_back(*L3ParAK4);
-    vParAK4.push_back(*L2L3ResAK4);
+    std::vector<JetCorrectorParameters> vParAK4_DATA;
+    std::vector<JetCorrectorParameters> vParAK4_MC;
+    vParAK4_DATA.push_back(*L1ParAK4_DATA);
+    vParAK4_DATA.push_back(*L2ParAK4_DATA);
+    vParAK4_DATA.push_back(*L3ParAK4_DATA);
+    vParAK4_DATA.push_back(*L2L3ResAK4_DATA);
+    vParAK4_MC.push_back(*L1ParAK4_MC);
+    vParAK4_MC.push_back(*L2ParAK4_MC);
+    vParAK4_MC.push_back(*L3ParAK4_MC);
 
-    JetCorrectorAK4 = new FactorizedJetCorrector(vParAK4);
+    JetCorrectorAK4_DATA = new FactorizedJetCorrector(vParAK4_DATA);
+    JetCorrectorAK4_MC = new FactorizedJetCorrector(vParAK4_MC);
 
     // AK8
-    L1ParAK8 = new JetCorrectorParameters(L1corrAK8_.fullPath());
-    L2ParAK8 = new JetCorrectorParameters(L2corrAK8_.fullPath());
-    L3ParAK8 = new JetCorrectorParameters(L3corrAK8_.fullPath());
-    L2L3ResAK8 = new JetCorrectorParameters(ResCorrAK8_.fullPath());
+    L1ParAK8_DATA = new JetCorrectorParameters(L1corrAK8_DATA_.fullPath());
+    L2ParAK8_DATA = new JetCorrectorParameters(L2corrAK8_DATA_.fullPath());
+    L3ParAK8_DATA = new JetCorrectorParameters(L3corrAK8_DATA_.fullPath());
+    L2L3ResAK8_DATA = new JetCorrectorParameters(ResCorrAK8_DATA_.fullPath());
+    L1ParAK8_MC = new JetCorrectorParameters(L1corrAK8_MC_.fullPath());
+    L2ParAK8_MC = new JetCorrectorParameters(L2corrAK8_MC_.fullPath());
+    L3ParAK8_MC = new JetCorrectorParameters(L3corrAK8_MC_.fullPath());
 
-    std::vector<JetCorrectorParameters> vParAK8;
-    vParAK8.push_back(*L1ParAK8);
-    vParAK8.push_back(*L2ParAK8);
-    vParAK8.push_back(*L3ParAK8);
-    vParAK8.push_back(*L2L3ResAK8);
+    std::vector<JetCorrectorParameters> vParAK8_DATA;
+    std::vector<JetCorrectorParameters> vParAK8_MC;
+    vParAK8_DATA.push_back(*L1ParAK8_DATA);
+    vParAK8_DATA.push_back(*L2ParAK8_DATA);
+    vParAK8_DATA.push_back(*L3ParAK8_DATA);
+    vParAK8_DATA.push_back(*L2L3ResAK8_DATA);
+    vParAK8_MC.push_back(*L1ParAK8_MC);
+    vParAK8_MC.push_back(*L2ParAK8_MC);
+    vParAK8_MC.push_back(*L3ParAK8_MC);
 
-    JetCorrectorAK8 = new FactorizedJetCorrector(vParAK8);
+    JetCorrectorAK8_DATA = new FactorizedJetCorrector(vParAK8_DATA);
+    JetCorrectorAK8_MC = new FactorizedJetCorrector(vParAK8_MC);
   }
 }
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -904,12 +928,20 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       std::multimap<double, unsigned> sortedAK4Jets;
       for(edm::View<pat::Jet>::const_iterator ijet = jetsAK4->begin();ijet != jetsAK4->end(); ++ijet)
 	{
-	  JetCorrectorAK4->setJetEta(ijet->eta());
-	  JetCorrectorAK4->setJetPt(ijet->correctedJet(0).pt());
-	  JetCorrectorAK4->setJetA(ijet->jetArea());
-	  JetCorrectorAK4->setRho(rho_);
+	  double correction = 1.;
+	  JetCorrectorAK4_DATA->setJetEta(ijet->eta());
+	  JetCorrectorAK4_DATA->setJetPt(ijet->correctedJet(0).pt());
+	  JetCorrectorAK4_DATA->setJetA(ijet->jetArea());
+	  JetCorrectorAK4_DATA->setRho(rho_);
+	  JetCorrectorAK4_MC->setJetEta(ijet->eta());
+	  JetCorrectorAK4_MC->setJetPt(ijet->correctedJet(0).pt());
+	  JetCorrectorAK4_MC->setJetA(ijet->jetArea());
+	  JetCorrectorAK4_MC->setRho(rho_);
+	  if (iEvent.isRealData()) 
+	    correction = JetCorrectorAK4_DATA->getCorrection();
+	  else
+	    correction = JetCorrectorAK4_MC->getCorrection();
 
-	  double correction = JetCorrectorAK4->getCorrection();
 
 	  jecFactorsAK4.push_back(correction);
 	  sortedAK4Jets.insert(std::make_pair(ijet->correctedJet(0).pt()*correction, ijet - jetsAK4->begin()));
@@ -1120,12 +1152,22 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       std::multimap<double, unsigned> sortedAK8Jets;
       for(edm::View<pat::Jet>::const_iterator ijet = jetsAK8->begin();ijet != jetsAK8->end(); ++ijet)
 	{
-	  JetCorrectorAK8->setJetEta(ijet->eta());
-	  JetCorrectorAK8->setJetPt(ijet->correctedJet(0).pt());
-	  JetCorrectorAK8->setJetA(ijet->jetArea());
-	  JetCorrectorAK8->setRho(rho_);
+	  double correction = 1.;
 
-	  double correction = JetCorrectorAK8->getCorrection();
+	  JetCorrectorAK8_DATA->setJetEta(ijet->eta());
+	  JetCorrectorAK8_DATA->setJetPt(ijet->correctedJet(0).pt());
+	  JetCorrectorAK8_DATA->setJetA(ijet->jetArea());
+	  JetCorrectorAK8_DATA->setRho(rho_);
+	  JetCorrectorAK8_MC->setJetEta(ijet->eta());
+	  JetCorrectorAK8_MC->setJetPt(ijet->correctedJet(0).pt());
+	  JetCorrectorAK8_MC->setJetA(ijet->jetArea());
+	  JetCorrectorAK8_MC->setRho(rho_);
+
+	  if (iEvent.isRealData()) 
+	    correction = JetCorrectorAK8_DATA->getCorrection();
+	  else
+	    correction = JetCorrectorAK8_MC->getCorrection();
+
 
 	  jecFactorsAK8.push_back(correction);
 	  sortedAK8Jets.insert(std::make_pair(ijet->correctedJet(0).pt()*correction, ijet - jetsAK8->begin()));

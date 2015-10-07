@@ -33,17 +33,27 @@ class DijetTreeProducer : public edm::EDAnalyzer
     void initialize();
     // For JECs
     bool redoJECs_;
-    edm::FileInPath L1corrAK4_, L2corrAK4_, L3corrAK4_, ResCorrAK4_, L1corrAK8_, L2corrAK8_, L3corrAK8_, ResCorrAK8_;
-    JetCorrectorParameters *L1ParAK4;
-    JetCorrectorParameters *L2ParAK4;
-    JetCorrectorParameters *L3ParAK4;
-    JetCorrectorParameters *L2L3ResAK4;
-    FactorizedJetCorrector *JetCorrectorAK4;
-    JetCorrectorParameters *L1ParAK8;
-    JetCorrectorParameters *L2ParAK8;
-    JetCorrectorParameters *L3ParAK8;
-    JetCorrectorParameters *L2L3ResAK8;
-    FactorizedJetCorrector *JetCorrectorAK8;
+    //edm::FileInPath L1corrAK4_, L2corrAK4_, L3corrAK4_, ResCorrAK4_, L1corrAK8_, L2corrAK8_, L3corrAK8_, ResCorrAK8_;
+    edm::FileInPath L1corrAK4_DATA_, L2corrAK4_DATA_, L3corrAK4_DATA_, ResCorrAK4_DATA_, L1corrAK8_DATA_, L2corrAK8_DATA_, L3corrAK8_DATA_, ResCorrAK8_DATA_;
+    edm::FileInPath L1corrAK4_MC_, L2corrAK4_MC_, L3corrAK4_MC_, L1corrAK8_MC_, L2corrAK8_MC_, L3corrAK8_MC_;
+    JetCorrectorParameters *L1ParAK4_DATA;
+    JetCorrectorParameters *L2ParAK4_DATA;
+    JetCorrectorParameters *L3ParAK4_DATA;
+    JetCorrectorParameters *L2L3ResAK4_DATA;
+    FactorizedJetCorrector *JetCorrectorAK4_DATA;
+    JetCorrectorParameters *L1ParAK4_MC;
+    JetCorrectorParameters *L2ParAK4_MC;
+    JetCorrectorParameters *L3ParAK4_MC;
+    FactorizedJetCorrector *JetCorrectorAK4_MC;
+    JetCorrectorParameters *L1ParAK8_DATA;
+    JetCorrectorParameters *L2ParAK8_DATA;
+    JetCorrectorParameters *L3ParAK8_DATA;
+    JetCorrectorParameters *L2L3ResAK8_DATA;
+    FactorizedJetCorrector *JetCorrectorAK8_DATA;
+    JetCorrectorParameters *L1ParAK8_MC;
+    JetCorrectorParameters *L2ParAK8_MC;
+    JetCorrectorParameters *L3ParAK8_MC;
+    FactorizedJetCorrector *JetCorrectorAK8_MC;
     //---- configurable parameters --------   
     double ptMinAK4_,ptMinAK8_,ptMinCA8_;//mjjMin_,,dEtaMax_;
     edm::InputTag srcJetsAK4_,srcJetsAK4Calo_,srcJetsAK4PFCluster_,srcJetsAK4PFCalo_,srcJetsAK8_, srcJetsCA8_,srcRho_,srcMET_,srcPU_,srcVrtx_, srcGenInfo_, srcGenJetsAK4_, srcGenJetsAK8_, srcGenJetsCA8_, srcPrunedGenParticles_;
