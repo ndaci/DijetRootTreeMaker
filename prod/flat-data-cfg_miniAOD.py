@@ -651,23 +651,21 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   ## JECs ################
   redoJECs  = cms.bool(True),
 
-  ## Version Summer15_V3_MC
-  #L1corrAK4 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_V5/Summer15_V5_MC_L1FastJet_AK4PFchs.txt'),
-  #L2corrAK4 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_V5/Summer15_V5_MC_L2Relative_AK4PFchs.txt'),
-  #L3corrAK4 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_V5/Summer15_V5_MC_L3Absolute_AK4PFchs.txt'),
-  #L1corrAK8 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_V5/Summer15_V5_MC_L1FastJet_AK8PFchs.txt'),
-  #L2corrAK8 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_V5/Summer15_V5_MC_L2Relative_AK8PFchs.txt'),
-  #L3corrAK8 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_V5/Summer15_V5_MC_L3Absolute_AK8PFchs.txt')
-
-  ## Version Summer15_50nsV4 ( https://hypernews.cern.ch/HyperNews/CMS/get/JetMET/ )
-  L1corrAK4 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_50nsV4/Summer15_50nsV4_DATA_L1FastJet_AK4PFchs.txt'),
-  L2corrAK4 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_50nsV4/Summer15_50nsV4_DATA_L2Relative_AK4PFchs.txt'),
-  L3corrAK4 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_50nsV4/Summer15_50nsV4_DATA_L3Absolute_AK4PFchs.txt'),
-  ResCorrAK4 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_50nsV4/Summer15_50nsV4_DATA_L2L3Residual_AK4PFchs.txt'),
-  L1corrAK8 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_50nsV4/Summer15_50nsV4_DATA_L1FastJet_AK8PFchs.txt'),
-  L2corrAK8 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_50nsV4/Summer15_50nsV4_DATA_L2Relative_AK8PFchs.txt'),
-  L3corrAK8 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_50nsV4/Summer15_50nsV4_DATA_L3Absolute_AK8PFchs.txt'),
-  ResCorrAK8 = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_50nsV4/Summer15_50nsV4_DATA_L2L3Residual_AK8PFchs.txt')
+  ## Version Summer15_25nsV3 ( https://hypernews.cern.ch/HyperNews/CMS/get/JetMET/ )
+  L1corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L1FastJet_AK4PFchs.txt'),
+  L2corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2Relative_AK4PFchs.txt'),
+  L3corrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L3Absolute_AK4PFchs.txt'),
+  ResCorrAK4_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2L3Residual_AK4PFchs.txt'),
+  L1corrAK8_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L1FastJet_AK8PFchs.txt'),
+  L2corrAK8_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2Relative_AK8PFchs.txt'),
+  L3corrAK8_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L3Absolute_AK8PFchs.txt'),
+  ResCorrAK8_DATA = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_DATA/Summer15_25nsV3_DATA_L2L3Residual_AK4PFchs.txt'),
+  L1corrAK4_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L1FastJet_AK4PFchs.txt'),
+  L2corrAK4_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L2Relative_AK4PFchs.txt'),
+  L3corrAK4_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L3Absolute_AK4PFchs.txt'),
+  L1corrAK8_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L1FastJet_AK8PFchs.txt'),
+  L2corrAK8_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L2Relative_AK8PFchs.txt'),
+  L3corrAK8_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L3Absolute_AK8PFchs.txt')
 )
 
 
