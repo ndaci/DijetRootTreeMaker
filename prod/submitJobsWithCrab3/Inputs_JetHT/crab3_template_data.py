@@ -26,7 +26,7 @@ config.Data.lumiMask = 'inputJson_final.json' ## if you downloaded the file in t
 #config.Data.outLFNDirBase = '/store/group/phys_exotica/dijet/Dijet13TeV/santanas/rootTrees/Run2015B_SingleMuonPromptReco_08Sep2015-CertJson50ns-XXXXXX-YYYYYY_JEC-Summer15_50nsV4_0d7d556/'
 #config.Data.outLFNDirBase = '/store/group/phys_exotica/dijet/Dijet13TeV/santanas/rootTrees/Run2015B_SingleMuonPromptReco_08Sep2015-CertJson50ns-XXXXXX-YYYYYY_JEC-Summer15_50nsV4_0d7d556/'
 #config.Data.outLFNDirBase = '/store/user/santanas/rootTrees/Run2015B_SingleElectron_07Aug2015-CertJson-251586-251883_JEC-Summer15_50nsV2_501dfb2/'
-config.Data.outLFNDirBase = '/store/user/santanas/rootTrees/Run2015D_JetHT_12Oct2015-DCSJson_71483e6/'
+config.Data.outLFNDirBase = '/store/user/santanas/rootTrees/Run2015Dv4_JetHT_16Oct2015Bis-DCSJson_450b0c1/'
 ##
 config.section_('User')
 config.section_('Site')

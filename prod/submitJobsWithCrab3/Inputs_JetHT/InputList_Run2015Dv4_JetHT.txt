@@ -1,0 +1,1 @@
+/JetHT/Run2015D-PromptReco-v4/MINIAOD -1 60 74X_dataRun2_Prompt_v0
