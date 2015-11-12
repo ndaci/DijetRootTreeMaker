@@ -5,7 +5,7 @@ DCS json processing
 The sum of all lumi sections processed so far is in the file: 
 
 lumiSummary_so_far.json
-1867.576 /pb
+2789.985 /pb
 
 ==
 1)
@@ -94,6 +94,20 @@ lumiSummary_crab_JetHT__Run2015D-PromptReco-v4__MINIAOD__151016_094835.json
 788.715 /pb 
 450b0c1
 19510306 events
+
+==
+9)
+
+/JetHT/Run2015D-PromptReco-v4/MINIAOD
+lumiSummary_crab_JetHT__Run2015D-PromptReco-v4__MINIAOD__151112_065640.json
+(Rome T3) /t3/users/santanas/Dijet/rootTrees/crab_JetHT__Run2015D-PromptReco-v4__MINIAOD__151112_065640/
+(CERN eos) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/santanas/rootTrees/Run2015Dv4_JetHT_12Nov2015-DCSJson_2e3c9db/JetHT/crab_JetHT__Run2015D-PromptReco-v4__MINIAOD/151112_065640/0000/
+922.409 /pb 
+2e3c9db
+20672088 events
+
+
+
 
 
 

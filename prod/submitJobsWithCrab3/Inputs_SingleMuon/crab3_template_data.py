@@ -26,7 +26,7 @@ config.Data.lumiMask = 'totalSilverJson.txt' ## if you downloaded the file in th
 #config.Data.outLFNDirBase = '/store/group/phys_exotica/dijet/Dijet13TeV/santanas/rootTrees/Run2015B_SingleMuonPromptReco_08Sep2015-CertJson50ns-XXXXXX-YYYYYY_JEC-Summer15_50nsV4_0d7d556/'
 #config.Data.outLFNDirBase = '/store/group/phys_exotica/dijet/Dijet13TeV/santanas/rootTrees/Run2015B_SingleMuonPromptReco_08Sep2015-CertJson50ns-XXXXXX-YYYYYY_JEC-Summer15_50nsV4_0d7d556/'
 #config.Data.outLFNDirBase = '/store/user/santanas/rootTrees/Run2015B_SingleElectron_07Aug2015-CertJson-251586-251883_JEC-Summer15_50nsV2_501dfb2/'
-config.Data.outLFNDirBase = '/store/user/santanas/rootTrees/Run2015Dv4_SingleMuonPromptReco_28Oct2015-SilverJson25ns_8434c5c/'
+config.Data.outLFNDirBase = '/store/user/santanas/rootTrees/Run2015Dv4_SingleMuonPromptReco_29Oct2015-SilverJson25ns_f566685/'
 ##
 config.section_('User')
 config.section_('Site')
