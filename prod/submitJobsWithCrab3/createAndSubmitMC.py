@@ -95,7 +95,8 @@ for line in ins:
       "THISGLOBALTAG":"\""+globaltag+"\"",
       "FILESPERJOB":filesperjob,
       "WORKINGAREA":storagedir+"/"+namedir+"/workdir", 
-      "WORKINGDIR":sample+"__"+dataset.split("/")[2]+"__"+dataset.split("/")[3], 
+      #"WORKINGDIR":sample+"__"+dataset.split("/")[2]+"__"+dataset.split("/")[3],
+      "WORKINGDIR":sample, # Had to truncate due to 100-character limit. Juska 
       "CMSSWCFG":storagedir+"/"+namedir+"/cfg/"+sample+"_cmssw.py",
       "OUTFILENAME":sample+"__"+dataset.split("/")[2]+"__"+dataset.split("/")[3]+".root",
       "INPUTDATASET":dataset

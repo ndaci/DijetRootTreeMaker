@@ -24,14 +24,22 @@
 #include "DataFormats/METReco/interface/MET.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
-#include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
-#include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
+//#include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
+//#include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 
 using namespace std;
 using namespace reco;
+using namespace pat;
+using namespace edm;
 
-DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg) 
+
+DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
+//DijetTreeProducer::DijetTreeProducer( const ParameterSet& cfg)
 {
+
+
+  
+  /*
   srcJetsAK4_         = cfg.getParameter<edm::InputTag>             ("jetsAK4");
   srcJetsAK4Calo_         = cfg.getParameter<edm::InputTag>             ("jetsAK4Calo");
   srcJetsAK4PFCluster_         = cfg.getParameter<edm::InputTag>             ("jetsAK4PFCluster");
@@ -47,16 +55,38 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
   srcPU_              = cfg.getUntrackedParameter<edm::InputTag>    ("pu",edm::InputTag(""));
   srcGenInfo_           = cfg.getUntrackedParameter<edm::InputTag>  ("ptHat",edm::InputTag());
   srcPrunedGenParticles_ = cfg.getParameter<edm::InputTag>          ("genParticles");
+  */
+  
+  // Migrate to Consumes-system. Skip Calo-stuff
+  
+  srcJetsAK4_ = (consumes<pat::JetCollection>(cfg.getParameter<InputTag>("jetsAK4")));
+  srcJetsAK8_ = (consumes<pat::JetCollection>(cfg.getParameter<InputTag>("jetsAK8")));
+  
+  srcGenJetsAK4_      = (consumes<GenJetCollection>(cfg.getParameter<edm::InputTag>("genJetsAK4")));
+  srcGenJetsAK8_      = (consumes<GenJetCollection>(cfg.getParameter<edm::InputTag>("genJetsAK8")));
+  srcRho_             = (consumes<double>(cfg.getParameter<edm::InputTag>             ("rho")));
+  srcMET_             = (consumes<vector <pat::MET> >(cfg.getParameter<edm::InputTag>             ("met")));
+  srcVrtx_            = (consumes<reco::VertexCollection>(cfg.getParameter<edm::InputTag>             ("vtx")));
+  
+  
+  srcPrunedGenParticles_ = (consumes<reco::GenParticleCollection>(cfg.getParameter<edm::InputTag>          ("genParticles")));
 
+  
   ptMinAK4_           = cfg.getParameter<double>                    ("ptMinAK4");
   ptMinAK8_           = cfg.getParameter<double>                    ("ptMinAK8");
-  //ptMinCA8_           = cfg.getParameter<double>                    ("ptMinCA8");
-  //mjjMin_             = cfg.getParameter<double>                    ("mjjMin");
-  //dEtaMax_            = cfg.getParameter<double>                    ("dEtaMax");
+  
+  srcPU_              = consumes<std::vector<PileupSummaryInfo> >(cfg.getUntrackedParameter<edm::InputTag>    ("pu"));
+  //PUInfoToken = consumes<std::vector<PileupSummaryInfo> >(iConfig.getParameter<edm::InputTag>("PUInfoInputTag"));
+  
+  srcGenInfo_           = consumes<GenEventInfoProduct>(cfg.getUntrackedParameter<edm::InputTag>  ("ptHat"));
+  //srcPU_              = cfg.getUntrackedParameter<edm::InputTag>    ("pu",edm::InputTag(""));
+  //srcGenInfo_           = cfg.getUntrackedParameter<edm::InputTag>  ("ptHat",edm::InputTag());
+
   triggerCache_       = triggerExpression::Data(cfg.getParameterSet("triggerConfiguration"),consumesCollector());
   vtriggerAlias_      = cfg.getParameter<std::vector<std::string> > ("triggerAlias");
   vtriggerSelection_  = cfg.getParameter<std::vector<std::string> > ("triggerSelection");
   noiseFilterCache_   = triggerExpression::Data(cfg.getParameterSet("noiseFilterConfiguration"),consumesCollector());
+  
 
   HBHENoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_HBHENoiseFilter") );
   CSCHaloNoiseFilter_Selector_ = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_CSCTightHaloFilter") );
@@ -152,12 +182,22 @@ void DijetTreeProducer::beginJob()
 {
   //--- book the trigger histograms ---------
   triggerNamesHisto_ = fs_->make<TH1F>("TriggerNames","TriggerNames",1,0,1);
-  triggerNamesHisto_->SetBit(TH1::kCanRebin);
+  //triggerNamesHisto_->SetBit(TH1::kCanRebin); // Does now work in CMSSW 806
+  //triggerNamesHisto_->GetXaxis()->SetCanExtend(true);
+  
+  // Now the 'SetBit' procedure also could be omitted altogether, as ROOT6 change blog
+  // suggests that it's not needed in this case:
+  // "TAxis::kCanExtend bit is set on automatically for axis where all bins have label (i.e. when the axis is alphanumeric)."
+  // https://root.cern.ch/content/main-histogram-changes-root-6
+  //
+  // Code compiles fine without this bit.
+  
   for(unsigned i=0;i<vtriggerSelection_.size();i++) {
     triggerNamesHisto_->Fill(vtriggerSelection_[i].c_str(),1);
   }
   triggerPassHisto_ = fs_->make<TH1F>("TriggerPass","TriggerPass",1,0,1);
-  triggerPassHisto_->SetBit(TH1::kCanRebin);
+  //triggerPassHisto_->SetBit(TH1::kCanRebin); // Does now work in CMSSW 806
+  //triggerPassHisto_->GetXaxis()->SetCanExtend(true);
   
   //--- book the tree -----------------------
   outTree_ = fs_->make<TTree>("events","events");
@@ -246,6 +286,8 @@ void DijetTreeProducer::beginJob()
   neHadMultAK4_      = new std::vector<int>;
   neMultAK4_         = new std::vector<int>;
   phoMultAK4_        = new std::vector<int>;
+  
+  /*
   ptAK4matchCaloJet_  = new std::vector<float>;
   emfAK4matchCaloJet_ = new std::vector<float>;
 
@@ -258,6 +300,7 @@ void DijetTreeProducer::beginJob()
   areaAK4Calo_           = new std::vector<float>;
   emfAK4Calo_            = new std::vector<float>;
 
+  
   ptAK4PFCluster_             = new std::vector<float>;
   jecAK4PFCluster_            = new std::vector<float>;
   etaAK4PFCluster_            = new std::vector<float>;
@@ -274,6 +317,7 @@ void DijetTreeProducer::beginJob()
   energyAK4PFCalo_         = new std::vector<float>;
   areaAK4PFCalo_           = new std::vector<float>;
   emfAK4PFCalo_            = new std::vector<float>;
+  */
   
   //massPrunedAK4_     = new std::vector<float>;
   //tau1AK4_           = new std::vector<float>;
@@ -315,6 +359,8 @@ void DijetTreeProducer::beginJob()
   //outTree_->Branch("cutbasedJetId"             ,"vector<float>"     ,&cutbasedJetId_);
   //outTree_->Branch("fullJetId"                 ,"vector<float>"     ,&fullJetId_);
   //outTree_->Branch("fullJetDiscriminant"       ,"vector<float>"     ,&fullJetDiscriminant_);
+  
+/*
   outTree_->Branch("jetPtAK4matchCaloJet"                ,"vector<float>"     ,&ptAK4matchCaloJet_);
   outTree_->Branch("jetEmfAK4matchCaloJet"               ,"vector<float>"     ,&emfAK4matchCaloJet_);
 
@@ -326,6 +372,7 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetEnergyAK4Calo"            ,"vector<float>"     ,&energyAK4Calo_);
   outTree_->Branch("jetAreaAK4Calo"              ,"vector<float>"     ,&areaAK4Calo_);
   outTree_->Branch("jetEmfAK4Calo"               ,"vector<float>"     ,&emfAK4Calo_);
+
 
   outTree_->Branch("jetPtAK4PFCluster"                ,"vector<float>"     ,&ptAK4PFCluster_);
   outTree_->Branch("jetJecAK4PFCluster"               ,"vector<float>"     ,&jecAK4PFCluster_);
@@ -343,6 +390,7 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetEnergyAK4PFCalo"            ,"vector<float>"     ,&energyAK4PFCalo_);
   outTree_->Branch("jetAreaAK4PFCalo"              ,"vector<float>"     ,&areaAK4PFCalo_);
   outTree_->Branch("jetEmfAK4PFCalo"               ,"vector<float>"     ,&emfAK4PFCalo_);
+*/
 
   ptAK8_             = new std::vector<float>;
   jecAK8_            = new std::vector<float>;
@@ -565,6 +613,7 @@ void DijetTreeProducer::endJob()
   delete neHadMultAK4_ ;
   delete neMultAK4_    ;
   delete phoMultAK4_   ;
+/*
   delete ptAK4matchCaloJet_;
   delete emfAK4matchCaloJet_;
   //delete massPrunedAK4_;
@@ -581,6 +630,8 @@ void DijetTreeProducer::endJob()
   delete phiAK4Calo_;
   delete massAK4Calo_;
   delete energyAK4Calo_;
+  
+  
   delete areaAK4Calo_;
   delete emfAK4Calo_;
 
@@ -600,6 +651,7 @@ void DijetTreeProducer::endJob()
   delete energyAK4PFCalo_;
   delete areaAK4PFCalo_;
   delete emfAK4PFCalo_;
+*/
 
   delete ptAK8_;
   delete jecAK8_;
@@ -693,48 +745,56 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 {
   initialize();
 
-  edm::Handle<edm::View<pat::Jet> > jetsAK4;
-  iEvent.getByLabel(srcJetsAK4_,jetsAK4);
+  //edm::Handle<edm::View<pat::Jet> > jetsAK4;
+  Handle<pat::JetCollection> jetsAK4;
+  iEvent.getByToken(srcJetsAK4_,jetsAK4);
 
+/*
   edm::Handle<edm::View<reco::CaloJet> > jetsAK4Calo;
   if(srcJetsAK4Calo_.label()!="")
-    iEvent.getByLabel(srcJetsAK4Calo_,jetsAK4Calo);
+    iEvent.getByToken(srcJetsAK4Calo_,jetsAK4Calo);
+
 
   edm::Handle<edm::View<reco::Jet> > jetsAK4PFCluster;
   if(srcJetsAK4PFCluster_.label()!="")
-    iEvent.getByLabel(srcJetsAK4PFCluster_,jetsAK4PFCluster);
+    iEvent.getByToken(srcJetsAK4PFCluster_,jetsAK4PFCluster);
 
   edm::Handle<edm::View<reco::PFJet> > jetsAK4PFCalo;
   if(srcJetsAK4PFCalo_.label()!="")
-    iEvent.getByLabel(srcJetsAK4PFCalo_,jetsAK4PFCalo);
+    iEvent.getByToken(srcJetsAK4PFCalo_,jetsAK4PFCalo);
+*/
 
-  edm::Handle<edm::View<pat::Jet> > jetsAK8;
-  iEvent.getByLabel(srcJetsAK8_,jetsAK8);
+  //edm::Handle<edm::View<pat::Jet> > jetsAK8;
+  Handle<pat::JetCollection> jetsAK8;
+  iEvent.getByToken(srcJetsAK8_,jetsAK8);
 
   // edm::Handle<edm::View<pat::Jet> > jetsCA8;
-  // iEvent.getByLabel(srcJetsCA8_,jetsCA8);
+  // iEvent.getByToken(srcJetsCA8_,jetsCA8);
   // edm::View<pat::Jet> pat_jetsCA8 = *jetsCA8;
 
-  edm::Handle<edm::View<reco::GenJet> > handle_genJetsAK4;
+  //edm::Handle<edm::View<reco::GenJet> > handle_genJetsAK4;
+  Handle<reco::GenJetCollection> handle_genJetsAK4;
   if (!iEvent.isRealData())
-    iEvent.getByLabel(srcGenJetsAK4_,handle_genJetsAK4);
+    iEvent.getByToken(srcGenJetsAK4_,handle_genJetsAK4);
 
-  edm::Handle<edm::View<reco::GenJet> > handle_genJetsAK8;
+  //edm::Handle<edm::View<reco::GenJet> > handle_genJetsAK8;
+  Handle<reco::GenJetCollection> handle_genJetsAK8;
   if (!iEvent.isRealData())
-    iEvent.getByLabel(srcGenJetsAK8_,handle_genJetsAK8);
+    iEvent.getByToken(srcGenJetsAK8_,handle_genJetsAK8);
   
   // edm::Handle<edm::View<reco::GenJet> > handle_genJetsCA8;
-  // iEvent.getByLabel(srcGenJetsCA8_,handle_genJetsCA8);
+  // iEvent.getByToken(srcGenJetsCA8_,handle_genJetsCA8);
   // edm::View<reco::GenJet> genJetsCA8 = *handle_genJetsCA8;
 
-  edm::Handle<double>  rho;
-  iEvent.getByLabel(srcRho_,rho);
+  Handle<double>  rho;
+  iEvent.getByToken(srcRho_,rho);
 
-  edm::Handle<edm::View<MET> >  met;
-  iEvent.getByLabel(srcMET_,met);
+  //edm::Handle<edm::View<pat::MET> >  met;'
+  Handle<vector<pat::MET> > met;
+  iEvent.getByToken(srcMET_,met);
 
-  edm::Handle<reco::VertexCollection> recVtxs;
-  iEvent.getByLabel(srcVrtx_,recVtxs);
+  Handle<reco::VertexCollection> recVtxs;
+  iEvent.getByToken(srcVrtx_,recVtxs);
 
   //-------------- Event Info -----------------------------------
   rho_    = *rho;
@@ -750,7 +810,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   //---------- pu -----------------------
   edm::Handle<std::vector<PileupSummaryInfo> > PupInfo;
   if (!iEvent.isRealData()) {
-    iEvent.getByLabel(srcPU_,PupInfo);
+    iEvent.getByToken(srcPU_,PupInfo);
     
     //std::cout << "PupInfo.isValid()? : " << PupInfo.isValid() << endl;
 
@@ -763,7 +823,8 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       }
     }
     else {
-      edm::LogError("DijetTreeProducer: PileUpError") << "Error! Can't get the product " << srcPU_;
+      //edm::LogError("DijetTreeProducer: PileUpError") << "Error! Can't get the product " << srcPU_;
+      cout << "an edm::LogError call for PileUpError used to be here, but that does not work anymore -Juska" << endl;
     }
     
     // std::vector<PileupSummaryInfo>::const_iterator PUI;
@@ -778,7 +839,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   if (!iEvent.isRealData()) {
 
     edm::Handle<GenEventInfoProduct> genEvtInfo;
-    iEvent.getByLabel(srcGenInfo_,genEvtInfo);
+    iEvent.getByToken(srcGenInfo_,genEvtInfo);
     
     if( !genEvtInfo.isValid() ) {
       edm::LogInfo("GenEvtInfo") << "ERROR: genEvtInfo not valid! " << genEvtInfo;
@@ -802,7 +863,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 
     edm::Handle<reco::GenParticleCollection> prunedGenParticles;
     if (!iEvent.isRealData())
-      iEvent.getByLabel(srcPrunedGenParticles_, prunedGenParticles);
+      iEvent.getByToken(srcPrunedGenParticles_, prunedGenParticles);
     
 
     // std::cout << "-------------------------------" << endl;
@@ -926,7 +987,8 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     {
       // sort AK4 jets by increasing pT
       std::multimap<double, unsigned> sortedAK4Jets;
-      for(edm::View<pat::Jet>::const_iterator ijet = jetsAK4->begin();ijet != jetsAK4->end(); ++ijet)
+      //for(edm::View<pat::Jet>::const_iterator ijet = jetsAK4->begin();ijet != jetsAK4->end(); ++ijet)
+      for(pat::JetCollection::const_iterator ijet = jetsAK4->begin();ijet != jetsAK4->end(); ++ijet)
 	{
 	  double correction = 1.;
 	  JetCorrectorAK4_DATA->setJetEta(ijet->eta());
@@ -952,7 +1014,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     }
   else
     {
-      for(edm::View<pat::Jet>::const_iterator ijet = jetsAK4->begin();ijet != jetsAK4->end(); ++ijet)
+      for(pat::JetCollection::const_iterator ijet = jetsAK4->begin();ijet != jetsAK4->end(); ++ijet)
 	{
 	  jecFactorsAK4.push_back(1./ijet->jecFactor(0));
 	  sortedAK4JetIdx.push_back(ijet - jetsAK4->begin());
@@ -964,7 +1026,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   vector<TLorentzVector> vP4AK4;
   for(std::vector<unsigned>::const_iterator i = sortedAK4JetIdx.begin(); i != sortedAK4JetIdx.end(); ++i) {
 
-    edm::View<pat::Jet>::const_iterator ijet = (jetsAK4->begin() + *i);
+    pat::JetCollection::const_iterator ijet = (jetsAK4->begin() + *i);
     double chf = ijet->chargedHadronEnergyFraction();
     double nhf = ijet->neutralHadronEnergyFraction(); // + ijet->HFHadronEnergyFraction();
     double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
@@ -1035,9 +1097,11 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       //fullJetId_          ->push_back(ijet->userFloat("pileupJetIdEvaluator:fullDiscriminant"));
       //fullJetDiscriminant_->push_back(ijet->userInt("pileupJetIdEvaluator:fullId"));
 
+/*
       //matched (dR<0.4) CaloJet
       ptAK4matchCaloJet_            ->push_back(ijet->userFloat("caloJetMap:pt"));
       emfAK4matchCaloJet_           ->push_back(ijet->userFloat("caloJetMap:emEnergyFraction")); //emEnergyFraction=(1-hadEnergyFraction) 
+
 
       if(srcJetsAK4Calo_.label()!="") {
 	double dRminCalo(1000);
@@ -1071,6 +1135,8 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
         }
       }
 
+
+
       if(srcJetsAK4PFCluster_.label()!="") {
 	double dRminPFCluster(1000);
         edm::View<reco::Jet>::const_iterator matchPFClusterJet;
@@ -1101,6 +1167,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
         }
       }
 
+
       if(srcJetsAK4PFCalo_.label()!="") {
 	double dRminPFCalo(1000);
         edm::View<reco::PFJet>::const_iterator matchPFCaloJet;
@@ -1111,7 +1178,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
             dRminPFCalo = dR;
           } 
         }
-        if(jetsAK4PFCalo.isValid() && matchPFCaloJet>=jetsAK4PFCalo->begin() && matchPFCaloJet<jetsAK4PFCalo->end() && matchPFCaloJet->pt() > ptMinAK4_)
+        if(jetsAK4PFCalo.isValid() && matchPFCaloJet>=jetsAK4PFCalo->begin() && matchPFCaloJet<jetsAK4PFCalo->end() && matchPFCaloJet->pt() > ptMinAK4_ && !_disableCalos)
 	  {
 	    ptAK4PFCalo_            ->push_back(matchPFCaloJet->pt());
 	    jecAK4PFCalo_           ->push_back(1);
@@ -1132,6 +1199,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
           emfAK4PFCalo_           ->push_back(-999);
         }
       }
+*/
     }
 
   }// jet loop  
@@ -1150,7 +1218,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     {
       // sort AK8 jets by increasing pT
       std::multimap<double, unsigned> sortedAK8Jets;
-      for(edm::View<pat::Jet>::const_iterator ijet = jetsAK8->begin();ijet != jetsAK8->end(); ++ijet)
+      for(pat::JetCollection::const_iterator ijet = jetsAK8->begin();ijet != jetsAK8->end(); ++ijet)
 	{
 	  double correction = 1.;
 
@@ -1178,7 +1246,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     }
   else
     {
-      for(edm::View<pat::Jet>::const_iterator ijet = jetsAK8->begin();ijet != jetsAK8->end(); ++ijet)
+      for(pat::JetCollection::const_iterator ijet = jetsAK8->begin();ijet != jetsAK8->end(); ++ijet)
 	{
 	  jecFactorsAK8.push_back(1./ijet->jecFactor(0));
 	  sortedAK8JetIdx.push_back(ijet - jetsAK8->begin());
@@ -1214,7 +1282,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       int phoMult = ijet->photonMultiplicity();
     */
 
-    edm::View<pat::Jet>::const_iterator ijet = (jetsAK8->begin() + *i);
+    pat::JetCollection::const_iterator ijet = (jetsAK8->begin() + *i);
     double chf = ijet->chargedHadronEnergyFraction();
     double nhf = ijet->neutralHadronEnergyFraction(); // + ijet->HFHadronEnergyFraction();
     double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
@@ -1364,8 +1432,8 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     //AK4
     nGenJetsAK4_ = 0;
     vector<TLorentzVector> vP4GenAK4;
-    edm::View<reco::GenJet> genJetsAK4 = *handle_genJetsAK4; 
-    for(edm::View<reco::GenJet>::const_iterator ijet = genJetsAK4.begin();ijet != genJetsAK4.end(); ++ijet) { 	
+    reco::GenJetCollection genJetsAK4 = *handle_genJetsAK4; 
+    for(reco::GenJetCollection::const_iterator ijet = genJetsAK4.begin();ijet != genJetsAK4.end(); ++ijet) { 	
       //float eta  = fabs(ijet->eta());
       float pt   = ijet->pt();
       if (pt > ptMinAK4_) {
@@ -1382,8 +1450,8 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     //AK8
     nGenJetsAK8_ = 0;
     vector<TLorentzVector> vP4GenAK8;      
-    edm::View<reco::GenJet> genJetsAK8 = *handle_genJetsAK8;      
-    for(edm::View<reco::GenJet>::const_iterator ijet = genJetsAK8.begin();ijet != genJetsAK8.end(); ++ijet) { 	
+    reco::GenJetCollection genJetsAK8 = *handle_genJetsAK8;
+    for(reco::GenJetCollection::const_iterator ijet = genJetsAK8.begin();ijet != genJetsAK8.end(); ++ijet) { 	
       //float eta  = fabs(ijet->eta());
       float pt   = ijet->pt();
       if (pt > ptMinAK8_) {
@@ -1475,8 +1543,10 @@ void DijetTreeProducer::initialize()
   //cutbasedJetId_      ->clear();
   //fullJetId_          ->clear();
   //fullJetDiscriminant_->clear();
-  ptAK4matchCaloJet_  ->clear();
-  emfAK4matchCaloJet_ ->clear(); 
+  //ptAK4matchCaloJet_  ->clear();
+  //emfAK4matchCaloJet_ ->clear(); 
+  
+/*
   
   ptAK4Calo_             ->clear();
   etaAK4Calo_            ->clear();
@@ -1487,22 +1557,25 @@ void DijetTreeProducer::initialize()
   jecAK4Calo_            ->clear();
   emfAK4Calo_            ->clear();
   
-  ptAK4PFCluster_             ->clear();
-  etaAK4PFCluster_            ->clear();
-  phiAK4PFCluster_            ->clear();
-  massAK4PFCluster_           ->clear();
-  energyAK4PFCluster_         ->clear();
-  areaAK4PFCluster_           ->clear();
-  jecAK4PFCluster_            ->clear();
+
+     ptAK4PFCluster_             ->clear();
+     etaAK4PFCluster_            ->clear();
+     phiAK4PFCluster_            ->clear();
+     massAK4PFCluster_           ->clear();
+     energyAK4PFCluster_         ->clear();
+     areaAK4PFCluster_           ->clear();
+     jecAK4PFCluster_            ->clear();
   
-  ptAK4PFCalo_             ->clear();
-  etaAK4PFCalo_            ->clear();
-  phiAK4PFCalo_            ->clear();
-  massAK4PFCalo_           ->clear();
-  energyAK4PFCalo_         ->clear();
-  areaAK4PFCalo_           ->clear();
-  jecAK4PFCalo_            ->clear();
-  emfAK4PFCalo_            ->clear();
+  
+     ptAK4PFCalo_             ->clear();
+     etaAK4PFCalo_            ->clear();
+     phiAK4PFCalo_            ->clear();
+     massAK4PFCalo_           ->clear();
+     energyAK4PFCalo_         ->clear();
+     areaAK4PFCalo_           ->clear();
+     jecAK4PFCalo_            ->clear();
+     emfAK4PFCalo_            ->clear();
+*/
   
   nJetsAK8_          = -999;
   htAK8_             = -999;

@@ -13,7 +13,7 @@ config.Data.inputDataset = 'INPUTDATASET'
 config.Data.unitsPerJob = FILESPERJOB #without '' since it must be an int
 config.Data.splitting = 'FileBased'
 config.Data.publication = False
-config.Data.outLFNDirBase = '/store/group/phys_exotica/dijet/Dijet13TeV/juska/Spring15/'
+config.Data.outLFNDirBase = '/store/group/phys_exotica/dijet/Dijet13TeV/juska/Spring16MC/'
 config.section_('User')
 config.section_('Site')
 config.Site.storageSite = 'T2_CH_CERN'
