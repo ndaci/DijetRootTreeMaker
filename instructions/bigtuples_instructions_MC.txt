@@ -1,0 +1,147 @@
+Instructions for producing big ntuples (QCD and Signal MC)
+-----------------------------------
+
+##########################################################
+# *Target: CMS Dijet Resonance Search 2016 - RECO flavor #
+# *Author: Juska                                         #
+# *Last update: 19 May 16                                #
+#                                                        #
+# Lines starting with '$' are commands to be executed    #
+# (after necessary changes when needed), all other text  #
+# is just instructions or program output.                #
+#                                                        #
+# Use at your own risk. No warranty. Author cannot be    #
+# held liable for equipment and/or nervous breakdowns    #
+# caused by following these instructions.                #
+##########################################################
+
+
+
+1) Set up a working directory and do a local test run
+
+Set up basis:
+
+$ ssh -X juska@lxplus.cern.ch
+$ mkdir myworkdir
+$ cd myworkdir
+$ echo $SCRAM_ARCH # Let's check if we have a good compiler version in use
+slc6_amd64_gcc491 # <- seems to be incompatible with CMSSW 8.0.6, let's update
+$ export SCRAM_ARCH=slc6_amd64_gcc530
+
+Create a CMSSW environment:
+
+$ scram p -n DijetReco2016_806 CMSSW CMSSW_8_0_6
+$ cd DijetReco2016_806/src/
+$ cmsenv
+
+Download code package from git and compile:
+
+$ git clone https://github.com/CMSDIJET/DijetRootTreeMaker.git CMSDIJET/DijetRootTreeMaker
+$ scram b -j 8
+
+Find a suitable miniAOD sample file for the test run. I found one here:
+
+/afs/cern.ch/user/j/juska/eos/cms/store/mc/RunIISpring16MiniAODv1/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/00000/4EC1A37D-840D-E611-957D-0025905C543A.root
+(Requires EOS to be mounted. I should've used miniAODv2 file here and tested
+later that it works as well.)
+
+Make a test CMSSW conf and replace THISGLOBALTAG with your global tag and
+THISROOTFILE with some name that you want for the output file. Also, change path
+to your test input miniAOD file here:
+process.source = cms.Source("PoolSource",
+    fileNames = cms.untracked.vstring("file:myfile.root").
+    
+$ cd prod
+$ cp flat-MC-cfg_miniAOD.py localtest_flat-MC-cfg_miniAOD.py
+$ gedit localtest_flat-MC-cfg_miniAOD.py&
+    
+As a global tag I use '80X_mcRun2_asymptotic_2016_miniAODv2' (note: no '::All' suffix
+allowed anymore) as it seems that it's the best to use in CMSSW 806 miniAODv1
+production:
+https://twiki.cern.ch/twiki/bin/viewauth/CMS/JECDataMC#Recommended_for_MC
+
+You can also optionally reduce the run events by modifying this line:
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(10))
+
+
+Now after suitable modifications to localtest_flat-MC-cfg_miniAOD.py I can do
+the local test run (be sure to have compiled the code before):
+
+$ cmsRun localtest_flat-MC-cfg_miniAOD.py
+
+Successful run looks something like this:
+
+[possibly warnings about triggers here if run over MC]
+Begin processing the 2nd record. Run 1, Event 3760566, LumiSection 20004 at 18-May-2016 18:13:58.823 CEST
+Begin processing the 3rd record. Run 1, Event 3760567, LumiSection 20004 at 18-May-2016 18:13:58.836 CEST
+Begin processing the 4th record. Run 1, Event 3760568, LumiSection 20004 at 18-May-2016 18:13:58.851 CEST
+Begin processing the 5th record. Run 1, Event 3760569, LumiSection 20004 at 18-May-2016 18:13:58.861 CEST
+Begin processing the 6th record. Run 1, Event 3760570, LumiSection 20004 at 18-May-2016 18:13:58.871 CEST
+[run summary here]
+
+You can check with ROOT TBrowser if your test output file looks healthy.
+Now after a successful test run, we can proceed to producing the file lists
+for the mass production.
+
+Now we need to do file lists for the production so that we can start multiple
+Crab3 tasks at the same time. There may be a script for this, but I'll do it by
+hand this time. Let's use das_client.py that's available in any CMSSW release:
+(note that I need to inverse-grep out a lot of non-interesting datasets)
+
+[juska@lxplus066 src]$ das_client.py --limit 0 --query='dataset=/QCD_Pt_*/RunIISpring16MiniAODv1*asymptotic*/MINIAODSIM' | sort -V | grep -v bcToE | grep -v ext1 | grep -v nriched | grep -v Flat
+/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/MINIAODSIM
+/QCD_Pt_30to50_TuneCUETP8M1_13TeV_pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/MINIAODSIM
+/QCD_Pt_50to80_TuneCUETP8M1_13TeV_pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/MINIAODSIM
+/QCD_Pt_80to120_TuneCUETP8M1_13TeV_pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/MINIAODSIM
+/QCD_Pt_120to170_TuneCUETP8M1_13TeV_pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/MINIAODSIM
+/QCD_Pt_170to300_TuneCUETP8M1_13TeV_pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/MINIAODSIM
+/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/MINIAODSIM
+/QCD_Pt_470to600_TuneCUETP8M1_13TeV_pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/MINIAODSIM
+/QCD_Pt_600to800_TuneCUETP8M1_13TeV_pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/MINIAODSIM
+/QCD_Pt_800to1000_TuneCUETP8M1_13TeV_pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/MINIAODSIM
+/QCD_Pt_1000to1400_TuneCUETP8M1_13TeV_pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/MINIAODSIM
+/QCD_Pt_1400to1800_TuneCUETP8M1_13TeV_pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/MINIAODSIM
+/QCD_Pt_1800to2400_TuneCUETP8M1_13TeV_pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/MINIAODSIM
+/QCD_Pt_2400to3200_TuneCUETP8M1_13TeV_pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/MINIAODSIM
+/QCD_Pt_3200toInf_TuneCUETP8M1_13TeV_pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/MINIAODSIM
+
+Now this would be our filelist, but we need to add a few parameters at the end
+of each line. I just do it by hand in my favourite editor, so that each line has
+the same ending as follows (update the global tag if necessary):
+
+/QCD_Pt_15to30_TuneCUETP8M1_13TeV_pythia8/RunIISpring16MiniAODv1-PUSpring16_80X_mcRun2_asymptotic_2016_v3-v1/MINIAODSIM -1 1 80X_mcRun2_asymptotic_2016_miniAODv2
+
+I made my outputfile with the above datasets each completed with the extra stuff
+at the end of line. I saved my input list to the file:
+
+prod/submitJobsWithCrab3/Inputs_Spring16/InputList_QCD_pthatBins_Pythia8_25nsAsympt_Spring16.txt
+
+Now we need to update the crab3_template_MC.py to have the correct output
+location:
+
+$ cd prod/submitJobsWithCrab3/
+$ gedit crab3_template_MC.py
+
+For me a valid storage location line looks like this:
+
+config.Data.outLFNDirBase = '/store/group/phys_exotica/dijet/Dijet13TeV/juska/Spring16MC/'
+
+I make sure that a folder Spring16MC exists in my EOS space, make a local output
+directory and also make necessary grid initializations as we are approaching job
+submission:
+
+$ mkdir Output_Spring16
+$ source /cvmfs/cms.cern.ch/crab3/crab.sh && voms-proxy-init -voms cms && cmsenv
+
+Now we can submit the jobs, yihaa! Let's give a nice tag for the production with
+the '-v' handle:
+
+$ python createAndSubmitMC.py -d Output_Spring16/ -v QCD_mAODv1_demoprod -i Inputs_Spring16/InputList_QCD_pthatBins_Pythia8_25nsAsympt_Spring16.txt -t crab3_template_MC.py -c ../flat-MC-cfg_miniAOD.py --submit
+
+We get a lot of output from the script as it sends multiple tasks to the grid,
+important being that for each line in the input list text file we get a green
+'Success' -text. Now as submission is done, we can patiently start monitoring
+the grid queueing and running, and eventually (within days) find the ready
+big ntuple files from the designated directory in EOS.
+
+
