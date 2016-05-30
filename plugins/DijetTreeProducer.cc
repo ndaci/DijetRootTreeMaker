@@ -62,15 +62,9 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
   srcJetsAK4_ = (consumes<pat::JetCollection>(cfg.getParameter<InputTag>("jetsAK4")));
   srcJetsAK8_ = (consumes<pat::JetCollection>(cfg.getParameter<InputTag>("jetsAK8")));
   
-  srcGenJetsAK4_      = (consumes<GenJetCollection>(cfg.getParameter<edm::InputTag>("genJetsAK4")));
-  srcGenJetsAK8_      = (consumes<GenJetCollection>(cfg.getParameter<edm::InputTag>("genJetsAK8")));
   srcRho_             = (consumes<double>(cfg.getParameter<edm::InputTag>             ("rho")));
   srcMET_             = (consumes<vector <pat::MET> >(cfg.getParameter<edm::InputTag>             ("met")));
   srcVrtx_            = (consumes<reco::VertexCollection>(cfg.getParameter<edm::InputTag>             ("vtx")));
-  
-  
-  srcPrunedGenParticles_ = (consumes<reco::GenParticleCollection>(cfg.getParameter<edm::InputTag>          ("genParticles")));
-
   
   ptMinAK4_           = cfg.getParameter<double>                    ("ptMinAK4");
   ptMinAK8_           = cfg.getParameter<double>                    ("ptMinAK8");
@@ -78,9 +72,16 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
   srcPU_              = consumes<std::vector<PileupSummaryInfo> >(cfg.getUntrackedParameter<edm::InputTag>    ("pu"));
   //PUInfoToken = consumes<std::vector<PileupSummaryInfo> >(iConfig.getParameter<edm::InputTag>("PUInfoInputTag"));
   
-  srcGenInfo_           = consumes<GenEventInfoProduct>(cfg.getUntrackedParameter<edm::InputTag>  ("ptHat"));
-  //srcPU_              = cfg.getUntrackedParameter<edm::InputTag>    ("pu",edm::InputTag(""));
-  //srcGenInfo_           = cfg.getUntrackedParameter<edm::InputTag>  ("ptHat",edm::InputTag());
+  // These are now causing data run to fail. Weird it used to work with 2015 version?!
+  isData_ = cfg.getParameter<bool>("isData");
+  if (!isData_){
+     srcGenJetsAK4_      = (consumes<GenJetCollection>(cfg.getParameter<edm::InputTag>("genJetsAK4")));
+     srcGenJetsAK8_      = (consumes<GenJetCollection>(cfg.getParameter<edm::InputTag>("genJetsAK8")));
+     srcPrunedGenParticles_ = (consumes<reco::GenParticleCollection>(cfg.getParameter<edm::InputTag>          ("genParticles")));
+     srcGenInfo_           = consumes<GenEventInfoProduct>(cfg.getUntrackedParameter<edm::InputTag>  ("ptHat"));
+     //srcPU_              = cfg.getUntrackedParameter<edm::InputTag>    ("pu",edm::InputTag(""));
+     //srcGenInfo_           = cfg.getUntrackedParameter<edm::InputTag>  ("ptHat",edm::InputTag());
+     }
 
   triggerCache_       = triggerExpression::Data(cfg.getParameterSet("triggerConfiguration"),consumesCollector());
   vtriggerAlias_      = cfg.getParameter<std::vector<std::string> > ("triggerAlias");
@@ -1341,11 +1342,19 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       areaAK8_          ->push_back(ijet->jetArea());
       idLAK8_           ->push_back(idL);
       idTAK8_           ->push_back(idT);
+      
+      // Disable, causes crash. See the interesting error below. Juska
+      /*
+      Exception Message:
+      Requested UserFloat NjettinessAK8:tau1 is not available! Possible UserFloats are: 
+      ak8PFJetsCHSPrunedMass ak8PFJetsCHSSoftDropMass ak8PFJetsCHSTrimmedMass ak8PFJetsCHSFilteredMass NjettinessAK8:tau1 NjettinessAK8:tau2 NjettinessAK8:tau3 
       tau1AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau1"));
       tau2AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau2"));
       tau3AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau3"));
       massPrunedAK8_    ->push_back(ijet->userFloat("ak8PFJetsCHSPrunedMass"));
       massSoftDropAK8_  ->push_back(ijet->userFloat("ak8PFJetsCHSSoftDropMass"));
+      */
+      
       chHadMultAK8_     ->push_back(chHadMult);
       chMultAK8_        ->push_back(chMult);
       neHadMultAK8_     ->push_back(neHadMult);  

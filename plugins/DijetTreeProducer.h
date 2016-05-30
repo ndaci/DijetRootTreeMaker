@@ -63,6 +63,7 @@ class DijetTreeProducer : public edm::EDAnalyzer
     FactorizedJetCorrector *JetCorrectorAK8_MC;
     //---- configurable parameters --------   
     double ptMinAK4_,ptMinAK8_;
+    bool isData_;
     
     // Migrate to consumes-system for running in 80X
     
