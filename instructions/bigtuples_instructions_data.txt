@@ -1,0 +1,92 @@
+Instructions for producing big ntuples (data)
+-----------------------------------
+
+##########################################################
+# *Target: CMS Dijet Resonance Search 2016 - RECO flavor #
+# *Author: Juska                                         #
+# *Last update: 31 May 16                                #
+#                                                        #
+# Lines starting with '$' are commands to be executed    #
+# (after necessary changes when needed), all other text  #
+# is just instructions or program output.                #
+#                                                        #
+# Use at your own risk. No warranty. Author cannot be    #
+# held liable for equipment and/or nervous breakdowns    #
+# caused by following these instructions.                #
+##########################################################
+
+Note: these instructions start a bit mid-way as the things that are
+done before these steps are very or entirely similar to what has been
+worked thru in the instructions for MC production. So please check them
+first if you struggle in the first steps here.
+
+##########################################################
+
+
+Let's create input file list for running over 2016B dataset. We do this by
+stalking for the datasets with das_client.py, pick the datasets I'm interested
+in and add the necessary parameters after each line.
+
+$ das_client.py --limit 0 --query='dataset=/JetHT/*Run2016B*/*' | grep MINIAOD
+/JetHT/Run2016B-PromptReco-v1/MINIAOD
+/JetHT/Run2016B-PromptReco-v2/MINIAOD
+
+So we need to have these two lines in the input list together with the extra
+parameters (if you wonder what they are for, you can see 'createAndSubmitMC.py').
+My input list called 'Inputs_Run2016B/InputList_Run2016B_JetHT_25May16.txt' looks
+like this:
+
+/JetHT/Run2016B-PromptReco-v1/MINIAOD -1 20 80X_dataRun2_Prompt_v8
+/JetHT/Run2016B-PromptReco-v2/MINIAOD -1 20 80X_dataRun2_Prompt_v8
+
+Next we need to modify the crab3_template_data.py a bit to match our needs.
+
+$ gedit crab3_template_data.py &
+
+First that I see is that I need to change the lumi mask. I check for the most
+recent version here (note that we are using DCSOnly JSON solely on purpose)
+https://cms-service-dqm.web.cern.ch/cms-service-dqm/CAF/certification/Collisions16/13TeV/DCSOnly/,
+download it to the working directory and re-name it to keep some provenance:
+
+$ cp /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/DCSOnly/json_DCSONLY.txt json_DCSONLY_25May16.txt
+
+Now this has to be updated to the grid conf so the line in question is like this:
+
+config.Data.lumiMask = 'json_DCSONLY_25May16.txt'
+
+Next I make sure that the output dir is fine and the directory actually also
+exists in my EOS space:
+
+config.Data.outLFNDirBase = '/store/group/phys_exotica/dijet/Dijet13TeV/juska/Run2016B_big/'
+
+Now we shold be ready to run. Let's start the production after creating the local
+output directory and doing necessary grid initializations:
+(note that I use createAndSubmitMC.py on purpose; we use it for both data and MC)
+
+
+$ source /cvmfs/cms.cern.ch/crab3/crab.sh && voms-proxy-init -voms cms && cmsenv
+$ mkdir Output_Run2016B
+$ python createAndSubmitMC.py -d Output_Run2016B/ -v only_MC_jec -i Inputs_Run2016B/InputList_Run2016B_JetHT_25May16.txt -t crab3_template_data.py -c ../flat-data-cfg_miniAOD.py -n $USER --submit
+
+Now you should get a lot of output with green 'Success' -texts indicating the
+triumphant success in the submission process. Continue monitoring the run
+with the usual grid commands, prepare for reduced skim production and book your
+flights to Stockholm.
+
+Once grid has crunched the numbers and all jobs are finished (O(1%) deficit is
+tolerable as long as it is processed at next round) remember to request the job
+report in order to get the accurate luminosity value that is actually in the
+processed files. It is rarely same as in the official JSON.
+
+Also, if the production is an official production that is distributed to the
+dijet group, it is important to modify DijetRootTreeMaker/data/json/README
+by adding the necessary information, together with adding the processed output json
+file. Otherwise after some weeks we have no means of figuring out what is actully
+in which productions et cetera.
+
+
+
+
+
+
+

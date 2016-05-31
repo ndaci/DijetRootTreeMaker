@@ -1,0 +1,120 @@
+===================
+DCS json processing
+===================
+
+The sum of all lumi sections processed so far is in the file: 
+
+lumiSummary_so_far.json
+2795.096 /pb
+
+==
+1)
+
+/JetHT/Run2015B-17Jul2015-v1/MINIAOD	
+lumiSummary_crab_JetHT__Run2015B-17Jul2015-v1__MINIAOD__150925_093041.json
+(Rome T2) /pnfs/roma1.infn.it/data/cms/store/user/gdimperi/Dijet/rootTrees/data/Run2015B/Run2015B_50ns_JEC_Summer15_50nsV4_DCSonly_Tag1f17e1/JetHT/crab_JetHT__Run2015B-17Jul2015-v1__MINIAOD/150925_093041/0000/ 
+(CERN eos) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/santanas/crab_JetHT__Run2015B-17Jul2015-v1__MINIAOD__150925_093041/  	
+22.503 /pb
+1f17e1	
+3855197 events
+
+==
+2)
+
+/JetHT/Run2015B-PromptReco-v1/MINIAOD
+lumiSummary_crab_JetHT__Run2015B-PromptReco-v1__MINIAOD__150930_151346.json
+(Rome T2) /pnfs/roma1.infn.it/data/cms/store/user/santanas/rootTrees/Run2015B_JetHT_30Sep2015-DCSJson_7ef5ecc/JetHT/crab_JetHT__Run2015B-PromptReco-v1__MINIAOD/150930_151346/0000/
+(CERN eos) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/santanas/crab_JetHT__Run2015B-PromptReco-v1__MINIAOD__150930_151346/
+28.603 /pb
+7ef5ecc
+1015163 events
+
+==
+3)
+
+/JetHT/Run2015C-PromptReco-v1/MINIAOD
+lumiSummary_crab_JetHT__Run2015C-PromptReco-v1__MINIAOD__150922_220844.json
+(Rome T2) /pnfs/roma1.infn.it/data/cms/store/user/gdimperi/Dijet/rootTrees/data/Run2015C/Run2015C_25ns_JEC_Summer15_25nsV3_DCSonlyJson_Tag1f17e1/JetHT/crab_JetHT__Run2015C-PromptReco-v1__MINIAOD/150922_220844/0000/
+(CERN eos) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/santanas/crab_JetHT__Run2015C-PromptReco-v1__MINIAOD__150922_220844
+47.267 /pb
+1f17e1	
+5601931 events
+
+==
+4)
+
+/JetHT/Run2015D-PromptReco-v3/MINIAOD
+lumiSummary_crab_JetHT__Run2015D-PromptReco-v3__MINIAOD__150930_155913.json
+(Rome T2) /pnfs/roma1.infn.it/data/cms/store/user/santanas/rootTrees/Run2015D_JetHT_30Sep2015-DCSJson_7ef5ecc/JetHT/crab_JetHT__Run2015D-PromptReco-v3__MINIAOD/150930_155913/0000/
+(CERN eos) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/santanas/crab_JetHT__Run2015D-PromptReco-v3__MINIAOD__150930_155913
+389.986 /pb
+7ef5ecc	
+15612081 events
+
+==
+5)
+
+/JetHT/Run2015D-PromptReco-v3/MINIAOD
+lumiSummary_crab_JetHT__Run2015D-PromptReco-v3__MINIAOD__151007_090551.json
+(Rome T2) /pnfs/roma1.infn.it/data/cms/store/user/santanas/rootTrees/Run2015D_JetHT_07Oct2015-DCSJson_b09a953/JetHT/crab_JetHT__Run2015D-PromptReco-v3__MINIAOD/151007_090551/0000/
+(CERN eos) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/santanas/crab_JetHT__Run2015D-PromptReco-v3__MINIAOD__151007_090551/
+412.711 /pb
+b09a953	
+14555362 events
+
+==
+6)
+
+/JetHT/Run2015D-PromptReco-v3/MINIAOD
+lumiSummary_crab_JetHT__Run2015D-PromptReco-v3__MINIAOD__151012_071719.json
+(Rome T2) /pnfs/roma1.infn.it/data/cms/store/user/santanas/rootTrees/Run2015D_JetHT_12Oct2015-DCSJson_71483e6/JetHT/crab_JetHT__Run2015D-PromptReco-v3__MINIAOD/151012_071719/0000/
+(CERN eos) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/santanas/crab_JetHT__Run2015D-PromptReco-v3__MINIAOD__151012_071719/
+171.711 /pb
+71483e6	
+4820033 events
+
+==
+7)
+
+/JetHT/Run2015D-PromptReco-v3/MINIAOD
+lumiSummary_crab_JetHT__Run2015D-PromptReco-v3__MINIAOD__151016_082745.json
+(Rome T2) /pnfs/roma1.infn.it/data/cms/store/user/santanas/rootTrees/Run2015D_JetHT_16Oct2015-DCSJson_450b0c1/JetHT/crab_JetHT__Run2015D-PromptReco-v3__MINIAOD/151016_082745/0000/
+(CERN eos) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/santanas/crab_JetHT__Run2015D-PromptReco-v3__MINIAOD__151016_082745/
+6.081 /pb 
+450b0c1
+170797 events
+
+==
+8)
+
+/JetHT/Run2015D-PromptReco-v4/MINIAOD
+lumiSummary_crab_JetHT__Run2015D-PromptReco-v4__MINIAOD__151016_094835.json
+(Rome T2) /pnfs/roma1.infn.it/data/cms/store/user/santanas/rootTrees/Run2015Dv4_JetHT_16Oct2015Bis-DCSJson_450b0c1/JetHT/crab_JetHT__Run2015D-PromptReco-v4__MINIAOD/151016_094835/0000/
+(CERN eos) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/santanas/crab_JetHT__Run2015D-PromptReco-v4__MINIAOD__151016_094835/
+788.715 /pb 
+450b0c1
+19510306 events
+
+==
+9)
+
+/JetHT/Run2015D-PromptReco-v4/MINIAOD
+lumiSummary_crab_JetHT__Run2015D-PromptReco-v4__MINIAOD__151112_065640.json
+(Rome T3) /t3/users/santanas/Dijet/rootTrees/crab_JetHT__Run2015D-PromptReco-v4__MINIAOD__151112_065640/
+(Rome T2) /pnfs/roma1.infn.it/data/cms/store/user/roma-group1/Dijet/rootTrees/data/crab_JetHT__Run2015D-PromptReco-v4__MINIAOD__151112_065640/
+(CERN eos) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/santanas/rootTrees/Run2015Dv4_JetHT_12Nov2015-DCSJson_2e3c9db/JetHT/crab_JetHT__Run2015D-PromptReco-v4__MINIAOD/151112_065640/0000/
+922.409 /pb 
+2e3c9db
+20672088 events
+
+==
+10)
+
+/JetHT/Run2015D-PromptReco-v4/MINIAOD
+lumiSummary_crab_JetHT__Run2015D-PromptReco-v4__MINIAOD__151112_234649.json
+(Rome T3) /t3/users/santanas/Dijet/rootTrees/crab_JetHT__Run2015D-PromptReco-v4__MINIAOD__151112_234649/
+(Rome T2) /pnfs/roma1.infn.it/data/cms/store/user/roma-group1/Dijet/rootTrees/data/crab_JetHT__Run2015D-PromptReco-v4__MINIAOD__151112_234649/ 
+(CERN eos) /eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/santanas/rootTrees/Run2015Dv4_JetHT_13Nov2015-DCSJson_bc77ee9/JetHT/crab_JetHT__Run2015D-PromptReco-v4__MINIAOD/151112_234649/0000
+5.111 /pb 
+bc77ee9
+94150 events
