@@ -61,12 +61,11 @@ config.Data.outLFNDirBase = '/store/group/phys_exotica/dijet/Dijet13TeV/juska/Ru
 
 Now we shold be ready to run. Let's start the production after creating the local
 output directory and doing necessary grid initializations:
-(note that I use createAndSubmitMC.py on purpose; we use it for both data and MC)
 
 
 $ source /cvmfs/cms.cern.ch/crab3/crab.sh && voms-proxy-init -voms cms && cmsenv
 $ mkdir Output_Run2016B
-$ python createAndSubmitMC.py -d Output_Run2016B/ -v only_MC_jec -i Inputs_Run2016B/InputList_Run2016B_JetHT_25May16.txt -t crab3_template_data.py -c ../flat-data-cfg_miniAOD.py -n $USER --submit
+$ python createAndSubmitDATA.py -d Output_Run2016B/ -v only_MC_jec -i Inputs_Run2016B/InputList_Run2016B_JetHT_25May16.txt -t crab3_template_data.py -c ../flat-data-cfg_miniAOD.py -n $USER --submit
 
 Now you should get a lot of output with green 'Success' -texts indicating the
 triumphant success in the submission process. Continue monitoring the run
