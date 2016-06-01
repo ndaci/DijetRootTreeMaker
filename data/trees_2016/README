@@ -1,11 +1,23 @@
 ===================
-Data
+DCS json processing
 ===================
 
+The sum of all lumi sections processed so far is in the file:
+707.911 /pb
+(with normtag_CERTDATA.json)
 
+==
+1)
 
-===================
-MC
-===================
+/JetHT/Run2016B-PromptReco-v1/MINIAOD
+/JetHT/Run2016B-PromptReco-v2/MINIAOD	
+27may16_promt_v1_v2_or.json 
+eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/Run2016B_big/JetHT/crab_JetHT__Run2016B-PromptReco-v1__MINIAOD/*.root
+eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/Run2016B_big/JetHT/crab_JetHT__Run2016B-PromptReco-v2__MINIAOD/*.root
+66.067 +
+641.844 /pb
+------------
+707.911 /pb (with normtag_CERTDATA.json)
+? events
 
-
+==
