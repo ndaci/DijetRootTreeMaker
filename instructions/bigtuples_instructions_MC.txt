@@ -4,7 +4,7 @@ Instructions for producing big ntuples (QCD and Signal MC)
 ##########################################################
 # *Target: CMS Dijet Resonance Search 2016 - RECO flavor #
 # *Author: Juska                                         #
-# *Last update: 19 May 16                                #
+# *Last update: 13 June 16                                #
 #                                                        #
 # Lines starting with '$' are commands to be executed    #
 # (after necessary changes when needed), all other text  #
@@ -30,8 +30,8 @@ $ export SCRAM_ARCH=slc6_amd64_gcc530
 
 Create a CMSSW environment:
 
-$ scram p -n DijetReco2016_806 CMSSW CMSSW_8_0_6
-$ cd DijetReco2016_806/src/
+$ scram p -n DijetReco2016_8010 CMSSW CMSSW_8_0_10
+$ cd DijetReco2016_8010/src/
 $ cmsenv
 
 Download code package from git and compile:

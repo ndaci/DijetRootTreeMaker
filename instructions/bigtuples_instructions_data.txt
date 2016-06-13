@@ -4,7 +4,7 @@ Instructions for producing big ntuples (data)
 ##########################################################
 # *Target: CMS Dijet Resonance Search 2016 - RECO flavor #
 # *Author: Juska                                         #
-# *Last update: 31 May 16                                #
+# *Last update: 13 June 16                               #
 #                                                        #
 # Lines starting with '$' are commands to be executed    #
 # (after necessary changes when needed), all other text  #
@@ -15,12 +15,86 @@ Instructions for producing big ntuples (data)
 # caused by following these instructions.                #
 ##########################################################
 
-Note: these instructions start a bit mid-way as the things that are
-done before these steps are very or entirely similar to what has been
-worked thru in the instructions for MC production. So please check them
-first if you struggle in the first steps here.
 
-##########################################################
+Set up a working directory and do a local test run
+
+$ ssh -X juska@lxplus.cern.ch
+$ mkdir myworkdir
+$ cd myworkdir
+$ echo $SCRAM_ARCH # Let's check if we have a good compiler version in use
+slc6_amd64_gcc491 # <- seems to be incompatible with CMSSW 8.0.6, let's update
+$ export SCRAM_ARCH=slc6_amd64_gcc530
+
+Create a CMSSW environment:
+
+$ scram p -n DijetReco2016_8010 CMSSW CMSSW_8_0_10
+$ cd DijetReco2016_8010/src/
+$ cmsenv
+
+Download code package from git and compile:
+
+$ git clone https://github.com/CMSDIJET/DijetRootTreeMaker.git CMSDIJET/DijetRootTreeMaker
+$ scram b -j 8
+
+## Test run ##
+
+Find a suitable miniAOD sample file for the test run. I found one here:
+
+/afs/cern.ch/user/j/juska/eos/cms/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/730/00000/EA345ED4-B821-E611-BEA5-02163E0138E2.root
+(Requires EOS to be mounted.)
+
+* Option 1 *
+
+Now that I have pushed it to git, you can just open the configuration file
+localtest_flat-data-cfg_miniAOD.py and check that it is almost identical
+with the production version flat-data-cfg_miniAOD.py, and then update your file
+paths and possibly global tag before test run.
+
+* End of option 1*
+
+* Option 2*
+
+Make a test CMSSW conf and replace THISGLOBALTAG with your global tag and
+THISROOTFILE with some name that you want for the output file. Also, change path
+to your test input miniAOD file here:
+process.source = cms.Source("PoolSource",
+    fileNames = cms.untracked.vstring("file:myfile.root").
+    
+$ cd prod
+$ cp flat-data-cfg_miniAOD.py mylocaltest_flat-data-cfg_miniAOD.py
+$ gedit mylocaltest_flat-data-cfg_miniAOD.py&
+
+* End of option 2*
+
+As a global tag I use '80X_mcRun2_asymptotic_2016_miniAODv2' (note: no '::All' suffix
+allowed anymore) as it seems that it's the best to use in CMSSW 806 miniAODv1
+production:
+https://twiki.cern.ch/twiki/bin/viewauth/CMS/JECDataMC#Recommended_for_MC
+
+You can also optionally reduce the run events by modifying this line:
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(10))
+
+
+Now after suitable modifications to the CMSSW run file I can do
+the local test run (being sure that I've compiled the code before):
+
+$ cmsRun localtest_flat-data-cfg_miniAOD.py
+
+Successful run looks something like this:
+
+[long list of warnings about triggers here]
+Begin processing the 8th record. Run 273730, Event 3146673520, LumiSection 2623 at 13-Jun-2016 10:49:45.182 CEST
+Begin processing the 9th record. Run 273730, Event 3146111224, LumiSection 2623 at 13-Jun-2016 10:49:45.187 CEST
+Begin processing the 10th record. Run 273730, Event 3146571947, LumiSection 2623 at 13-Jun-2016 10:49:45.189 CEST
+13-Jun-2016 10:49:45 CEST  Closed file file:/afs/cern.ch/user/j/juska/eos/cms/store/data/Run2016B/JetHT/MINIAOD/PromptReco-v2/000/273/730/00000/EA345ED4-B821-E611-BEA5-02163E0138E2.root
+
+[run summary here]
+
+You can check with ROOT TBrowser if your test output file looks healthy.
+Now after a successful test run, we can proceed to producing the file lists
+for the mass production.
+
+***
 
 
 Let's create input file list for running over 2016B dataset. We do this by
@@ -38,6 +112,9 @@ like this:
 
 /JetHT/Run2016B-PromptReco-v1/MINIAOD -1 20 80X_dataRun2_Prompt_v8
 /JetHT/Run2016B-PromptReco-v2/MINIAOD -1 20 80X_dataRun2_Prompt_v8
+
+(The above inputlist is fine for data production as long as they change
+the name of the accumulating dataset or global tag changes)
 
 Next we need to modify the crab3_template_data.py a bit to match our needs.
 
