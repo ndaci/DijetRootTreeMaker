@@ -2,9 +2,22 @@
 DCS json processing
 ===================
 
-The sum of all lumi sections processed so far is in the file:
-707.911 /pb
+The sum of all lumi sections processed so far is in the file lumiSummary_sofar.json:
+2755.285 /pb
 (with normtag_CERTDATA.json)
+
+4) Full 2016 production
+
+/JetHT/Run2016B-PromptReco-v1/MINIAOD
+/JetHT/Run2016B-PromptReco-v2/MINIAOD	
+
+processed_jsons/lumis_round4_full_promt_v1_or_v2.json
+2755.285 /pb
+
+File location (CERN EOS):
+eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/Run2016B_big/JetHT/crab_JetHT__Run2016B-PromptReco-v1__MINIAOD/round4
+eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/Run2016B_big/JetHT/crab_JetHT__Run2016B-PromptReco-v2__MINIAOD/round4_part1
+eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/Run2016B_big/JetHT/crab_JetHT__Run2016B-PromptReco-v2__MINIAOD/round4_part2
 
 ==
 1)
