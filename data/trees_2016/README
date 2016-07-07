@@ -2,12 +2,23 @@
 DCS json processing
 ===================
 
-The sum of all lumi sections processed so far is in the file lumiSummary_sofar_round4+5_22Jun16.json:
-4774.123 /pb ONLINE LUMINOSITY (normtag not ready)
+The sum of all lumi sections processed so far is in the file lumiSummary_sofar_rounds456_7Jul16.json:
+7338.492 /pb ONLINE LUMINOSITY
 
-********************************************************************
-*** For full set of 2016B data please combine datasets 4) and 5) ***
-********************************************************************
+**************************************************************************
+*** For full set of 2016B+C data please combine datasets 4), 5) and 6) ***
+**************************************************************************
+
+5) Top-up production 'round6'
+
+processed_jsons/processedLumis_round6_2016B_prompt_v2.json
+854.903 /pb ONLINE
+processed_jsons/processedLumis_round6_2016C_prompt_v2.json
+1710.466 /pb ONLINE
+
+File location:
+
+eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/Run2016B_red/pub/2016BC_round6_full_20160706_224248/*skim.root 
 
 5) Top-up production 'round5'
 
