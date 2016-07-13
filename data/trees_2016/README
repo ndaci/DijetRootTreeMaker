@@ -2,14 +2,26 @@
 DCS json processing
 ===================
 
-The sum of all lumi sections processed so far is in the file lumiSummary_sofar_rounds456_7Jul16.json:
-7338.492 /pb ONLINE LUMINOSITY
+The sum of all lumi sections processed so far is in the file lumiSummary_sofar_rounds4567_12Jul16.json:
+9556.165 /pb (offline)
 
-**************************************************************************
-*** For full set of 2016B+C data please combine datasets 4), 5) and 6) ***
-**************************************************************************
+******************************************************************************
+*** For full set of 2016B+C+D data please combine datasets 4), 5), 6) & 7) ***
+******************************************************************************
 
-5) Top-up production 'round6'
+
+7) Top-up production 'round7'
+
+processed_jsons/processedLumis_round7_2016C_or_D.json
+1555.854 /pb (offline)
+
+File location:
+/eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/Run2016B_big/JetHT/crab_JetHT__Run2016C-PromptReco-v2__MINIAOD/round7_topup
+/eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/Run2016B_big/JetHT/crab_JetHT__Run2016D-PromptReco-v2__MINIAOD/round7_topup
+
+
+
+6) Top-up production 'round6'
 
 processed_jsons/processedLumis_round6_2016B_prompt_v2.json
 854.903 /pb ONLINE
@@ -18,7 +30,8 @@ processed_jsons/processedLumis_round6_2016C_prompt_v2.json
 
 File location:
 
-eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/Run2016B_red/pub/2016BC_round6_full_20160706_224248/*skim.root 
+eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/Run2016B_big/JetHT/crab_JetHT__Run2016B-PromptReco-v2__MINIAOD/round6_topup_v2
+eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/Run2016B_big/JetHT/crab_JetHT__Run2016C-PromptReco-v2__MINIAOD/round6_topup_v2
 
 5) Top-up production 'round5'
 
