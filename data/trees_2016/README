@@ -2,12 +2,23 @@
 DCS json processing
 ===================
 
-The sum of all lumi sections processed so far is in the file lumiSummary_sofar_rounds4567_12Jul16.json:
-9556.165 /pb (offline)
+The sum of all lumi sections processed so far is in the file lumiSummary_sofar_rounds45678_22Jul16.json:
+14655 /pb (online)
 
 ******************************************************************************
-*** For full set of 2016B+C+D data please combine datasets 4), 5), 6) & 7) ***
+*** For full set of 2016B+C+D+E data please combine datasets 4), 5), 6), 7) & 8) ***
 ******************************************************************************
+
+
+8) Top-up production 'round8'
+
+processed_jsons/processedLumis_2016D_or_E_round8.json
+5033 /pb (online)
+
+File location:
+
+eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/Run2016B_big/JetHT/crab_JetHT__Run2016D-PromptReco-v2__MINIAOD/round8_topup
+eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/Run2016B_big/JetHT/crab_JetHT__Run2016E-PromptReco-v2__MINIAOD/round8_topup
 
 
 7) Top-up production 'round7'
