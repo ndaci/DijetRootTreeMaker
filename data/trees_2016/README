@@ -1,5 +1,39 @@
+++++++++++++++++++++++++++++++++++++++++++++
+Accumulating Certified JSON Processing - ACP
+++++++++++++++++++++++++++++++++++++++++++++
+
+The sum of all lumi sections processed so far is in the file processedLumis_2016BCDEF_22Aug16_fall16_round1_full.json:
+20087 /pb (offline)
+
+*****************************************************************
+*** For full 2016 dataset produced so far, please use dataset 1)
+*****************************************************************
+
+1) Full certified production 'Fall16 round1'
+
+processedLumis_2016BCDEF_22Aug16_fall16_round1_full.json:
+20087 /pb (offline)
+
+File location:
+eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/fall16_big_cert/JetHT/crab_JetHT__Run2016B-PromptReco-v2__MINIAOD/160819_194518/0000
+eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/fall16_big_cert/JetHT/crab_JetHT__Run2016C-PromptReco-v2__MINIAOD/160819_194548/0000
+eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/fall16_big_cert/JetHT/crab_JetHT__Run2016D-PromptReco-v2__MINIAOD/160819_194620/0000
+eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/fall16_big_cert/JetHT/crab_JetHT__Run2016E-PromptReco-v2__MINIAOD/160819_194646/0000
+eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/fall16_big_cert/JetHT/crab_JetHT__Run2016F-PromptReco-v1__MINIAOD/160819_194713/0000
+
+
+
+
+
+
+
+
+
+(Productions to be used post-ICHEP2016 end here)
+
+
 ===================
-DCS json processing
+DCS json processing -- Obsolete after ICHEP2016
 ===================
 
 The sum of all lumi sections processed so far is in the file lumiSummary_sofar_rounds45678_22Jul16.json:
