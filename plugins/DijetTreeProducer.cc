@@ -268,6 +268,7 @@ void DijetTreeProducer::beginJob()
   massAK4_           = new std::vector<float>;
   energyAK4_         = new std::vector<float>;
   areaAK4_           = new std::vector<float>;
+  csvAK4_            = new std::vector<float>;
   chfAK4_            = new std::vector<float>;
   nhfAK4_            = new std::vector<float>;
   phfAK4_            = new std::vector<float>;
@@ -336,6 +337,7 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetMassAK4"              ,"vector<float>"     ,&massAK4_);
   outTree_->Branch("jetEnergyAK4"            ,"vector<float>"     ,&energyAK4_);
   outTree_->Branch("jetAreaAK4"              ,"vector<float>"     ,&areaAK4_);
+  outTree_->Branch("jetCSVAK4"               ,"vector<float>"     ,&csvAK4_);
   outTree_->Branch("jetChfAK4"               ,"vector<float>"     ,&chfAK4_);
   outTree_->Branch("jetNhfAK4"               ,"vector<float>"     ,&nhfAK4_);
   outTree_->Branch("jetPhfAK4"               ,"vector<float>"     ,&phfAK4_);
@@ -400,6 +402,7 @@ void DijetTreeProducer::beginJob()
   massAK8_           = new std::vector<float>;
   energyAK8_         = new std::vector<float>;
   areaAK8_           = new std::vector<float>;
+  csvAK8_            = new std::vector<float>;
   chfAK8_            = new std::vector<float>;
   nhfAK8_            = new std::vector<float>;
   phfAK8_            = new std::vector<float>;
@@ -433,6 +436,7 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetMassAK8"              ,"vector<float>"     ,&massAK8_);
   outTree_->Branch("jetEnergyAK8"            ,"vector<float>"     ,&energyAK8_);
   outTree_->Branch("jetAreaAK8"              ,"vector<float>"     ,&areaAK8_);
+  outTree_->Branch("jetCSVAK8"               ,"vector<float>"     ,&csvAK8_);
   outTree_->Branch("jetChfAK8"               ,"vector<float>"     ,&chfAK8_);
   outTree_->Branch("jetNhfAK8"               ,"vector<float>"     ,&nhfAK8_);
   outTree_->Branch("jetPhfAK8"               ,"vector<float>"     ,&phfAK8_);
@@ -597,6 +601,7 @@ void DijetTreeProducer::endJob()
   delete massAK4_;
   delete energyAK4_;
   delete areaAK4_;
+  delete csvAK4_;
   delete chfAK4_;
   delete nhfAK4_;
   delete phfAK4_;
@@ -661,6 +666,7 @@ void DijetTreeProducer::endJob()
   delete massAK8_;
   delete energyAK8_;
   delete areaAK8_;
+  delete csvAK8_;
   delete chfAK8_;
   delete nhfAK8_;
   delete phfAK8_;
@@ -1085,6 +1091,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       massAK4_          ->push_back(ijet->correctedJet(0).mass()*jecFactorsAK4.at(*i));
       energyAK4_        ->push_back(ijet->correctedJet(0).energy()*jecFactorsAK4.at(*i));
       areaAK4_          ->push_back(ijet->jetArea());
+      csvAK4_           ->push_back(ijet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
       idLAK4_           ->push_back(idL);
       idTAK4_           ->push_back(idT);
       chHadMultAK4_     ->push_back(chHadMult);
@@ -1340,6 +1347,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       massAK8_          ->push_back(ijet->correctedJet(0).mass()*jecFactorsAK8.at(*i));
       energyAK8_        ->push_back(ijet->correctedJet(0).energy()*jecFactorsAK8.at(*i));
       areaAK8_          ->push_back(ijet->jetArea());
+      csvAK8_           ->push_back(ijet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
       idLAK8_           ->push_back(idL);
       idTAK8_           ->push_back(idT);
       
@@ -1525,6 +1533,7 @@ void DijetTreeProducer::initialize()
   massAK4_           ->clear();
   energyAK4_         ->clear();
   areaAK4_           ->clear();
+  csvAK4_            ->clear();
   chfAK4_            ->clear();
   nhfAK4_            ->clear();
   phfAK4_            ->clear();
@@ -1597,6 +1606,7 @@ void DijetTreeProducer::initialize()
   massAK8_           ->clear();
   energyAK8_         ->clear();
   areaAK8_           ->clear();
+  csvAK8_            ->clear();
   chfAK8_            ->clear();
   nhfAK8_            ->clear();
   phfAK8_            ->clear();
