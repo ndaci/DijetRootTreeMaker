@@ -23,7 +23,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 
 
 process.TFileService=cms.Service("TFileService",
-                                 #fileName=cms.string('mylocaltest_Run2016B_10.root'),
+                                 #fileName=cms.string('test.root'),
                                  fileName=cms.string(THISROOTFILE),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
@@ -124,7 +124,7 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   ##### For 0T data  #####
   #triggerAlias     = cms.vstring('L1Jet68','L1Jet36','L1Jet16','L1EG20','L1EG5'),
   ##### For JetHT PD ##### 
-  triggerAlias     = cms.vstring('PFHT800','PFHT650','PFHT600','PFHT475','PFHT400','PFHT350','PFHT300','PFHT250','PFHT200',
+  triggerAlias     = cms.vstring('PFHT900','PFHT800','PFHT650','PFHT600','PFHT475','PFHT400','PFHT350','PFHT300','PFHT250','PFHT200',
                                  'PFHT650MJJ950','PFHT650MJJ900',
                                  'PFJET500','PFJET450','PFJET200',
                                  'HT2000','HT2500','Mu45Eta2p1',
@@ -136,6 +136,7 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
      ###
      ### For JetHT PD ###
      ###
+     'HLT_PFHT900_v*',
      'HLT_PFHT800_v*',
      'HLT_PFHT650_v*',
      'HLT_PFHT600_v*',
