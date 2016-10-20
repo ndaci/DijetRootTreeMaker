@@ -11,7 +11,7 @@ process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.GlobalTag.globaltag = THISGLOBALTAG
-#process.GlobalTag.globaltag = 'MCRUN2_74_V9A::All'
+#process.GlobalTag.globaltag = '80X_mcRun2_asymptotic_2016_miniAODv2_v0'
 
 
 #--------------------- Report and output ---------------------------
@@ -24,6 +24,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 5000
 
 process.TFileService=cms.Service("TFileService",
                                  fileName=cms.string(THISROOTFILE),
+                                 #fileName=cms.string("test.root"),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
 
@@ -79,7 +80,8 @@ process.out.outputCommands.append("keep *_slimmedGenJetsAK8_*_*")
 process.source = cms.Source("PoolSource",
     #fileNames = cms.untracked.vstring('file:QstarToJJ_M_4000_TuneCUETP8M1_13TeV_pythia8__MINIAODSIM__Asympt50ns_MCRUN2_74_V9A-v1__70000__AA35D1E7-FEFE-E411-B1C5-0025905B858A.root')    
     #fileNames = cms.untracked.vstring('/store/mc/RunIISpring15DR74/QstarToJJ_M_1000_TuneCUETP8M1_13TeV_pythia8/AODSIM/Asympt50ns_MCRUN2_74_V9A-v1/50000/00F85752-BCFB-E411-A29A-000F5327349C.root')
-    fileNames = cms.untracked.vstring('root://xrootd.unl.edu//store/mc/RunIISpring15DR74/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/Asympt25ns_MCRUN2_74_V9-v1/50000/0E4CEBFE-ECFB-E411-9F0C-842B2B29273C.root')
+    #fileNames = cms.untracked.vstring('root://xrootd.unl.edu//store/mc/RunIISpring15DR74/QCD_Pt_300to470_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/Asympt25ns_MCRUN2_74_V9-v1/50000/0E4CEBFE-ECFB-E411-9F0C-842B2B29273C.root')
+    fileNames = cms.untracked.vstring('/store/mc/RunIISpring16MiniAODv2/RSGravitonToQuarkQuark_kMpl01_M_3000_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/10000/080413DE-FC2C-E611-B822-D8D385FF6C5E.root')
     )
 
 
