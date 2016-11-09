@@ -1,13 +1,37 @@
 ++++++++++++++++++++++++++++++++++++++++++++
-Accumulating Certified JSON Processing - ACP
+Certified JSON Processing
 ++++++++++++++++++++++++++++++++++++++++++++
 
-The sum of all lumi sections processed so far is in the file processedLumis_2016BCDEF_22Aug16_fall16_round1_full.json:
-20087 /pb (offline)
+The sum of all lumi sections processed so far is in the file processed_jsons/processedlumis_moriond16_v0_promptreco_9Nov16.json:
+33583 /pb (online)
 
 *****************************************************************
-*** For full 2016 dataset produced so far, please use dataset 1)
+*** For full 2016 dataset produced so far, please use dataset 2)
 *****************************************************************
+
+2) Full certified production 'Moriond16 v0' with PromptReco
+
+processed_jsons/processedlumis_moriond16_v0_promptreco_9Nov16.json
+33583 /pb (online)
+
+Used lumimask:
+Cert_271036-283685_13TeV_PromptReco_Collisions16_JSON_NoL1T_28Oct16.txt, 33598 /pb (online),
+i.e. 15 /pb of luminosity mysteriously missing, probably due to non-available miniAOD files
+
+File location:
+/afs/cern.ch/user/j/juska/eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/moriond16_big_cert_v0/JetHT/crab_JetHT__Run2016B-PromptReco-v2__MINIAOD/161102_224811/0000/
+/afs/cern.ch/user/j/juska/eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/moriond16_big_cert_v0/JetHT/crab_JetHT__Run2016B-PromptReco-v2__MINIAOD/161102_224811/0001/
+/afs/cern.ch/user/j/juska/eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/moriond16_big_cert_v0/JetHT/crab_JetHT__Run2016C-PromptReco-v2__MINIAOD/161102_224845/0000/
+/afs/cern.ch/user/j/juska/eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/moriond16_big_cert_v0/JetHT/crab_JetHT__Run2016D-PromptReco-v2__MINIAOD/161102_224921/0000/
+/afs/cern.ch/user/j/juska/eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/moriond16_big_cert_v0/JetHT/crab_JetHT__Run2016E-PromptReco-v2__MINIAOD/161102_224955/0000/
+/afs/cern.ch/user/j/juska/eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/moriond16_big_cert_v0/JetHT/crab_JetHT__Run2016F-PromptReco-v1__MINIAOD/161102_225037/0000/
+/afs/cern.ch/user/j/juska/eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/moriond16_big_cert_v0/JetHT/crab_JetHT__Run2016G-PromptReco-v1__MINIAOD/161102_225111/0000/
+/afs/cern.ch/user/j/juska/eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/moriond16_big_cert_v0/JetHT/crab_JetHT__Run2016G-PromptReco-v1__MINIAOD/161102_225111/0001/
+/afs/cern.ch/user/j/juska/eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/moriond16_big_cert_v0/JetHT/crab_JetHT__Run2016H-PromptReco-v2__MINIAOD/161102_225224/0000/
+/afs/cern.ch/user/j/juska/eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/moriond16_big_cert_v0/JetHT/crab_JetHT__Run2016H-PromptReco-v2__MINIAOD/161102_225224/0001/
+
+
+
 
 1) Full certified production 'Fall16 round1'
 
@@ -20,11 +44,6 @@ eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/fall16_big_cert/JetHT/cr
 eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/fall16_big_cert/JetHT/crab_JetHT__Run2016D-PromptReco-v2__MINIAOD/160819_194620/0000
 eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/fall16_big_cert/JetHT/crab_JetHT__Run2016E-PromptReco-v2__MINIAOD/160819_194646/0000
 eos/cms/store/group/phys_exotica/dijet/Dijet13TeV/juska/fall16_big_cert/JetHT/crab_JetHT__Run2016F-PromptReco-v1__MINIAOD/160819_194713/0000
-
-
-
-
-
 
 
 
