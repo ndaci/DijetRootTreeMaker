@@ -2,12 +2,34 @@
 Certified JSON Processing
 ++++++++++++++++++++++++++++++++++++++++++++
 
-The sum of all lumi sections processed so far is in the file processed_jsons/processedlumis_moriond16_v0_promptreco_9Nov16.json:
-33583 /pb (online)
+The sum of all lumi sections processed so far is in the file processed_jsons/processedLumis_moriond16_v1_rerecoB-G_promptrecoH_22Nov16.json:
+37022 /pb (online)
 
 *****************************************************************
-*** For full 2016 dataset produced so far, please use dataset 2)
+*** For full 2016 dataset produced so far, please use dataset 3)
 *****************************************************************
+
+3) Full certified production 'Moriond16 v1' with ReReco for 2016BCDEFG and PromptReco for 2016H
+processed_jsons/processedLumis_moriond16_v1_rerecoB-G_promptrecoH_22Nov16.json
+37022 /pb (online)
+
+Used lumimask:
+/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/DCSOnly/json_DCSONLY.txt
+
+File location:
+/store/group/phys_exotica/dijet/Dijet13TeV/deguio/fall16_big_cert/Full2016_20161117/JetHT/crab_JetHT__Run2016B-23Sep2016-v1__MINIAOD/*/0000
+/store/group/phys_exotica/dijet/Dijet13TeV/deguio/fall16_big_cert/Full2016_20161117/JetHT/crab_JetHT__Run2016B-23Sep2016-v3__MINIAOD/*/0000
+/store/group/phys_exotica/dijet/Dijet13TeV/deguio/fall16_big_cert/Full2016_20161117/JetHT/crab_JetHT__Run2016C-23Sep2016-v1__MINIAOD/*/0000
+/store/group/phys_exotica/dijet/Dijet13TeV/deguio/fall16_big_cert/Full2016_20161117/JetHT/crab_JetHT__Run2016D-23Sep2016-v1__MINIAOD/*/0000
+/store/group/phys_exotica/dijet/Dijet13TeV/deguio/fall16_big_cert/Full2016_20161117/JetHT/crab_JetHT__Run2016E-23Sep2016-v1__MINIAOD/*/0000
+/store/group/phys_exotica/dijet/Dijet13TeV/deguio/fall16_big_cert/Full2016_20161117/JetHT/crab_JetHT__Run2016F-23Sep2016-v1__MINIAOD/*/0000
+/store/group/phys_exotica/dijet/Dijet13TeV/deguio/fall16_big_cert/Full2016_20161117/JetHT/crab_JetHT__Run2016G-23Sep2016-v1__MINIAOD/*/0000
+/store/group/phys_exotica/dijet/Dijet13TeV/deguio/fall16_big_cert/Full2016_20161117/JetHT/crab_JetHT__Run2016H-PromptReco-v2__MINIAOD/*/0000
+/store/group/phys_exotica/dijet/Dijet13TeV/deguio/fall16_big_cert/Full2016_20161117/JetHT/crab_JetHT__Run2016H-PromptReco-v3__MINIAOD/*/0000
+
+
+
+
 
 2) Full certified production 'Moriond16 v0' with PromptReco
 
