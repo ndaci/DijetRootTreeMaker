@@ -3,7 +3,7 @@ Certified JSON Processing
 ++++++++++++++++++++++++++++++++++++++++++++
 
 The sum of all lumi sections processed so far is in the file processed_jsons/processedLumis_moriond16_v1_rerecoB-G_promptrecoH_22Nov16.json:
-37022 /pb (online)
+36226 /pb (online)
 
 *****************************************************************
 *** For full 2016 dataset produced so far, please use dataset 3)
@@ -11,7 +11,7 @@ The sum of all lumi sections processed so far is in the file processed_jsons/pro
 
 3) Full certified production 'Moriond16 v1' with ReReco for 2016BCDEFG and PromptReco for 2016H
 processed_jsons/processedLumis_moriond16_v1_rerecoB-G_promptrecoH_22Nov16.json
-37022 /pb (online)
+36226 /pb (online)
 
 Used lumimask:
 /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/13TeV/DCSOnly/json_DCSONLY.txt
