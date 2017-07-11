@@ -127,5 +127,3 @@ for line in ins:
     print "Submitting jobs....."
     #print crab_cfgfile
     os.system("crab submit -c "+crab_cfgfile)
-
-

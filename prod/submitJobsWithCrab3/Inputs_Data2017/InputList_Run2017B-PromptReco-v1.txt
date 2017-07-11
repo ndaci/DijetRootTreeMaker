@@ -1,0 +1,2 @@
+/JetHT/Run2017B-PromptReco-v1/MINIAOD -1 30 92X_dataRun2_Prompt_v4
+
