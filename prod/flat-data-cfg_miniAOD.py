@@ -124,57 +124,53 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   ##### For 0T data  #####
   #triggerAlias     = cms.vstring('L1Jet68','L1Jet36','L1Jet16','L1EG20','L1EG5'),
   ##### For JetHT PD ##### 
-  triggerAlias     = cms.vstring('PFHT900','PFHT800','PFHT650','PFHT600','PFHT475','PFHT400','PFHT350','PFHT300','PFHT250','PFHT200',
-                                 'PFHT650MJJ950','PFHT650MJJ900',
-                                 'PFJET500','PFJET450','PFJET200',
-                                 'HT2000','HT2500','Mu45Eta2p1',
-                                 'AK8DiPFJet280200TrimMass30Btag','AK8PFHT600TriMass50Btag','AK8PFHT700TriMass50','AK8PFJet360TrimMass50',
-                                 'AK8PFJet450', 'AK8PFJet500','CaloJet500NoJetID','DiPFJetAve300HFJEC','DiPFJetAve500',
-                                 'PFHT400SixJet30Btag','PFHT450SixJet40Btag','PFHT750FourJetPt50','QuadPFJetVBF'),                                 
+  triggerAlias     = cms.vstring('PFHT780','PFHT890','PFHT1050',
+                                 'PFJET400','PFJET450','PFJET500','PFJET550',
+                                 'Mu50',
+                                 'AK8PFJet320', 'AK8PFJet400','AK8PFJet450','AK8PFJet500','AK8PFJet550',
+		                 'CaloJet500NoJetID','CaloJet550NoJetID',                               'HLT_PFHT500_PFMET100_PFMHT100_IDTight','HLT_PFHT500_PFMET110_PFMHT110_IDTight','HLT_PFHT700_PFMET85_PFMHT85_IDTight','HLT_PFHT700_PFMET95_PFMHT95_IDTight',
+'HLT_PFHT800_PFMET75_PFMHT75_IDTight','HLT_PFHT800_PFMET85_PFMHT85_IDTight',
+'PFHT380_SixJet32_DoubleBTagCSV_p075', 
+'HLT_PFHT430_SixJet40_BTagCSV_p080'),                                 
+#
+
   triggerSelection = cms.vstring(
 
      ###
      ### For JetHT PD ###
      ###
-     'HLT_PFHT900_v*',
-     'HLT_PFHT800_v*',
-     'HLT_PFHT650_v*',
-     'HLT_PFHT600_v*',
-     'HLT_PFHT475_v*',
-     'HLT_PFHT400_v*',
-     'HLT_PFHT350_v*',
-     'HLT_PFHT300_v*',
-     'HLT_PFHT250_v*',
-     'HLT_PFHT200_v*',
-     'HLT_PFHT650_WideJetMJJ950DEtaJJ1p5_v*',
-     'HLT_PFHT650_WideJetMJJ900DEtaJJ1p5_v*',
-     'HLT_PFJet500_v*',
-     'HLT_PFJet450_v*',
-     'HLT_PFJet200_v*',
-     'HLT_HT2000_v*',
-     'HLT_HT2500_v*',
-     'HLT_Mu45_eta2p1_v*',
-     'HLT_AK8DiPFJet280_200_TrimMass30_BTagCSV0p45_v*',
-     'HLT_AK8PFHT600_TrimR0p1PT0p03Mass50_BTagCSV0p45_v*',
-     'HLT_AK8PFHT700_TrimR0p1PT0p03Mass50_v*',
-     'HLT_AK8PFJet360_TrimMass30_v*',
-     'HLT_AK8PFJet450_v*',
-     'HLT_AK8PFJet500_v*',
-     'HLT_CaloJet500_NoJetID_v*',
-     'HLT_DiPFJetAve300_HFJEC_v*',
-     'HLT_DiPFJetAve500_v*',
-     'HLT_PFHT400_SixJet30_BTagCSV0p55_2PFBTagCSV0p72_v*',
-     'HLT_PFHT450_SixJet40_PFBTagCSV0p72_v*',
-     'HLT_PFHT750_4JetPt50_v*',
-     'HLT_QuadPFJet_VBF_v*',
+     'HLT_PFHT780_v*',  # it exists and it is the PFHT prescaled 
+     'HLT_PFHT890_v*',  # it exists and it is the PFHT prescaled
+     'HLT_PFHT1050_v*', # it exists and it is the PFHT unprescaled
+     'HLT_PFJet400_v*', # it exists and it is prescaled
+     'HLT_PFJet450_v*', # it exists and it is unprescaled
+     'HLT_PFJet500_v*', # it exists and it is unprescaled
+     'HLT_PFJet550_v*', # it exists and it is unprescaled
+     'HLT_Mu50_v*', 	# it exists and it is unprescaled
+     'HLT_AK8PFJet320_v*',# it exists and it is prerescaled
+     'HLT_AK8PFJet400_v*',# it exists and it is unprescaled  
+     'HLT_AK8PFJet450_v*',# it exists and it is unprescaled
+     'HLT_AK8PFJet500_v*',# it exists and it is unprescaled
+     'HLT_AK8PFJet550_v*',# it exists and it is unprescaled
+     'HLT_CaloJet500_NoJetID_v*', # it exists and it is unprescaled
+     'HLT_CaloJet550_NoJetID_v*', # it exists and it is unprescaled
+     'HLT_PFHT500_PFMET100_PFMHT100_IDTight_v*', # it exists and it is unprescaled
+     'HLT_PFHT500_PFMET110_PFMHT110_IDTight_v*', # it exists and it is unprescaled 
+     'HLT_PFHT700_PFMET85_PFMHT85_IDTight_v*', # it exists and it is unprescaled
+     'HLT_PFHT700_PFMET95_PFMHT95_IDTight_v*', # it exists and it is unprescaled
+     'HLT_PFHT800_PFMET75_PFMHT75_IDTight_v*', # it exists and it is unprescaled
+     'HLT_PFHT800_PFMET85_PFMHT85_IDTight_v*', # it exists and it is unprescaled
+     'HLT_PFHT380_SixJet32_DoubleBTagCSV_p075_v*', # it exists and it is unprescaled
+     'HLT_PFHT430_SixJet40_BTagCSV_p080_v*',       # it exists and it is unprescaled
      ###
   ),
   triggerConfiguration = cms.PSet(
     hltResults            = cms.InputTag('TriggerResults','','HLT'),
     l1tResults            = cms.InputTag(''),
     daqPartitions         = cms.uint32(1),
-    l1tIgnoreMask         = cms.bool(False),
-    l1techIgnorePrescales = cms.bool(False),
+    l1tIgnoreMaskAndPrescale = cms.bool(False),
+    #l1tIgnoreMask         = cms.bool(False),
+   # l1techIgnorePrescales = cms.bool(False),
     throw                 = cms.bool(False)
   ),
 
@@ -198,8 +194,9 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
     hltResults            = cms.InputTag('TriggerResults','','RECO'), #for prompt reco
     l1tResults            = cms.InputTag(''),
     daqPartitions         = cms.uint32(1),
-    l1tIgnoreMask         = cms.bool(False),
-    l1techIgnorePrescales = cms.bool(False),
+    l1tIgnoreMaskAndPrescale = cms.bool(False),
+    #l1tIgnoreMask         = cms.bool(False),
+    #l1techIgnorePrescales = cms.bool(False),
     throw                 = cms.bool(False)
   ),
 
