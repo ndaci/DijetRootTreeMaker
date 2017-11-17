@@ -49,12 +49,12 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
   // These are now causing data run to fail. Weird it used to work with 2015 version?!
   isData_ = cfg.getParameter<bool>("isData");
   if (!isData_){
-     srcGenJetsAK4_      = (consumes<GenJetCollection>(cfg.getParameter<InputTag>("genJetsAK4")));
-     srcGenJetsAK8_      = (consumes<GenJetCollection>(cfg.getParameter<InputTag>("genJetsAK8")));
-     srcPrunedGenParticles_ = (consumes<reco::GenParticleCollection>(cfg.getParameter<InputTag> ("genParticles")));
-     srcGenInfo_           = consumes<GenEventInfoProduct>(cfg.getUntrackedParameter<InputTag>  ("ptHat"));
-     //srcPU_              = cfg.getUntrackedParameter<InputTag>    ("pu",InputTag(""));
-     //srcGenInfo_         = cfg.getUntrackedParameter<InputTag>  ("ptHat",InputTag());
+    srcGenJetsAK4_      = (consumes<GenJetCollection>(cfg.getParameter<InputTag>("genJetsAK4")));
+    srcGenJetsAK8_      = (consumes<GenJetCollection>(cfg.getParameter<InputTag>("genJetsAK8")));
+    srcPrunedGenParticles_ = (consumes<reco::GenParticleCollection>(cfg.getParameter<InputTag> ("genParticles")));
+    srcGenInfo_           = consumes<GenEventInfoProduct>(cfg.getUntrackedParameter<InputTag>  ("ptHat"));
+    //srcPU_              = cfg.getUntrackedParameter<InputTag>    ("pu",InputTag(""));
+    //srcGenInfo_         = cfg.getUntrackedParameter<InputTag>  ("ptHat",InputTag());
   }
 
   triggerCache_       = triggerExpression::Data(cfg.getParameterSet("triggerConfiguration"),consumesCollector());
@@ -105,51 +105,51 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
   L3corrAK8_MC_ = cfg.getParameter<edm::FileInPath>("L3corrAK8_MC");
 
   if(redoJECs_)
-  {
-    // AK4
-    L1ParAK4_DATA = new JetCorrectorParameters(L1corrAK4_DATA_.fullPath());
-    L2ParAK4_DATA = new JetCorrectorParameters(L2corrAK4_DATA_.fullPath());
-    L3ParAK4_DATA = new JetCorrectorParameters(L3corrAK4_DATA_.fullPath());
-    L2L3ResAK4_DATA = new JetCorrectorParameters(ResCorrAK4_DATA_.fullPath());
-    L1ParAK4_MC = new JetCorrectorParameters(L1corrAK4_MC_.fullPath());
-    L2ParAK4_MC = new JetCorrectorParameters(L2corrAK4_MC_.fullPath());
-    L3ParAK4_MC = new JetCorrectorParameters(L3corrAK4_MC_.fullPath());
+    {
+      // AK4
+      L1ParAK4_DATA = new JetCorrectorParameters(L1corrAK4_DATA_.fullPath());
+      L2ParAK4_DATA = new JetCorrectorParameters(L2corrAK4_DATA_.fullPath());
+      L3ParAK4_DATA = new JetCorrectorParameters(L3corrAK4_DATA_.fullPath());
+      L2L3ResAK4_DATA = new JetCorrectorParameters(ResCorrAK4_DATA_.fullPath());
+      L1ParAK4_MC = new JetCorrectorParameters(L1corrAK4_MC_.fullPath());
+      L2ParAK4_MC = new JetCorrectorParameters(L2corrAK4_MC_.fullPath());
+      L3ParAK4_MC = new JetCorrectorParameters(L3corrAK4_MC_.fullPath());
 
-    std::vector<JetCorrectorParameters> vParAK4_DATA;
-    std::vector<JetCorrectorParameters> vParAK4_MC;
-    vParAK4_DATA.push_back(*L1ParAK4_DATA);
-    vParAK4_DATA.push_back(*L2ParAK4_DATA);
-    vParAK4_DATA.push_back(*L3ParAK4_DATA);
-    vParAK4_DATA.push_back(*L2L3ResAK4_DATA);
-    vParAK4_MC.push_back(*L1ParAK4_MC);
-    vParAK4_MC.push_back(*L2ParAK4_MC);
-    vParAK4_MC.push_back(*L3ParAK4_MC);
+      std::vector<JetCorrectorParameters> vParAK4_DATA;
+      std::vector<JetCorrectorParameters> vParAK4_MC;
+      vParAK4_DATA.push_back(*L1ParAK4_DATA);
+      vParAK4_DATA.push_back(*L2ParAK4_DATA);
+      vParAK4_DATA.push_back(*L3ParAK4_DATA);
+      vParAK4_DATA.push_back(*L2L3ResAK4_DATA);
+      vParAK4_MC.push_back(*L1ParAK4_MC);
+      vParAK4_MC.push_back(*L2ParAK4_MC);
+      vParAK4_MC.push_back(*L3ParAK4_MC);
 
-    JetCorrectorAK4_DATA = new FactorizedJetCorrector(vParAK4_DATA);
-    JetCorrectorAK4_MC = new FactorizedJetCorrector(vParAK4_MC);
+      JetCorrectorAK4_DATA = new FactorizedJetCorrector(vParAK4_DATA);
+      JetCorrectorAK4_MC = new FactorizedJetCorrector(vParAK4_MC);
 
-    // AK8
-    L1ParAK8_DATA = new JetCorrectorParameters(L1corrAK8_DATA_.fullPath());
-    L2ParAK8_DATA = new JetCorrectorParameters(L2corrAK8_DATA_.fullPath());
-    L3ParAK8_DATA = new JetCorrectorParameters(L3corrAK8_DATA_.fullPath());
-    L2L3ResAK8_DATA = new JetCorrectorParameters(ResCorrAK8_DATA_.fullPath());
-    L1ParAK8_MC = new JetCorrectorParameters(L1corrAK8_MC_.fullPath());
-    L2ParAK8_MC = new JetCorrectorParameters(L2corrAK8_MC_.fullPath());
-    L3ParAK8_MC = new JetCorrectorParameters(L3corrAK8_MC_.fullPath());
+      // AK8
+      L1ParAK8_DATA = new JetCorrectorParameters(L1corrAK8_DATA_.fullPath());
+      L2ParAK8_DATA = new JetCorrectorParameters(L2corrAK8_DATA_.fullPath());
+      L3ParAK8_DATA = new JetCorrectorParameters(L3corrAK8_DATA_.fullPath());
+      L2L3ResAK8_DATA = new JetCorrectorParameters(ResCorrAK8_DATA_.fullPath());
+      L1ParAK8_MC = new JetCorrectorParameters(L1corrAK8_MC_.fullPath());
+      L2ParAK8_MC = new JetCorrectorParameters(L2corrAK8_MC_.fullPath());
+      L3ParAK8_MC = new JetCorrectorParameters(L3corrAK8_MC_.fullPath());
 
-    std::vector<JetCorrectorParameters> vParAK8_DATA;
-    std::vector<JetCorrectorParameters> vParAK8_MC;
-    vParAK8_DATA.push_back(*L1ParAK8_DATA);
-    vParAK8_DATA.push_back(*L2ParAK8_DATA);
-    vParAK8_DATA.push_back(*L3ParAK8_DATA);
-    vParAK8_DATA.push_back(*L2L3ResAK8_DATA);
-    vParAK8_MC.push_back(*L1ParAK8_MC);
-    vParAK8_MC.push_back(*L2ParAK8_MC);
-    vParAK8_MC.push_back(*L3ParAK8_MC);
+      std::vector<JetCorrectorParameters> vParAK8_DATA;
+      std::vector<JetCorrectorParameters> vParAK8_MC;
+      vParAK8_DATA.push_back(*L1ParAK8_DATA);
+      vParAK8_DATA.push_back(*L2ParAK8_DATA);
+      vParAK8_DATA.push_back(*L3ParAK8_DATA);
+      vParAK8_DATA.push_back(*L2L3ResAK8_DATA);
+      vParAK8_MC.push_back(*L1ParAK8_MC);
+      vParAK8_MC.push_back(*L2ParAK8_MC);
+      vParAK8_MC.push_back(*L3ParAK8_MC);
 
-    JetCorrectorAK8_DATA = new FactorizedJetCorrector(vParAK8_DATA);
-    JetCorrectorAK8_MC = new FactorizedJetCorrector(vParAK8_MC);
-  }
+      JetCorrectorAK8_DATA = new FactorizedJetCorrector(vParAK8_DATA);
+      JetCorrectorAK8_MC = new FactorizedJetCorrector(vParAK8_MC);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -999,14 +999,14 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       
       // Disable, causes crash. See the interesting error below. Juska
       /*
-      Exception Message:
-      Requested UserFloat NjettinessAK8:tau1 is not available! Possible UserFloats are: 
-      ak8PFJetsCHSPrunedMass ak8PFJetsCHSSoftDropMass ak8PFJetsCHSTrimmedMass ak8PFJetsCHSFilteredMass NjettinessAK8:tau1 NjettinessAK8:tau2 NjettinessAK8:tau3 
-      tau1AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau1"));
-      tau2AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau2"));
-      tau3AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau3"));
-      massPrunedAK8_    ->push_back(ijet->userFloat("ak8PFJetsCHSPrunedMass"));
-      massSoftDropAK8_  ->push_back(ijet->userFloat("ak8PFJetsCHSSoftDropMass"));
+	Exception Message:
+	Requested UserFloat NjettinessAK8:tau1 is not available! Possible UserFloats are: 
+	ak8PFJetsCHSPrunedMass ak8PFJetsCHSSoftDropMass ak8PFJetsCHSTrimmedMass ak8PFJetsCHSFilteredMass NjettinessAK8:tau1 NjettinessAK8:tau2 NjettinessAK8:tau3 
+	tau1AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau1"));
+	tau2AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau2"));
+	tau3AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau3"));
+	massPrunedAK8_    ->push_back(ijet->userFloat("ak8PFJetsCHSPrunedMass"));
+	massSoftDropAK8_  ->push_back(ijet->userFloat("ak8PFJetsCHSSoftDropMass"));
       */
       
       chHadMultAK8_     ->push_back(chHadMult);
