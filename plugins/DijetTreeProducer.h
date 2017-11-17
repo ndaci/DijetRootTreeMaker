@@ -12,6 +12,7 @@
 #include "DataFormats/JetReco/interface/Jet.h"
 #include "TTree.h"
 #include "TH1F.h"
+#include "TString.h"
 // For JECs
 #include "FWCore/ParameterSet/interface/FileInPath.h"
 #include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
@@ -24,6 +25,7 @@
 
 #include "DataFormats/PatCandidates/interface/MET.h"
 
+const u_int nCollAK8=2;
 
 class DijetTreeProducer : public edm::EDAnalyzer 
 {
@@ -39,7 +41,7 @@ class DijetTreeProducer : public edm::EDAnalyzer
   // customized methods
   int InstantiateVectorForBranches();
   int DefineBranches();
-  int FillJetsAK8(edm::Event const& iEvent, const edm::Handle<pat::JetCollection> &jetsAK8);
+  int FillJetsAK8(edm::Event const& iEvent, const edm::Handle<pat::JetCollection> &jetsAK8, const u_int idxCollAK8);
 
  private:  
   void initialize();
@@ -136,19 +138,22 @@ class DijetTreeProducer : public edm::EDAnalyzer
   bool passFilterTrkPOG_toomanystrip_;
   bool passFilterTrkPOG_logError_;
 
-  //---- jet and genJet variables --------------
-  std::vector<float> *ptAK4_,*jecAK4_,*etaAK4_,*phiAK4_,*massAK4_,*energyAK4_,*areaAK4_,*csvAK4_,*chfAK4_,*nhfAK4_,*phfAK4_,*elfAK4_,*mufAK4_,*nemfAK4_,*cemfAK4_;
-  std::vector<int> *idLAK4_,*idTAK4_, *chHadMultAK4_, *chMultAK4_, *neHadMultAK4_, *neMultAK4_, *phoMultAK4_,*pFlavourAK4_,*hFlavourAK4_,*nbHadAK4_,*ncHadAK4_,*pFlavourAK8_,*hFlavourAK8_,*nbHadAK8_,*ncHadAK8_;
-  std::vector<float> *hf_hfAK4_, *hf_emfAK4_, *hofAK4_;
-  //std::vector<float> *cutbasedJetId_, *fullJetId_, *fullJetDiscriminant_;
+  //---- genJet variables --------------
   std::vector<float> *ptGenAK4_,*etaGenAK4_,*phiGenAK4_,*massGenAK4_,*energyGenAK4_;
-    
-  std::vector<float> *ptAK8_,*jecAK8_,*etaAK8_,*phiAK8_,*massAK8_,*energyAK8_,*areaAK8_,*csvAK8_,*chfAK8_,*nhfAK8_,*phfAK8_,*elfAK8_,*mufAK8_,*nemfAK8_,*cemfAK8_, *massPrunedAK8_, *massSoftDropAK8_, *dR_AK8_,*tau1AK8_,*tau2AK8_, *tau3AK8_ ;
-  std::vector<int> *idLAK8_,*idTAK8_, *chHadMultAK8_, *chMultAK8_, *neHadMultAK8_, *neMultAK8_, *phoMultAK8_;
-  std::vector<float> *hf_hfAK8_, *hf_emfAK8_, *hofAK8_;
   std::vector<float> *ptGenAK8_,*etaGenAK8_,*phiGenAK8_,*massGenAK8_,*energyGenAK8_;
 
-  std::vector<float> *ptAK8_Puppi_ , *etaAK8_Puppi_ , *phiAK8_Puppi_ , *massAK8_Puppi_ , *tau1AK8_Puppi_ , *tau2AK8_Puppi_ , *tau3AK8_Puppi_ , *massSoftDropAK8_Puppi_ ;
+  //---- jet variables --------------
+  std::vector<float> *ptAK4_,*jecAK4_,*etaAK4_,*phiAK4_,*massAK4_,*energyAK4_,*areaAK4_,*csvAK4_,*chfAK4_,*nhfAK4_,*phfAK4_,*elfAK4_,*mufAK4_,*nemfAK4_,*cemfAK4_;
+  std::vector<int> *idLAK4_,*idTAK4_, *chHadMultAK4_, *chMultAK4_, *neHadMultAK4_, *neMultAK4_, *phoMultAK4_,*pFlavourAK4_,*hFlavourAK4_,*nbHadAK4_,*ncHadAK4_;
+  std::vector<float> *hf_hfAK4_, *hf_emfAK4_, *hofAK4_;
+  //std::vector<float> *cutbasedJetId_, *fullJetId_, *fullJetDiscriminant_;
+
+  std::vector<int> *pFlavourAK8_[nCollAK8],*hFlavourAK8_[nCollAK8],*nbHadAK8_[nCollAK8],*ncHadAK8_[nCollAK8];
+  std::vector<float> *ptAK8_[nCollAK8],*jecAK8_[nCollAK8],*etaAK8_[nCollAK8],*phiAK8_[nCollAK8],*massAK8_[nCollAK8],*energyAK8_[nCollAK8],*areaAK8_[nCollAK8],*csvAK8_[nCollAK8],*chfAK8_[nCollAK8],*nhfAK8_[nCollAK8],*phfAK8_[nCollAK8],*elfAK8_[nCollAK8],*mufAK8_[nCollAK8],*nemfAK8_[nCollAK8],*cemfAK8_[nCollAK8], *massPrunedAK8_[nCollAK8], *massSoftDropAK8_[nCollAK8], *dR_AK8_[nCollAK8],*tau1AK8_[nCollAK8],*tau2AK8_[nCollAK8], *tau3AK8_[nCollAK8] ;
+  std::vector<int> *idLAK8_[nCollAK8],*idTAK8_[nCollAK8], *chHadMultAK8_[nCollAK8], *chMultAK8_[nCollAK8], *neHadMultAK8_[nCollAK8], *neMultAK8_[nCollAK8], *phoMultAK8_[nCollAK8];
+  std::vector<float> *hf_hfAK8_[nCollAK8], *hf_emfAK8_[nCollAK8], *hofAK8_[nCollAK8];
+
+  std::vector<float> *ptAK8_Puppi_[nCollAK8] , *etaAK8_Puppi_[nCollAK8] , *phiAK8_Puppi_[nCollAK8] , *massAK8_Puppi_[nCollAK8] , *tau1AK8_Puppi_[nCollAK8] , *tau2AK8_Puppi_[nCollAK8] , *tau3AK8_Puppi_[nCollAK8] , *massSoftDropAK8_Puppi_[nCollAK8] ;
 
   //---- MC variables ---------------
   std::vector<float> *npu_; 
