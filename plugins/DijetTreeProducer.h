@@ -64,8 +64,11 @@ class DijetTreeProducer : public edm::EDAnalyzer
   //---- configurable parameters --------   
   double ptMinAK4_,ptMinAK8_;
   bool isData_;
+  bool useJetTB_;
     
   // Migrate to consumes-system for running in 80X
+
+  edm::EDGetTokenT<pat::JetCollection> srcJetsAK8_TB_;
     
   edm::EDGetTokenT<pat::JetCollection> srcJetsAK4_;
   edm::EDGetTokenT<pat::JetCollection> srcJetsAK8_;

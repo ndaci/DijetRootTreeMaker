@@ -32,10 +32,16 @@ using namespace edm;
 
 DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
 {
-  
+
+  // Extra AK8 jet collections from JetToolbox
+  useJetTB_ = cfg.getParameter<bool>("useJetTB");
+  if(useJetTB_) {
+    srcJetsAK8_TB_ = (consumes<pat::JetCollection>(    cfg.getParameter<InputTag>("jetsAK8_TB")));
+  }
+
   // Migrate to Consumes-system. Skip Calo-stuff
-  srcJetsAK4_ = (consumes<pat::JetCollection>(    cfg.getParameter<InputTag>("jetsAK4")));
-  srcJetsAK8_ = (consumes<pat::JetCollection>(    cfg.getParameter<InputTag>("jetsAK8")));
+  srcJetsAK4_    = (consumes<pat::JetCollection>(    cfg.getParameter<InputTag>("jetsAK4")));
+  srcJetsAK8_    = (consumes<pat::JetCollection>(    cfg.getParameter<InputTag>("jetsAK8")));
   
   srcRho_     = (consumes<double>(                cfg.getParameter<InputTag>("rho")));
   srcMET_     = (consumes<vector <pat::MET> >(    cfg.getParameter<InputTag>("met")));
@@ -579,6 +585,11 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   //edm::Handle<edm::View<pat::Jet> > jetsAK8;
   Handle<pat::JetCollection> jetsAK8;
   iEvent.getByToken(srcJetsAK8_,jetsAK8);
+
+  Handle<pat::JetCollection> jetsAK8_TB;
+  if(useJetTB_) {
+    iEvent.getByToken(srcJetsAK8_TB_,jetsAK8_TB);
+  }
 
   //edm::Handle<edm::View<reco::GenJet> > handle_genJetsAK4;
   Handle<reco::GenJetCollection> handle_genJetsAK4;
