@@ -67,7 +67,7 @@ DijetTreeProducer::DijetTreeProducer(edm::ParameterSet const& cfg)
   HCALlaserNoiseFilter_Selector_            = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_hcalLaserEventFilter") );
   ECALDeadCellNoiseFilter_Selector_         = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_EcalDeadCellTriggerPrimitiveFilter") );
   GoodVtxNoiseFilter_Selector_              = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_goodVertices") );
-  TrkFailureNoiseFilter_Selector_           = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_trackingFailureFilter") );
+  //TrkFailureNoiseFilter_Selector_           = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_trackingFailureFilter") );
   EEBadScNoiseFilter_Selector_              = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_eeBadScFilter") );
   ECALlaserNoiseFilter_Selector_            = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_ecalLaserCorrFilter") );
   TrkPOGNoiseFilter_Selector_               = triggerExpression::parse( cfg.getParameter<std::string> ("noiseFilterSelection_trkPOGFilters") );
@@ -381,7 +381,7 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("passFilterHCALlaser"            ,&passFilterHCALlaser_           ,"passFilterHCALlaser_/O");
   outTree_->Branch("passFilterECALDeadCell"         ,&passFilterECALDeadCell_        ,"passFilterECALDeadCell_/O");
   outTree_->Branch("passFilterGoodVtx"              ,&passFilterGoodVtx_             ,"passFilterGoodVtx_/O");
-  outTree_->Branch("passFilterTrkFailure"           ,&passFilterTrkFailure_          ,"passFilterTrkFailure_/O");
+  //outTree_->Branch("passFilterTrkFailure"           ,&passFilterTrkFailure_          ,"passFilterTrkFailure_/O");
   outTree_->Branch("passFilterEEBadSc"              ,&passFilterEEBadSc_             ,"passFilterEEBadSc_/O");
   outTree_->Branch("passFilterECALlaser"            ,&passFilterECALlaser_           ,"passFilterECALlaser_/O");
   outTree_->Branch("passFilterTrkPOG"               ,&passFilterTrkPOG_              ,"passFilterTrkPOG_/O");
@@ -526,7 +526,7 @@ void DijetTreeProducer::endJob()
   delete HCALlaserNoiseFilter_Selector_;
   delete ECALDeadCellNoiseFilter_Selector_;
   delete GoodVtxNoiseFilter_Selector_;
-  delete TrkFailureNoiseFilter_Selector_;
+  //delete TrkFailureNoiseFilter_Selector_;
   delete EEBadScNoiseFilter_Selector_;
   delete ECALlaserNoiseFilter_Selector_;
   delete TrkPOGNoiseFilter_Selector_;
@@ -724,7 +724,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       HCALlaserNoiseFilter_Selector_           -> init(noiseFilterCache_);
       ECALDeadCellNoiseFilter_Selector_        -> init(noiseFilterCache_);
       GoodVtxNoiseFilter_Selector_             -> init(noiseFilterCache_);
-      TrkFailureNoiseFilter_Selector_          -> init(noiseFilterCache_);
+      //TrkFailureNoiseFilter_Selector_          -> init(noiseFilterCache_);
       EEBadScNoiseFilter_Selector_             -> init(noiseFilterCache_);
       ECALlaserNoiseFilter_Selector_           -> init(noiseFilterCache_);
       TrkPOGNoiseFilter_Selector_              -> init(noiseFilterCache_);
@@ -738,7 +738,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     passFilterHCALlaser_           = (*HCALlaserNoiseFilter_Selector_)           (noiseFilterCache_);    
     passFilterECALDeadCell_        = (*ECALDeadCellNoiseFilter_Selector_)        (noiseFilterCache_);    
     passFilterGoodVtx_             = (*GoodVtxNoiseFilter_Selector_)             (noiseFilterCache_);    
-    passFilterTrkFailure_          = (*TrkFailureNoiseFilter_Selector_)          (noiseFilterCache_);    
+    //passFilterTrkFailure_          = (*TrkFailureNoiseFilter_Selector_)          (noiseFilterCache_);    
     passFilterEEBadSc_             = (*EEBadScNoiseFilter_Selector_)             (noiseFilterCache_);    
     passFilterECALlaser_           = (*ECALlaserNoiseFilter_Selector_)           (noiseFilterCache_);    
     passFilterTrkPOG_              = (*TrkPOGNoiseFilter_Selector_)              (noiseFilterCache_);    
@@ -930,9 +930,12 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   nJetsAK8_ = 0;
   float htAK8(0.0);
   vector<TLorentzVector> vP4AK8;
+  TLorentzVector tempP4;
+
   for(std::vector<unsigned>::const_iterator i = sortedAK8JetIdx.begin(); i != sortedAK8JetIdx.end(); ++i) {
 
     pat::JetCollection::const_iterator ijet = (jetsAK8->begin() + *i);
+
     double chf = ijet->chargedHadronEnergyFraction();
     double nhf = ijet->neutralHadronEnergyFraction(); // + ijet->HFHadronEnergyFraction();
     double phf = ijet->photonEnergy()/(ijet->jecFactor(0) * ijet->energy());
@@ -966,12 +969,34 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     int idL = (nhf<0.99 && nemf<0.99 && NumConst>1 && muf < 0.8) && ((fabs(eta) <= 2.4 && chf>0 && chMult>0 && cemf<0.99) || fabs(eta)>2.4);
     int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.4 && chf>0 && chMult>0 && cemf<0.90) || fabs(eta)>2.4);
       
-      
     if (pt > ptMinAK8_) {
-      htAK8 += pt;
+
+      // Counting jets
       nJetsAK8_++;
 
-      vP4AK8.push_back(TLorentzVector(ijet->correctedJet(0).px()*jecFactorsAK8.at(*i),ijet->correctedJet(0).py()*jecFactorsAK8.at(*i),ijet->correctedJet(0).pz()*jecFactorsAK8.at(*i),ijet->correctedJet(0).energy()*jecFactorsAK8.at(*i)));
+      // HT
+      htAK8 += pt;
+
+      // 4-momentum
+      tempP4 = TLorentzVector( ijet->correctedJet(0).px()*jecFactorsAK8.at(*i),
+			       ijet->correctedJet(0).py()*jecFactorsAK8.at(*i),
+			       ijet->correctedJet(0).pz()*jecFactorsAK8.at(*i),
+			       ijet->correctedJet(0).energy()*jecFactorsAK8.at(*i) 
+			       );
+      vP4AK8.push_back(tempP4);
+
+      // Kinematics
+      ptAK8_            ->push_back(pt);
+      phiAK8_           ->push_back(ijet->phi());
+      etaAK8_           ->push_back(ijet->eta());
+
+      // Energy
+      jecAK8_           ->push_back(jecFactorsAK8.at(*i));
+      massAK8_          ->push_back(ijet->correctedJet(0).mass()*jecFactorsAK8.at(*i));
+      energyAK8_        ->push_back(ijet->correctedJet(0).energy()*jecFactorsAK8.at(*i));
+      areaAK8_          ->push_back(ijet->jetArea());
+
+      // Energy fractions
       chfAK8_           ->push_back(chf);
       nhfAK8_           ->push_back(nhf);
       phfAK8_           ->push_back(phf);
@@ -982,40 +1007,32 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       hf_hfAK8_         ->push_back(hf_hf);
       hf_emfAK8_        ->push_back(hf_emf);
       hofAK8_           ->push_back(hof);
-      jecAK8_           ->push_back(jecFactorsAK8.at(*i));
-      ptAK8_            ->push_back(pt);
-      phiAK8_           ->push_back(ijet->phi());
-      etaAK8_           ->push_back(ijet->eta());
-      massAK8_          ->push_back(ijet->correctedJet(0).mass()*jecFactorsAK8.at(*i));
-      energyAK8_        ->push_back(ijet->correctedJet(0).energy()*jecFactorsAK8.at(*i));
-      areaAK8_          ->push_back(ijet->jetArea());
-      csvAK8_           ->push_back(ijet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
-      pFlavourAK8_      ->push_back(ijet->partonFlavour());
-      hFlavourAK8_      ->push_back(ijet->hadronFlavour());
-      nbHadAK8_         ->push_back(ijet->jetFlavourInfo().getbHadrons().size());
-      ncHadAK8_         ->push_back(ijet->jetFlavourInfo().getcHadrons().size());
-      idLAK8_           ->push_back(idL);
-      idTAK8_           ->push_back(idT);
-      
-      // Disable, causes crash. See the interesting error below. Juska
-      /*
-	Exception Message:
-	Requested UserFloat NjettinessAK8:tau1 is not available! Possible UserFloats are: 
-	ak8PFJetsCHSPrunedMass ak8PFJetsCHSSoftDropMass ak8PFJetsCHSTrimmedMass ak8PFJetsCHSFilteredMass NjettinessAK8:tau1 NjettinessAK8:tau2 NjettinessAK8:tau3 
-	tau1AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau1"));
-	tau2AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau2"));
-	tau3AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau3"));
-	massPrunedAK8_    ->push_back(ijet->userFloat("ak8PFJetsCHSPrunedMass"));
-	massSoftDropAK8_  ->push_back(ijet->userFloat("ak8PFJetsCHSSoftDropMass"));
-      */
-      
+
+      // Multiplicities
       chHadMultAK8_     ->push_back(chHadMult);
       chMultAK8_        ->push_back(chMult);
       neHadMultAK8_     ->push_back(neHadMult);  
       neMultAK8_        ->push_back(neMult);
       phoMultAK8_       ->push_back(phoMult); 
-	
-	
+
+      // ID variables
+      idLAK8_           ->push_back(idL);
+      idTAK8_           ->push_back(idT);
+
+      // Flavour
+      csvAK8_           ->push_back(ijet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags"));
+      pFlavourAK8_      ->push_back(ijet->partonFlavour());
+      hFlavourAK8_      ->push_back(ijet->hadronFlavour());
+      nbHadAK8_         ->push_back(ijet->jetFlavourInfo().getbHadrons().size());
+      ncHadAK8_         ->push_back(ijet->jetFlavourInfo().getcHadrons().size());
+
+      // Sub-structure
+      tau1AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau1"));
+      tau2AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau2"));
+      tau3AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau3"));
+      massPrunedAK8_    ->push_back(ijet->userFloat("ak8PFJetsCHSPrunedMass"));
+      massSoftDropAK8_  ->push_back(ijet->userFloat("ak8PFJetsCHSSoftDropMass"));
+
       //---- match with the pruned jet collection -----
       // double dRmin(1000);
       // double auxm(0.0);
@@ -1199,7 +1216,7 @@ void DijetTreeProducer::initialize()
   passFilterHCALlaser_             = false;
   passFilterECALDeadCell_          = false;
   passFilterGoodVtx_               = false;
-  passFilterTrkFailure_            = false;
+  //passFilterTrkFailure_            = false;
   passFilterEEBadSc_               = false;
   passFilterECALlaser_             = false;
   passFilterTrkPOG_                = false;
