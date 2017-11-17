@@ -27,6 +27,7 @@
 
 class DijetTreeProducer : public edm::EDAnalyzer 
 {
+
  public:
   typedef reco::Particle::LorentzVector LorentzVector;
   explicit DijetTreeProducer(edm::ParameterSet const& cfg);
@@ -34,6 +35,10 @@ class DijetTreeProducer : public edm::EDAnalyzer
   virtual void analyze(edm::Event const& iEvent, edm::EventSetup const& iSetup);
   virtual void endJob();
   virtual ~DijetTreeProducer();
+
+  // customized methods
+  int InstantiateVectorForBranches();
+  int DefineBranches();
   int FillJetsAK8(edm::Event const& iEvent, const edm::Handle<pat::JetCollection> &jetsAK8);
 
  private:  
