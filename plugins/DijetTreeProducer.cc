@@ -917,6 +917,67 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     dPhijjAK4_ = fabs(deltaPhi((*phiAK4_)[0],(*phiAK4_)[1]));
   }
 
+  // Fill reco AK8 Jets
+  FillJetsAK8(iEvent, jetsAK8);
+
+    
+  //-------------- Gen Jets Info -----------------------------------
+
+  if (!iEvent.isRealData()) {
+
+    //AK4
+    nGenJetsAK4_ = 0;
+    vector<TLorentzVector> vP4GenAK4;
+    reco::GenJetCollection genJetsAK4 = *handle_genJetsAK4; 
+    for(reco::GenJetCollection::const_iterator ijet = genJetsAK4.begin();ijet != genJetsAK4.end(); ++ijet) { 	
+      //float eta  = fabs(ijet->eta());
+      float pt   = ijet->pt();
+      if (pt > ptMinAK4_) {
+	nGenJetsAK4_++;
+	vP4GenAK4.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
+	ptGenAK4_            ->push_back(pt);
+	phiGenAK4_           ->push_back(ijet->phi());
+	etaGenAK4_           ->push_back(ijet->eta());
+	massGenAK4_          ->push_back(ijet->mass());
+	energyGenAK4_        ->push_back(ijet->energy());
+      }
+    }// jet loop  
+      
+    //AK8
+    nGenJetsAK8_ = 0;
+    vector<TLorentzVector> vP4GenAK8;      
+    reco::GenJetCollection genJetsAK8 = *handle_genJetsAK8;
+    for(reco::GenJetCollection::const_iterator ijet = genJetsAK8.begin();ijet != genJetsAK8.end(); ++ijet) { 	
+      //float eta  = fabs(ijet->eta());
+      float pt   = ijet->pt();
+      if (pt > ptMinAK8_) {
+	nGenJetsAK8_++;
+	vP4GenAK8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
+	ptGenAK8_            ->push_back(pt);
+	phiGenAK8_           ->push_back(ijet->phi());
+	etaGenAK8_           ->push_back(ijet->eta());
+	massGenAK8_          ->push_back(ijet->mass());
+	energyGenAK8_        ->push_back(ijet->energy());
+      }
+    }// jet loop  
+      
+  }//if MC 
+
+  //  }// if vtx
+  
+  
+  //---- Fill Tree ---
+  //if (mjjAK4_ > mjjMin_ && dEtajjAK4_ < dEtaMax_) {
+  outTree_->Fill();     
+  //}
+  //------------------
+  
+  
+}//end analyze for each event
+
+int DijetTreeProducer::FillJetsAK8(edm::Event const& iEvent, const edm::Handle<pat::JetCollection> &jetsAK8)
+{
+
   // AK8
   std::vector<double> jecFactorsAK8;
   std::vector<unsigned> sortedAK8JetIdx;
@@ -1110,60 +1171,10 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
     dEtajjAK8_ = fabs((*etaAK8_)[0]-(*etaAK8_)[1]); 
     dPhijjAK8_ = fabs(deltaPhi((*phiAK8_)[0],(*phiAK8_)[1]));
   }
-    
-  //-------------- Gen Jets Info -----------------------------------
 
-  if (!iEvent.isRealData()) {
+  return 0;
 
-    //AK4
-    nGenJetsAK4_ = 0;
-    vector<TLorentzVector> vP4GenAK4;
-    reco::GenJetCollection genJetsAK4 = *handle_genJetsAK4; 
-    for(reco::GenJetCollection::const_iterator ijet = genJetsAK4.begin();ijet != genJetsAK4.end(); ++ijet) { 	
-      //float eta  = fabs(ijet->eta());
-      float pt   = ijet->pt();
-      if (pt > ptMinAK4_) {
-	nGenJetsAK4_++;
-	vP4GenAK4.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
-	ptGenAK4_            ->push_back(pt);
-	phiGenAK4_           ->push_back(ijet->phi());
-	etaGenAK4_           ->push_back(ijet->eta());
-	massGenAK4_          ->push_back(ijet->mass());
-	energyGenAK4_        ->push_back(ijet->energy());
-      }
-    }// jet loop  
-      
-    //AK8
-    nGenJetsAK8_ = 0;
-    vector<TLorentzVector> vP4GenAK8;      
-    reco::GenJetCollection genJetsAK8 = *handle_genJetsAK8;
-    for(reco::GenJetCollection::const_iterator ijet = genJetsAK8.begin();ijet != genJetsAK8.end(); ++ijet) { 	
-      //float eta  = fabs(ijet->eta());
-      float pt   = ijet->pt();
-      if (pt > ptMinAK8_) {
-	nGenJetsAK8_++;
-	vP4GenAK8.push_back(TLorentzVector(ijet->px(),ijet->py(),ijet->pz(),ijet->energy()));
-	ptGenAK8_            ->push_back(pt);
-	phiGenAK8_           ->push_back(ijet->phi());
-	etaGenAK8_           ->push_back(ijet->eta());
-	massGenAK8_          ->push_back(ijet->mass());
-	energyGenAK8_        ->push_back(ijet->energy());
-      }
-    }// jet loop  
-      
-  }//if MC 
-
-  //  }// if vtx
-  
-  
-  //---- Fill Tree ---
-  //if (mjjAK4_ > mjjMin_ && dEtajjAK4_ < dEtaMax_) {
-  outTree_->Fill();     
-  //}
-  //------------------
-  
-  
-}//end analyze for each event
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////
 void DijetTreeProducer::initialize()
