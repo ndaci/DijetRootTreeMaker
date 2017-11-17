@@ -140,6 +140,8 @@ class DijetTreeProducer : public edm::EDAnalyzer
   std::vector<float> *hf_hfAK8_, *hf_emfAK8_, *hofAK8_;
   std::vector<float> *ptGenAK8_,*etaGenAK8_,*phiGenAK8_,*massGenAK8_,*energyGenAK8_;
 
+  std::vector<float> *ptAK8_Puppi_ , *etaAK8_Puppi_ , *phiAK8_Puppi_ , *massAK8_Puppi_ , *tau1AK8_Puppi_ , *tau2AK8_Puppi_ , *tau3AK8_Puppi_ , *massSoftDropAK8_Puppi_ ;
+
   //---- MC variables ---------------
   std::vector<float> *npu_; 
   std::vector<int> *Number_interactions;

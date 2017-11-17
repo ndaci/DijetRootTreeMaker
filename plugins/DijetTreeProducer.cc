@@ -333,6 +333,15 @@ void DijetTreeProducer::beginJob()
   neHadMultAK8_      = new std::vector<int>; 
   neMultAK8_         = new std::vector<int>;
   phoMultAK8_        = new std::vector<int>;
+  //
+  ptAK8_Puppi_       = new std::vector<float>;
+  etaAK8_Puppi_      = new std::vector<float>;
+  phiAK8_Puppi_      = new std::vector<float>;
+  massAK8_Puppi_     = new std::vector<float>;
+  tau1AK8_Puppi_     = new std::vector<float>;
+  tau2AK8_Puppi_     = new std::vector<float>;
+  tau3AK8_Puppi_     = new std::vector<float>;
+  massSoftDropAK8_Puppi_ = new std::vector<float>;
  
   //dRAK8_             = new std::vector<float>;
   outTree_->Branch("jetPtAK8"                ,"vector<float>"     ,&ptAK8_);
@@ -359,11 +368,24 @@ void DijetTreeProducer::beginJob()
   outTree_->Branch("jetHofAK8"               ,"vector<float>"     ,&hofAK8_);
   outTree_->Branch("idLAK8"                  ,"vector<int>"      ,&idLAK8_);   
   outTree_->Branch("idTAK8"                  ,"vector<int>"      ,&idTAK8_);   
+  //
+  // Sub-structure
   outTree_->Branch("jetMassPrunedAK8"        ,"vector<float>"     ,&massPrunedAK8_);
   outTree_->Branch("jetMassSoftDropAK8"      ,"vector<float>"     ,&massSoftDropAK8_);
   outTree_->Branch("jetTau1AK8"              ,"vector<float>"     ,&tau1AK8_);
   outTree_->Branch("jetTau2AK8"              ,"vector<float>"     ,&tau2AK8_);
   outTree_->Branch("jetTau3AK8"              ,"vector<float>"     ,&tau3AK8_); 
+  //
+  // Associated PUPPI jets
+  outTree_->Branch("jetPtAK8_Puppi"          , "vector<float>", &ptAK8_Puppi_   );
+  outTree_->Branch("jetEtaAK8_Puppi"         , "vector<float>", &etaAK8_Puppi_  );
+  outTree_->Branch("jetPhiAK8_Puppi"         , "vector<float>", &phiAK8_Puppi_  );
+  outTree_->Branch("jetMassAK8_Puppi"        , "vector<float>", &massAK8_Puppi_ );
+  outTree_->Branch("jetTau1AK8_Puppi"        , "vector<float>", &tau1AK8_Puppi_ );
+  outTree_->Branch("jetTau2AK8_Puppi"        , "vector<float>", &tau2AK8_Puppi_ );
+  outTree_->Branch("jetTau3AK8_Puppi"        , "vector<float>", &tau3AK8_Puppi_ );
+  outTree_->Branch("jetMassSoftDropAK8_Puppi", "vector<float>", &massSoftDropAK8_Puppi_ );
+  //
   //outTree_->Branch("jetDRAK8"                ,"vector<float>"     ,&dRAK8_); 
   outTree_->Branch("chHadMultAK8"          ,"vector<int>"      ,&chHadMultAK8_);   
   outTree_->Branch("chMultAK8"              ,"vector<int>"      ,&chMultAK8_);   
@@ -516,6 +538,15 @@ void DijetTreeProducer::endJob()
   delete neHadMultAK8_ ;
   delete neMultAK8_    ;
   delete phoMultAK8_   ;
+
+  delete ptAK8_Puppi_ ;   
+  delete etaAK8_Puppi_ ;  
+  delete phiAK8_Puppi_ ;  
+  delete massAK8_Puppi_ ; 
+  delete tau1AK8_Puppi_ ; 
+  delete tau2AK8_Puppi_ ; 
+  delete tau3AK8_Puppi_ ; 
+  delete massSoftDropAK8_Puppi_ ; 
 
   for(unsigned i=0;i<vtriggerSelector_.size();i++) {
     delete vtriggerSelector_[i];
@@ -931,6 +962,7 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
   float htAK8(0.0);
   vector<TLorentzVector> vP4AK8;
   TLorentzVector tempP4;
+  TLorentzVector puppi_softdrop, puppi_softdrop_subjet;
 
   for(std::vector<unsigned>::const_iterator i = sortedAK8JetIdx.begin(); i != sortedAK8JetIdx.end(); ++i) {
 
@@ -955,11 +987,11 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 
     int chHadMult = chm; //ijet->chargedHadronMultiplicity();
     int neHadMult = ijet->neutralHadronMultiplicity();
-    int phoMult = ijet->photonMultiplicity();
+    int phoMult   = ijet->photonMultiplicity();
       
     // Juska's added fractions for identical JetID with recommendations
-    double nemf = ijet->neutralEmEnergyFraction();
-    double cemf = ijet->chargedEmEnergyFraction();
+    double nemf  = ijet->neutralEmEnergyFraction();
+    double cemf  = ijet->chargedEmEnergyFraction();
     int NumConst = npr;
 
     float eta  = ijet->eta(); // removed fabs() -Juska
@@ -1032,6 +1064,29 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       tau3AK8_          ->push_back(ijet->userFloat("NjettinessAK8:tau3"));
       massPrunedAK8_    ->push_back(ijet->userFloat("ak8PFJetsCHSPrunedMass"));
       massSoftDropAK8_  ->push_back(ijet->userFloat("ak8PFJetsCHSSoftDropMass"));
+
+      // Associated PUPPI jets //
+      ///
+      /// kinematics
+      ptAK8_Puppi_   ->push_back(ijet->userFloat("ak8PFJetsPuppiValueMap:pt"  ));
+      etaAK8_Puppi_  ->push_back(ijet->userFloat("ak8PFJetsPuppiValueMap:eta" ));
+      phiAK8_Puppi_  ->push_back(ijet->userFloat("ak8PFJetsPuppiValueMap:phi" ));
+      massAK8_Puppi_ ->push_back(ijet->userFloat("ak8PFJetsPuppiValueMap:mass"));
+      ///
+      /// sub-structure
+      tau1AK8_Puppi_ ->push_back(ijet->userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau1"));
+      tau2AK8_Puppi_ ->push_back(ijet->userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau2"));
+      tau3AK8_Puppi_ ->push_back(ijet->userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau3"));
+      ///
+      /// soft-drop mass
+      puppi_softdrop        = TLorentzVector();
+      puppi_softdrop_subjet = TLorentzVector();
+      auto const & sdSubjetsPuppi = ijet->subjets("SoftDropPuppi");
+      for ( auto const & it : sdSubjetsPuppi ) {
+	puppi_softdrop_subjet.SetPtEtaPhiM(it->correctedP4(0).pt(),it->correctedP4(0).eta(),it->correctedP4(0).phi(),it->correctedP4(0).mass());
+	puppi_softdrop+=puppi_softdrop_subjet;
+      }
+      massSoftDropAK8_Puppi_ ->push_back( puppi_softdrop.M() );
 
       //---- match with the pruned jet collection -----
       // double dRmin(1000);
@@ -1208,6 +1263,15 @@ void DijetTreeProducer::initialize()
   neMultAK8_        ->clear();
   phoMultAK8_        ->clear();
   //dRAK8_             ->clear();
+
+  ptAK8_Puppi_ ->clear();   
+  etaAK8_Puppi_ ->clear();  
+  phiAK8_Puppi_ ->clear();  
+  massAK8_Puppi_ ->clear(); 
+  tau1AK8_Puppi_ ->clear(); 
+  tau2AK8_Puppi_ ->clear(); 
+  tau3AK8_Puppi_ ->clear(); 
+  massSoftDropAK8_Puppi_ ->clear(); 
   
   triggerResult_     ->clear();
   
