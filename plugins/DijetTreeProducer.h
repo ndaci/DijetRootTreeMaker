@@ -34,7 +34,7 @@ class DijetTreeProducer : public edm::EDAnalyzer
   virtual void analyze(edm::Event const& iEvent, edm::EventSetup const& iSetup);
   virtual void endJob();
   virtual ~DijetTreeProducer();
-    
+  int FillJetsAK8(edm::Event const& iEvent, const edm::Handle<pat::JetCollection> &jetsAK8);
 
  private:  
   void initialize();
