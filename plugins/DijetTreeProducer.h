@@ -107,7 +107,7 @@ class DijetTreeProducer : public edm::EDAnalyzer
   triggerExpression::Evaluator * HCALlaserNoiseFilter_Selector_;
   triggerExpression::Evaluator * ECALDeadCellNoiseFilter_Selector_;
   triggerExpression::Evaluator * GoodVtxNoiseFilter_Selector_;
-  triggerExpression::Evaluator * TrkFailureNoiseFilter_Selector_;
+  //triggerExpression::Evaluator * TrkFailureNoiseFilter_Selector_;
   triggerExpression::Evaluator * EEBadScNoiseFilter_Selector_;
   triggerExpression::Evaluator * ECALlaserNoiseFilter_Selector_;
   triggerExpression::Evaluator * TrkPOGNoiseFilter_Selector_;
@@ -120,7 +120,7 @@ class DijetTreeProducer : public edm::EDAnalyzer
   bool passFilterHCALlaser_;
   bool passFilterECALDeadCell_;
   bool passFilterGoodVtx_;
-  bool passFilterTrkFailure_;
+  //bool passFilterTrkFailure_;
   bool passFilterEEBadSc_;
   bool passFilterECALlaser_;
   bool passFilterTrkPOG_;
