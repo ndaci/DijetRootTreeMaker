@@ -135,19 +135,10 @@ class DijetTreeProducer : public edm::EDAnalyzer
     //std::vector<float> *cutbasedJetId_, *fullJetId_, *fullJetDiscriminant_;
     std::vector<float> *ptGenAK4_,*etaGenAK4_,*phiGenAK4_,*massGenAK4_,*energyGenAK4_;
     
-//    std::vector<float> *ptAK4matchCaloJet_,*emfAK4matchCaloJet_;
-//    std::vector<float> *ptAK4Calo_,*jecAK4Calo_,*etaAK4Calo_,*phiAK4Calo_,*massAK4Calo_,*energyAK4Calo_,*areaAK4Calo_,*emfAK4Calo_;
-//    std::vector<float> *ptAK4PFCluster_,*jecAK4PFCluster_,*etaAK4PFCluster_,*phiAK4PFCluster_,*massAK4PFCluster_,*energyAK4PFCluster_,*areaAK4PFCluster_;
-//    std::vector<float> *ptAK4PFCalo_,*jecAK4PFCalo_,*etaAK4PFCalo_,*phiAK4PFCalo_,*massAK4PFCalo_,*energyAK4PFCalo_,*areaAK4PFCalo_,*emfAK4PFCalo_;
-
     std::vector<float> *ptAK8_,*jecAK8_,*etaAK8_,*phiAK8_,*massAK8_,*energyAK8_,*areaAK8_,*csvAK8_,*chfAK8_,*nhfAK8_,*phfAK8_,*elfAK8_,*mufAK8_,*nemfAK8_,*cemfAK8_, *massPrunedAK8_, *massSoftDropAK8_, *dR_AK8_,*tau1AK8_,*tau2AK8_, *tau3AK8_ ;
     std::vector<int> *idLAK8_,*idTAK8_, *chHadMultAK8_, *chMultAK8_, *neHadMultAK8_, *neMultAK8_, *phoMultAK8_;
     std::vector<float> *hf_hfAK8_, *hf_emfAK8_, *hofAK8_;
     std::vector<float> *ptGenAK8_,*etaGenAK8_,*phiGenAK8_,*massGenAK8_,*energyGenAK8_;
-
-//    std::vector<float> *ptCA8_,*jecCA8_,*etaCA8_,*phiCA8_,*massCA8_,*energyCA8_,*chfCA8_,*nhfCA8_,*phfCA8_,*elfCA8_,*mufCA8_, *massPrunedCA8_, *dR_CA8_,*tau1CA8_,*tau2CA8_, *tau3CA8_ ;
-//    std::vector<int> *idLCA8_,*idTCA8_;
-//    std::vector<float> *ptGenCA8_,*etaGenCA8_,*phiGenCA8_,*massGenCA8_,*energyGenCA8_;
 
     //---- MC variables ---------------
     std::vector<float> *npu_; 
