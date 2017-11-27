@@ -31,7 +31,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = nReport
 
 process.TFileService=cms.Service("TFileService",
                                  #fileName=cms.string(THISROOTFILE),
-                                 fileName=cms.string("tree.root"),
+                                 fileName=cms.string("tree_MC.root"),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
 
@@ -105,6 +105,8 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   
   # There's no avoiding this in Consumes era
   isData          = cms.bool(False),
+  useJetTB         = cms.bool(False),
+  jetsAK8_TB       = cms.InputTag('selectedPatJetsAK8PFCHS'),
   
   jetsAK4          = cms.InputTag('slimmedJets'), 
   jetsAK8          = cms.InputTag('slimmedJetsAK8'),     
@@ -195,12 +197,13 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 )
 
 if runJetTB:                                    
-  process.dijets.jetsAK8 = cms.InputTag('selectedPatJetsAK8PFCHS')
+    process.dijets.useJetTB   = cms.bool(True)
+    process.dijets.jetsAK8_TB = cms.InputTag('selectedPatJetsAK8PFCHS')
 
 ############## output  edm format ###############
 process.out = cms.OutputModule(
     'PoolOutputModule',
-    fileName = cms.untracked.string('edm.root'),
+    fileName = cms.untracked.string('edm_MC.root'),
     outputCommands = cms.untracked.vstring([
             #'keep *'
             'drop *',
