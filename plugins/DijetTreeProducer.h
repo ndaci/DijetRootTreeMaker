@@ -19,6 +19,7 @@
 #include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
 
 // For 80X updates (for consumes system)
+#include "DataFormats/PatCandidates/interface/PATObject.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
@@ -43,6 +44,9 @@ class DijetTreeProducer : public edm::EDAnalyzer
   int DefineBranches();
   int FillJetsAK8(edm::Event const& iEvent, const edm::Handle<pat::JetCollection> &jetsAK8, const u_int idxCollAK8);
 
+  template<typename T>
+    float GetUserFloat(const pat::PATObject< T > &obj,  const TString tag);
+  
  private:  
   void initialize();
   // For JECs

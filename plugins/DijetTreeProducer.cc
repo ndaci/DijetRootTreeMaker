@@ -528,12 +528,6 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
       neMultAK4_        ->push_back(neMult);
       phoMultAK4_       ->push_back(phoMult); 
 
-      //tau1AK4_          ->push_back(ijet->userFloat("NjettinessAK4:tau1"));
-      //tau2AK4_          ->push_back(ijet->userFloat("NjettinessAK4:tau2"));
-      //cutbasedJetId_      ->push_back(ijet->userInt("pileupJetIdEvaluator:cutbasedId"));
-      //fullJetId_          ->push_back(ijet->userFloat("pileupJetIdEvaluator:fullDiscriminant"));
-      //fullJetDiscriminant_->push_back(ijet->userInt("pileupJetIdEvaluator:fullId"));
-
     }
 
   }// jet loop  
@@ -547,7 +541,10 @@ void DijetTreeProducer::analyze(edm::Event const& iEvent, edm::EventSetup const&
 
   // Fill reco AK8 Jets from MINIAOD contents
   FillJetsAK8(iEvent, jetsAK8, 0); // idxColl=0 <-> original MINIAOD collection
-    
+  if(useJetTB_) {
+    FillJetsAK8(iEvent, jetsAK8_TB, 1); // idxColl=1 <-> jets from JetToolbox
+  }    
+
   //-------------- Gen Jets Info -----------------------------------
 
   if (!iEvent.isRealData()) {
@@ -610,6 +607,9 @@ int DijetTreeProducer::FillJetsAK8(edm::Event const& iEvent, const edm::Handle<p
 	 << idxCollAK8 << " >= " << nCollAK8 << endl;
     return -1;
   }
+
+  // Name of jettiness depending on input collection (0: standard miniaod; 1: JetToolbox)
+  TString nameJettiness[nCollAK8] = {"NjettinessAK8", "NjettinessAK8CHS"};
 
   // AK8
   std::vector<double> jecFactorsAK8;
@@ -694,6 +694,25 @@ int DijetTreeProducer::FillJetsAK8(edm::Event const& iEvent, const edm::Handle<p
     // https://twiki.cern.ch/twiki/bin/viewauth/CMS/JetID
     int idL = (nhf<0.99 && nemf<0.99 && NumConst>1 && muf < 0.8) && ((fabs(eta) <= 2.4 && chf>0 && chMult>0 && cemf<0.99) || fabs(eta)>2.4);
     int idT = (nhf<0.90 && nemf<0.90 && NumConst>1 && muf<0.8) && ((fabs(eta)<=2.4 && chf>0 && chMult>0 && cemf<0.90) || fabs(eta)>2.4);
+
+    // Sub-structure
+    float jchs_tau1, jchs_tau2, jchs_tau3, jchs_m_pruned, jchs_m_softdrop;
+    float jpuppi_pt, jpuppi_eta, jpuppi_phi, jpuppi_mass, jpuppi_tau1, jpuppi_tau2, jpuppi_tau3;
+    ///
+    jchs_tau1 = GetUserFloat( *ijet , nameJettiness[idxCollAK8]+":tau1");
+    jchs_tau2 = GetUserFloat( *ijet , nameJettiness[idxCollAK8]+":tau2");
+    jchs_tau3 = GetUserFloat( *ijet , nameJettiness[idxCollAK8]+":tau3");
+    //
+    jchs_m_pruned   = GetUserFloat( *ijet , "ak8PFJetsCHSPrunedMass" );
+    jchs_m_softdrop = GetUserFloat( *ijet , "ak8PFJetsCHSSoftDropMass" );
+    //
+    jpuppi_pt   = GetUserFloat( *ijet , "ak8PFJetsPuppiValueMap:pt" );
+    jpuppi_eta  = GetUserFloat( *ijet , "ak8PFJetsPuppiValueMap:eta" );
+    jpuppi_phi  = GetUserFloat( *ijet , "ak8PFJetsPuppiValueMap:phi" );
+    jpuppi_mass = GetUserFloat( *ijet , "ak8PFJetsPuppiValueMap:mass" );
+    jpuppi_tau1 = GetUserFloat( *ijet , "ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau1" );
+    jpuppi_tau2 = GetUserFloat( *ijet , "ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau2" );
+    jpuppi_tau3 = GetUserFloat( *ijet , "ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau3" );
       
     if (pt > ptMinAK8_) {
 
@@ -753,25 +772,27 @@ int DijetTreeProducer::FillJetsAK8(edm::Event const& iEvent, const edm::Handle<p
       ncHadAK8_         [idxCollAK8]->push_back(ijet->jetFlavourInfo().getcHadrons().size());
 
       // Sub-structure
-      tau1AK8_          [idxCollAK8]->push_back(ijet->userFloat("NjettinessAK8:tau1"));
-      tau2AK8_          [idxCollAK8]->push_back(ijet->userFloat("NjettinessAK8:tau2"));
-      tau3AK8_          [idxCollAK8]->push_back(ijet->userFloat("NjettinessAK8:tau3"));
-      massPrunedAK8_    [idxCollAK8]->push_back(ijet->userFloat("ak8PFJetsCHSPrunedMass"));
-      massSoftDropAK8_  [idxCollAK8]->push_back(ijet->userFloat("ak8PFJetsCHSSoftDropMass"));
+      tau1AK8_          [idxCollAK8]->push_back(jchs_tau1);
+      tau2AK8_          [idxCollAK8]->push_back(jchs_tau2);
+      tau3AK8_          [idxCollAK8]->push_back(jchs_tau3);
+      massPrunedAK8_    [idxCollAK8]->push_back(jchs_m_pruned);
+      massSoftDropAK8_  [idxCollAK8]->push_back(jchs_m_softdrop);
 
       // Associated PUPPI jets //
       ///
       /// kinematics
-      ptAK8_Puppi_   [idxCollAK8]->push_back(ijet->userFloat("ak8PFJetsPuppiValueMap:pt"  ));
-      etaAK8_Puppi_  [idxCollAK8]->push_back(ijet->userFloat("ak8PFJetsPuppiValueMap:eta" ));
-      phiAK8_Puppi_  [idxCollAK8]->push_back(ijet->userFloat("ak8PFJetsPuppiValueMap:phi" ));
-      massAK8_Puppi_ [idxCollAK8]->push_back(ijet->userFloat("ak8PFJetsPuppiValueMap:mass"));
+      ptAK8_Puppi_   [idxCollAK8]->push_back(jpuppi_pt);
+      etaAK8_Puppi_  [idxCollAK8]->push_back(jpuppi_eta);
+      phiAK8_Puppi_  [idxCollAK8]->push_back(jpuppi_phi);
+      massAK8_Puppi_ [idxCollAK8]->push_back(jpuppi_mass);
       ///
       /// sub-structure
-      tau1AK8_Puppi_ [idxCollAK8]->push_back(ijet->userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau1"));
-      tau2AK8_Puppi_ [idxCollAK8]->push_back(ijet->userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau2"));
-      tau3AK8_Puppi_ [idxCollAK8]->push_back(ijet->userFloat("ak8PFJetsPuppiValueMap:NjettinessAK8PuppiTau3"));
+      tau1AK8_Puppi_ [idxCollAK8]->push_back(jpuppi_tau1);
+      tau2AK8_Puppi_ [idxCollAK8]->push_back(jpuppi_tau2);
+      tau3AK8_Puppi_ [idxCollAK8]->push_back(jpuppi_tau3);
       ///
+
+      /*
       /// soft-drop mass
       puppi_softdrop        = TLorentzVector();
       puppi_softdrop_subjet = TLorentzVector();
@@ -781,6 +802,7 @@ int DijetTreeProducer::FillJetsAK8(edm::Event const& iEvent, const edm::Handle<p
 	puppi_softdrop+=puppi_softdrop_subjet;
       }
       massSoftDropAK8_Puppi_ [idxCollAK8]->push_back( puppi_softdrop.M() );
+      */
 
       //---- match with the pruned jet collection -----
       // double dRmin(1000);
@@ -1404,6 +1426,15 @@ void DijetTreeProducer::endJob()
   delete TrkPOG_toomanystrip_NoiseFilter_Selector_;
   delete TrkPOG_logError_NoiseFilter_Selector_;
 
+}
+
+template<typename T> float DijetTreeProducer::GetUserFloat(const pat::PATObject< T > &obj,  const TString tag)
+{
+  float result = -8888888;
+  if(obj.hasUserFloat(tag)) {
+    result = obj.userFloat(tag);
+  }
+  return result;
 }
 
 DEFINE_FWK_MODULE(DijetTreeProducer);
