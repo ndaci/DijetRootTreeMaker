@@ -29,7 +29,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = nReport
 
 
 process.TFileService=cms.Service("TFileService",
-                                 fileName=cms.string('test.root'),
+                                 fileName=cms.string('tree_data.root'),
                                  #fileName=cms.string(THISROOTFILE),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
@@ -44,7 +44,7 @@ process.options = cms.untracked.PSet(
 ############## output  edm format ###############
 process.out = cms.OutputModule(
     'PoolOutputModule',
-    fileName = cms.untracked.string('edm.root'),
+    fileName = cms.untracked.string('edm_data.root'),
     outputCommands = cms.untracked.vstring([
             #'keep *'
             'drop *',
@@ -133,6 +133,8 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 
   # There's no avoiding this in Consumes era
   isData          = cms.bool(True),
+  useJetTB         = cms.bool(False),
+  jetsAK8_TB       = cms.InputTag('selectedPatJetsAK8PFCHS'),
 
   ## JETS/MET ########################################
   jetsAK4             = cms.InputTag('slimmedJets'), 
@@ -253,6 +255,9 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   L3corrAK8_MC = cms.FileInPath('CMSDIJET/DijetRootTreeMaker/data/Summer15_25nsV3_MC/Summer15_25nsV3_MC_L3Absolute_AK8PFchs.txt')
 )
 
+if runJetTB:                                    
+    process.dijets.useJetTB   = cms.bool(True)
+    process.dijets.jetsAK8_TB = cms.InputTag('selectedPatJetsAK8PFCHS')
 
 # ------------------ path --------------------------
 
