@@ -1,8 +1,8 @@
 import FWCore.ParameterSet.Config as cms 
 
 # User options
-nEvents  = 5
-nReport  = 1
+nEvents  = 1000
+nReport  = 10
 runJetTB = True
 saveEDM  = True
 
@@ -31,7 +31,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = nReport
 
 process.TFileService=cms.Service("TFileService",
                                  #fileName=cms.string(THISROOTFILE),
-                                 fileName=cms.string("tree.root"),
+                                 fileName=cms.string("tree_MC.root"),
                                  closeFileFast = cms.untracked.bool(True)
                                  )
 
@@ -104,7 +104,9 @@ pfcalo_collection=''
 process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   
   # There's no avoiding this in Consumes era
-  isData          = cms.bool(False),
+  isData           = cms.bool(False),
+  useJetTB         = cms.bool(False),
+  jetsAK8_TB       = cms.InputTag('selectedPatJetsAK8PFCHS'),
   
   jetsAK4          = cms.InputTag('slimmedJets'), 
   jetsAK8          = cms.InputTag('slimmedJetsAK8'),     
@@ -118,9 +120,9 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
   pu               = cms.untracked.InputTag('slimmedAddPileupInfo'),
   ptHat            = cms.untracked.InputTag('generator'),
   genParticles     = cms.InputTag('prunedGenParticlesDijet'),
-  genJetsAK4             = cms.InputTag('slimmedGenJets'), 
-  genJetsAK8             = cms.InputTag('slimmedGenJetsAK8'),     
-
+  genJetsAK4       = cms.InputTag('slimmedGenJets'), 
+  genJetsAK8       = cms.InputTag('slimmedGenJetsAK8'),     
+  
 
   ## trigger ###################################
   triggerAlias     = cms.vstring('PFHT900','PFHT650','PFHT600','PFHT350'
@@ -195,12 +197,13 @@ process.dijets     = cms.EDAnalyzer('DijetTreeProducer',
 )
 
 if runJetTB:                                    
-  process.dijets.jetsAK8 = cms.InputTag('selectedPatJetsAK8PFCHS')
+    process.dijets.useJetTB   = cms.bool(True)
+    process.dijets.jetsAK8_TB = cms.InputTag('selectedPatJetsAK8PFCHS')
 
 ############## output  edm format ###############
 process.out = cms.OutputModule(
     'PoolOutputModule',
-    fileName = cms.untracked.string('edm.root'),
+    fileName = cms.untracked.string('edm_MC.root'),
     outputCommands = cms.untracked.vstring([
             #'keep *'
             'drop *',
