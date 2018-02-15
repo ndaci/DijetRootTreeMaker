@@ -7,12 +7,12 @@
 
 using namespace std;
 
-Int_t plots()
+Int_t plots(TString process="mc_zz_qqqq")
 {
 
   // Define chain
   TChain* ch = new TChain("dijets/events");
-  ch->Add("tree_ZZ4Q_10k.root");
+  ch->Add("tree_ZZ4Q_20k.root");
   
   // Define jet collections
   const UInt_t nColl=2; // 0: MINIAOD ; 1: JetToolbox
@@ -22,13 +22,34 @@ Int_t plots()
   Int_t   color    [nColl] = {kBlue, kRed};
 
   // Define variables
-  const UInt_t nVar = 5;
-  TString varName [nVar] = {"jetPtAK8", "jetEtaAK8", "jetMassAK8", "jetMassPrunedAK8", "jetMassSoftDropAK8" };
-  TString varTitle[nVar] = {"AK8 Jet p_{T}", "AK8 Jet #eta", "AK8 Jet Mass", "AK8 Jet Pruned Mass", "AK8 Jet SoftDrop Mass" };
-  UInt_t  nBins   [nVar] = {100  ,   50,  40,  40,  40};
-  Float_t firstbin[nVar] = {160  , -3.0,   0,   0,   0};
-  Float_t lastbin [nVar] = {2160 ,  3.0, 200, 200, 200};
-  UInt_t  nSplit  [nVar] = {3, 3, 3, 3, 3};
+  const UInt_t nVar = 14;
+  TString varName [nVar] = {"jetPtAK8"  , "jetEtaAK8",                               // AK8 CHS   Jet kinematics
+			    "jetMassAK8", "jetMassPrunedAK8", "jetMassSoftDropAK8",  // AK8 CHS   Jet masses
+			    "jetTau1AK8", "jetTau2AK8",                              // AK8 CHS   Jet substructure
+			    "jetPtAK8_Puppi"  , "jetEtaAK8_Puppi",                   // AK8 PUPPI Jet kinematics
+			    "jetMassAK8_Puppi", "jetMassPrunedAK8_Puppi", "jetMassSoftDropAK8_Puppi", // AK8 PUPPI Jet masses
+			    "jetTau1AK8_Puppi", "jetTau2AK8_Puppi" };                // AK8 PUPPI Jet substructure
+
+  TString varTitle[nVar] = {"AK8 CHS Jet p_{T}", "AK8 CHS Jet #eta", 
+			    "AK8 CHS Jet Mass" , "AK8 CHS Jet Pruned Mass", "AK8 CHS Jet SoftDrop Mass", 
+			    "AK8 CHS #tau_{1}" , "AK8 CHS #tau_{2}",
+			    "AK8 PUPPI Jet p_{T}", "AK8 PUPPI Jet #eta", 
+			    "AK8 PUPPI Jet Mass" , "AK8 PUPPI Jet Pruned Mass", "AK8 PUPPI Jet SoftDrop Mass", 
+			    "AK8 PUPPI #tau_{1}" , "AK8 PUPPI #tau_{2}" };
+
+  UInt_t  nBins   [nVar] = {100  ,   50,  40,  40,  40, 20, 20,
+			    100  ,   50,  40,  40,  40, 20, 20};
+
+  Float_t firstbin[nVar] = {160  , -3.0,   0,   0,   0,  0,  0,
+			    160  , -3.0,   0,   0,   0,  0,  0};
+
+  Float_t lastbin [nVar] = {2160 ,  3.0, 200, 200, 200,  1,  1,
+			    2160 ,  3.0, 200, 200, 200,  1,  1};
+  //
+  UInt_t  nSplit  [nVar];
+  for(UInt_t iV=0; iV<nVar; iV++) {
+    nSplit[iV] = 3;
+  }
 
   // Split variables (first, second, third jet...)
   TString Order[4]={"First ", "Second ", "Third ", "Fourth "};
@@ -101,6 +122,9 @@ Int_t plots()
   // Loop over variables and indices iS (first/second... jet)
   for(UInt_t iV=0; iV<nVar; iV++) {
     for(UInt_t iS=0; iS<varIdx[iV].size(); iS++) {
+
+      // avoid un-existing collections
+      if(varName[iV]=="jetMassPrunedAK8_Puppi") continue; //fixme
 
       // make 1 plot with both collections
       for(UInt_t iC=0; iC<nColl; iC++) {
