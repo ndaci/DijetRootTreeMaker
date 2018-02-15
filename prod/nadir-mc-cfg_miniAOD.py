@@ -1,10 +1,10 @@
 import FWCore.ParameterSet.Config as cms 
 
 # User options
-nEvents  = 1000
-nReport  = 10
+nEvents  = 20000
+nReport  = 100
 runJetTB = True
-saveEDM  = True
+saveEDM  = False
 
 # Define process
 process = cms.Process('XJETS')
@@ -76,7 +76,8 @@ process.source = cms.Source(
     "PoolSource",
     fileNames = cms.untracked.vstring(
         #'/store/mc/RunIISpring16MiniAODv2/RSGravitonToQuarkQuark_kMpl01_M_3000_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0-v1/10000/080413DE-FC2C-E611-B822-D8D385FF6C5E.root'
-        '/store/mc/RunIISummer16MiniAODv2/RSGravitonToQuarkQuark_kMpl01_M_3000_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/6072A3CD-EDC2-E611-B12D-00266CF3E314.root'
+        #'/store/mc/RunIISummer16MiniAODv2/RSGravitonToQuarkQuark_kMpl01_M_3000_TuneCUETP8M1_13TeV_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/6072A3CD-EDC2-E611-B12D-00266CF3E314.root',
+        '/store/mc/RunIISummer16MiniAODv2/ZZTo4Q_13TeV_amcatnloFXFX_madspin_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/120000/04B6EACA-4AC6-E611-8E7D-001E677926DC.root'
         )
     )
 
